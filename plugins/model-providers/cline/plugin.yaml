@@ -1,0 +1,5 @@
+name: cline-provider
+kind: model-provider
+version: 1.0.0
+description: Cline — ClinePass subscription or pay-as-you-go credits through one API key
+author: Thoth

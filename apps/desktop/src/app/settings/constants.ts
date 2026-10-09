@@ -157,6 +157,13 @@ export const PROVIDER_GROUPS: ProviderPrefix[] = [
     priority: 13
   },
   {
+    prefix: 'CLINE_',
+    name: 'Cline',
+    description: 'ClinePass subscription or pay-as-you-go credits',
+    docsUrl: 'https://app.cline.bot/settings/api-keys',
+    priority: 24
+  },
+  {
     prefix: 'OPENCODE_GO_',
     name: 'OpenCode Go',
     description: '$10/month subscription for open coding models',

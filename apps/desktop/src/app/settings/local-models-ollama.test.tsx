@@ -66,7 +66,10 @@ beforeEach((): void => {
     vram_usable_bytes: 60 * 2 ** 30,
     ram_total_bytes: 63 * 2 ** 30,
     ram_available_bytes: 50 * 2 ** 30,
-    vram_label: '63.1 GB'
+    vram_label: '63.1 GB',
+    gpu_name: 'AMD Radeon 8060S',
+    gpu_util_percent: 0,
+    vram_used_bytes: 0
   })
   mocked.getLocalCatalog.mockResolvedValue({ models: [] })
   mocked.getLocalModelsJobs.mockResolvedValue({ jobs: [] })

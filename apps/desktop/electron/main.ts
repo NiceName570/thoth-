@@ -2847,25 +2847,12 @@ function getFirstRunSetupGate() {
   return firstRunSetupGate
 }
 
-async function waitForFirstRunSetupChoice(backend) {
-  const gate = getFirstRunSetupGate()
+async function waitForFirstRunSetupChoice(_backend) {
+  // Thoth installs locally on first launch with no choice screen to sit on;
+  // a remote gateway is added later from Settings -> Gateway.
+  continueFirstRunLocalBootstrap()
 
-  if (!gate.shouldGate(backend)) {
-    return 'continue-local'
-  }
-
-  updateBootProgress(
-    {
-      error: null,
-      message: 'Waiting for first-run setup choice',
-      phase: 'bootstrap.choice',
-      progress: 12,
-      running: true
-    },
-    { allowDecrease: true }
-  )
-
-  return gate.wait(backend)
+  return 'continue-local' as const
 }
 
 function continueFirstRunLocalBootstrap() {

@@ -2,6 +2,12 @@ import type { Translations } from './types'
 
 export const enLocalModels: Translations['settings']['localModels'] = {
   connectionChanged: 'Local models connection changed',
+  ollamaTitle: 'Ollama',
+  ollamaDetected: count => `Ollama is running on this computer with ${count} model${count === 1 ? '' : 's'}`,
+  ollamaDetail: baseUrl => `Use the Ollama you already have at ${baseUrl}. Nothing new is downloaded.`,
+  ollamaUse: 'Use Ollama',
+  ollamaInUse: 'Using Ollama',
+  ollamaFailed: 'Could not switch to Ollama',
   title: 'Local Models',
   runtimeTitle: 'Local runtime',
   runtimeReady: backend => `Ready · ${backend}`,

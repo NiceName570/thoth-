@@ -635,6 +635,19 @@ def local_models_catalog():
     return {"models": [_catalog_row(e, budget, recommended_id, recommended_reason, staged_ids) for e in catalog.CATALOG]}
 
 
+# ── an Ollama the user already runs ─────────────────────────
+@router.get("/api/local-models/ollama")
+def local_models_ollama():
+    """A running Ollama on this machine (or wherever ``OLLAMA_HOST`` / ``providers.ollama.base_url``
+    points), so the pane can offer it instead of installing a second engine. Sync def: blocking probe."""
+    from hermes_cli.models_local import _get_ollama_base_url, _root_for_ollama_native_api, probe_ollama_local_models
+
+    # 127.0.0.1, not localhost: resolving localhost costs ~2s per request on Windows.
+    root = _root_for_ollama_native_api(_get_ollama_base_url()).replace("://localhost", "://127.0.0.1", 1)
+    models = _quiet(lambda: probe_ollama_local_models(root, timeout=1.5), None, debug="ollama probe failed: %r")
+    return {"detected": models is not None, "base_url": f"{root}/v1", "models": list(models or [])}
+
+
 # ── runtime install (job) ────────────────────────────────────
 def _runtime_progress_hook(job: dict[str, Any]):
     """PM owns byte accounting; stages describe work without resetting it."""

@@ -21,6 +21,7 @@ import {
   getLocalHardware,
   getLocalModelsJobs,
   getLocalModelsStatus,
+  getLocalOllama,
   installLocalRuntime
 } from '@/hermes'
 import { translateNow } from '@/i18n'
@@ -28,7 +29,7 @@ import { queryClient } from '@/lib/query-client'
 import { useStoresSelector } from '@/lib/use-session-slice'
 import { notify, notifyError } from '@/store/notifications'
 import { $connection } from '@/store/session'
-import type { LocalCatalogModel, LocalHardware, LocalModelsStatus, LocalRuntimeJob } from '@/types/hermes'
+import type { LocalCatalogModel, LocalHardware, LocalModelsStatus, LocalOllama, LocalRuntimeJob } from '@/types/hermes'
 
 export interface LocalModelsOwner extends LocalModelsScope {
   // Legacy primary routes have no registry pin. Fence them by endpoint instead.
@@ -191,6 +192,19 @@ export function localModelsCatalogOptions(owner: LocalModelsOwner): UseQueryOpti
       assertLocalModelsOwnerLive(owner)
 
       return models
+    },
+    retry: false
+  })
+}
+
+export function localModelsOllamaOptions(owner: LocalModelsOwner): UseQueryOptions<LocalOllama> {
+  return queryOptions({
+    queryKey: localModelsKey(owner, 'ollama'),
+    queryFn: async (): Promise<LocalOllama> => {
+      const ollama: LocalOllama = await getLocalOllama(localModelsRequestScope(owner))
+      assertLocalModelsOwnerLive(owner)
+
+      return ollama
     },
     retry: false
   })

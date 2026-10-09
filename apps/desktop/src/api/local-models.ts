@@ -1,4 +1,4 @@
-import type { LocalCatalogModel, LocalHardware, LocalModelsStatus, LocalRuntimeJob } from '@/types/hermes'
+import type { LocalCatalogModel, LocalHardware, LocalModelsStatus, LocalOllama, LocalRuntimeJob } from '@/types/hermes'
 
 import { hermesApi, profileScoped } from './client'
 
@@ -14,6 +14,13 @@ export function getLocalModelsStatus(scope?: LocalModelsScope): Promise<LocalMod
   return hermesApi<LocalModelsStatus>({
     ...(scope ?? profileScoped()),
     path: '/api/local-models/status'
+  })
+}
+
+export function getLocalOllama(scope?: LocalModelsScope): Promise<LocalOllama> {
+  return hermesApi<LocalOllama>({
+    ...(scope ?? profileScoped()),
+    path: '/api/local-models/ollama'
   })
 }
 

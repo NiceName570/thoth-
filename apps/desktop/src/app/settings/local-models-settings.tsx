@@ -7,6 +7,7 @@ import {
   localModelsCatalogOptions,
   localModelsHardwareOptions,
   localModelsKey,
+  localModelsOllamaOptions,
   type LocalModelsOwner,
   useLocalModelsOwner,
   useLocalModelsStatus,
@@ -18,6 +19,7 @@ import { isActiveStatus } from './local-models-actions'
 import { LocalModelsBrowseSection } from './local-models-browse'
 import { LocalModelsHardwareSection } from './local-models-hardware-section'
 import { LocalModelsModelsSection } from './local-models-models-section'
+import { LocalModelsOllamaSection } from './local-models-ollama-section'
 import { LocalModelsOwnerProvider, useScopedLocalModelsOwner } from './local-models-owner'
 import { LocalModelsQuickstart } from './local-models-quickstart'
 import { LocalModelsRuntimeSection } from './local-models-runtime-section'
@@ -40,6 +42,8 @@ function ScopedLocalModelsSettings(): ReactElement {
   const { data: status } = useLocalModelsStatus(owner, true, true)
   const { data: hardware } = useQuery(localModelsHardwareOptions(owner))
   const { data: catalog } = useQuery(localModelsCatalogOptions(owner))
+  const { data: ollama } = useQuery(localModelsOllamaOptions(owner))
+  const ollamaDetected: boolean = Boolean(ollama?.detected && ollama.models.length > 0)
   // Quickstart escape hatch: true once the user asks for the full pane
   // (model list, HF browser) instead of the one-button setup card.
   const [configure, setConfigure] = useState<boolean>(false)
@@ -106,7 +110,8 @@ function ScopedLocalModelsSettings(): ReactElement {
     (job: LocalRuntimeJob): boolean => job.kind === 'runtime-install' && job.status === 'error'
   )
 
-  if ((qJob || (needsSetup && !configure && heroModel)) && !otherActiveJob && !installStarting && !failedInstall) {
+  // A detected Ollama skips the one-button download card: the user already has an engine.
+  if ((qJob || (needsSetup && !configure && heroModel && !ollamaDetected)) && !otherActiveJob && !installStarting && !failedInstall) {
     return (
       <LocalModelsQuickstart
         heroModel={heroModel}
@@ -120,6 +125,7 @@ function ScopedLocalModelsSettings(): ReactElement {
   return (
     <SettingsContent>
       <ActiveProfileNote className="mb-5" />
+      {ollama && ollamaDetected ? <LocalModelsOllamaSection ollama={ollama} /> : null}
       <LocalModelsRuntimeSection jobs={jobs} lastError={lastError} status={status} />
       <LocalModelsHardwareSection hardware={hardware} />
       <LocalModelsModelsSection catalog={catalog} jobs={jobs} lastError={lastError} status={status} />

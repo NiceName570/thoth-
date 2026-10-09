@@ -1425,6 +1425,12 @@ export interface Translations extends NoticeTranslations {
     }
     localModels: {
       connectionChanged: string
+      ollamaTitle: string
+      ollamaDetected: (count: number) => string
+      ollamaDetail: (baseUrl: string) => string
+      ollamaUse: string
+      ollamaInUse: string
+      ollamaFailed: string
       title: string
       runtimeTitle: string
       runtimeReady: (backend: string) => string

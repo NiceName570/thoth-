@@ -53,7 +53,7 @@ export const en: Translations = {
     ownerMissing: 'Reopen this conversation to manage its connections.',
     search: 'Find an app',
     empty: 'No matching apps',
-    disclaimer: 'Connecting is optional. Only authorize the apps you want Hermes to use.',
+    disclaimer: 'Connecting is optional. Only authorize the apps you want Thoth to use.',
     execution: 'Connector tools',
     setup: server => `Set up ${server}`,
     openInBrowser: 'Open in browser',
@@ -92,7 +92,7 @@ export const en: Translations = {
       kindCatalog: 'MCP · Catalog',
       kindCustom: 'MCP · Custom',
       kindPlugin: (plugin: string) => `MCP · Plugin ${plugin}`,
-      inCatalog: 'In the Hermes catalog',
+      inCatalog: 'In the Thoth catalog',
       hostedTwin: 'Managed version available',
       alsoLocal: 'Also runs on this device',
       open: (name: string) => `Open ${name}`,
@@ -142,7 +142,7 @@ export const en: Translations = {
       loading: 'Reading the catalog and the servers on this computer',
       emptyTitle: 'No apps here yet. Add a server on this computer to get started.',
       noMatchTitle: 'No matching apps',
-      noMatchBody: 'Nothing here matches. Point Hermes at your own MCP server to add it.',
+      noMatchBody: 'Nothing here matches. Point Thoth at your own MCP server to add it.',
       clearSearch: 'Clear the search',
       hostedFailedTitle: 'Could not reach the hosted apps.',
       hostedFailedBody: 'The servers on this computer are unaffected and still running. Nothing was turned off.',
@@ -156,7 +156,7 @@ export const en: Translations = {
       managedUnavailable: 'Managed apps are not available for this account yet.',
       writeFailed: 'That change was not saved.',
       refreshFailed: 'The tool list was not refreshed.',
-      disconnectNoAccount: 'Hermes has no account to disconnect here. Refresh the page and try again.',
+      disconnectNoAccount: 'Thoth has no account to disconnect here. Refresh the page and try again.',
       disconnectRefused:
         'Nous could not remove this sign-in right now. Turn the app off with the switch instead, or try again later.'
     },
@@ -198,16 +198,16 @@ export const en: Translations = {
     dialog: {
       disconnect: 'Disconnect',
       disconnectTitle: (name: string) => `Disconnect ${name}?`,
-      disconnectBody: 'Hermes stops acting as this account. You can connect again at any time.',
+      disconnectBody: 'Thoth stops acting as this account. You can connect again at any time.',
       menuRefreshTools: 'Refresh tools',
       moreActions: 'More actions',
       removeServerTitle: (name: string) => `Remove ${name}?`,
       removeServerBody: 'The entry leaves mcp.json on this computer. Nothing else is deleted.',
-      appSwitch: (name: string) => `Hermes can use ${name}`,
+      appSwitch: (name: string) => `Thoth can use ${name}`,
       waysTitle: (name: string) => `Where ${name} runs`,
       wayNotConnected: (name: string) => `Not connected yet. Sign in to ${name} in your browser.`,
       wayHosted: 'Managed',
-      bothOn: (name: string) => `Both are on, so Hermes sees every ${name} tool twice.`,
+      bothOn: (name: string) => `Both are on, so Thoth sees every ${name} tool twice.`,
       turnOffLocal: 'Turn off the local server',
       providedByPlugin: (plugin: string) => `Provided by plugin ${plugin}`,
       openPlugins: 'Open the Plugins tab',
@@ -215,7 +215,7 @@ export const en: Translations = {
       nousLine: 'Nous apps follow your account, not the profile.',
       rulesReadOnly: 'Rules cannot be changed right now.',
       rulesAppOff: (name: string) => `Turn ${name} on to change its tools.`,
-      rulesSignIn: 'Sign in to change what Hermes may do here.',
+      rulesSignIn: 'Sign in to change what Thoth may do here.',
       orgNote: (count: number) => `Your organisation turned ${count} tools off.`,
       orgLink: 'Open the connectors admin',
       connectEnded: 'The sign-in did not finish.',
@@ -229,8 +229,8 @@ export const en: Translations = {
     tools: {
       title: 'Tools',
       notInstalledBody: 'Install it on this device to see the tools it brings.',
-      summaryTitle: (name: string) => `What Hermes may do with ${name}`,
-      summaryPreviewTitle: (name: string) => `What Hermes could do with ${name} once you connect`,
+      summaryTitle: (name: string) => `What Thoth may do with ${name}`,
+      summaryPreviewTitle: (name: string) => `What Thoth could do with ${name} once you connect`,
       summaryCount: (count: number) => `${count} tool${count === 1 ? '' : 's'}`,
       summaryAllTools: 'All tools',
       summaryOther: 'Other',
@@ -263,7 +263,7 @@ export const en: Translations = {
       needsAuthBody: 'The sign-in stays on this computer. Nothing leaves it.',
       retry: 'Retry',
       goneTitle: (name: string) => `${name} left the catalog.`,
-      goneBody: 'Hermes cannot call it any more. The row stays until you remove it, so nothing vanishes.',
+      goneBody: 'Thoth cannot call it any more. The row stays until you remove it, so nothing vanishes.',
       remove: 'Remove',
       offTitle: (name: string) => `${name} is off.`,
       offBody: 'Turn it on with the switch above to read the tools it brings.',
@@ -307,7 +307,7 @@ export const en: Translations = {
 
   sessionImport: {
     title: 'Continue from another app',
-    subtitle: 'Bring a conversation into Hermes and pick up where you left off.',
+    subtitle: 'Bring a conversation into Thoth and pick up where you left off.',
     action: 'Import session',
     readingFrom: 'Reading from',
     connectedComputer: 'the connected computer',
@@ -325,18 +325,18 @@ export const en: Translations = {
     more: 'Load more sessions',
     messages: 'messages',
     choose: 'A conversation worth continuing',
-    chooseHelp: 'Choose a session to read its history before bringing it into Hermes.',
+    chooseHelp: 'Choose a session to read its history before bringing it into Thoth.',
     previewLoading: 'Opening preview',
     previewError: 'Preview unavailable',
     previewHelp: 'The source may have moved or changed. Refresh the list and try again.',
     previewLimit: 'Preview shortened for readability. The complete conversation is imported.',
     you: 'You',
-    snapshot: 'This conversation is already in Hermes. Open your existing copy to continue.',
+    snapshot: 'This conversation is already in Thoth. Open your existing copy to continue.',
     copyNotice:
       'Copies conversation text. Source files stay unchanged. Tool output and reasoning are not carried over.',
     importing: 'Importing…',
-    open: 'Open in Hermes',
-    continue: 'Continue in Hermes',
+    open: 'Open in Thoth',
+    continue: 'Continue in Thoth',
     importError: 'Could not import this conversation.'
   },
   common: {
@@ -407,7 +407,7 @@ export const en: Translations = {
 
   notifications: {
     sharedProfileWarning:
-      'Another Hermes installation is using this profile. Both installations share its settings and data, so changes can conflict. You can continue, or close the other installation before making changes.',
+      'Another Thoth installation is using this profile. Both installations share its settings and data, so changes can conflict. You can continue, or close the other installation before making changes.',
     region: 'Notifications',
     hide: 'Hide',
     show: 'Show',
@@ -420,17 +420,17 @@ export const en: Translations = {
     compressDeferredDone: 'Context compression finished',
     backendOutOfDateTitle: 'Backend out of date',
     backendOutOfDateMessage:
-      'Your Hermes backend is older than this desktop build and may not work correctly. Update to align them.',
-    desktopOutOfDateTitle: 'Hermes app out of date',
+      'Your Thoth backend is older than this desktop build and may not work correctly. Update to align them.',
+    desktopOutOfDateTitle: 'Thoth app out of date',
     desktopOutOfDateMessage:
-      'This Hermes app is older than the backend it is connected to and may not work correctly. Update the app to align them.',
+      'This Thoth app is older than the backend it is connected to and may not work correctly. Update the app to align them.',
     updateDesktopApp: 'Update app',
     installMethodUnsupportedTitle: 'Unsupported install method',
-    updateHermes: 'Update Hermes',
+    updateHermes: 'Update Thoth',
     updateReadyTitle: 'Update ready',
     updateReadyMessage: count => `${count} new change${count === 1 ? '' : 's'} available.`,
     updateReadyMessageUnknown: 'A new update is available.',
-    updateReadyMessageAppInstaller: 'A new version of Hermes is ready. Update now and Windows will finish it for you.',
+    updateReadyMessageAppInstaller: 'A new version of Thoth is ready. Update now and Windows will finish it for you.',
     seeWhatsNew: "See what's new",
     mcp: {
       needsAuthTitle: 'MCP server needs re-authentication',
@@ -447,21 +447,21 @@ export const en: Translations = {
       elevenLabsNeedsKey: 'Voice input needs an ElevenLabs key. Add one in Settings → Keys.',
       elevenLabsRejectedKey: "ElevenLabs didn't accept your API key. Update it in Settings → Keys, then try again.",
       diskFull: 'Disk full — free some space, then try again.',
-      storageFailure: "Hermes couldn't save to its data folder. Open Maintenance to check and repair it.",
+      storageFailure: "Thoth couldn't save to its data folder. Open Maintenance to check and repair it.",
       gatewayAuthFailed:
-        'This Hermes no longer accepts your saved sign-in. Open Gateways and sign in again (or paste a new access token), then retry.',
+        'This Thoth no longer accepts your saved sign-in. Open Gateways and sign in again (or paste a new access token), then retry.',
       methodNotAllowed:
-        "Hermes' background service is out of step with the app, probably after an update. Restart it to fix this.",
+        "Thoth' background service is out of step with the app, probably after an update. Restart it to fix this.",
       microphonePermission: 'Microphone permission was denied.',
       openaiRejectedApiKey: "OpenAI didn't accept your API key. Update it in Settings → Keys, then try again.",
       openaiTtsNeedsKey: 'Voice needs an OpenAI key. Add one in Settings → Keys.',
       codeSkewRestartRequired:
-        'Hermes was updated but is still running the old version. Restart it to finish the update.',
+        'Thoth was updated but is still running the old version. Restart it to finish the update.',
       rpcOutOfSync: 'The app and the backend are on different versions. Update both.',
-      restartHermesFailed: "Couldn't restart Hermes"
+      restartHermesFailed: "Couldn't restart Thoth"
     },
     actions: {
-      restartHermes: 'Restart Hermes',
+      restartHermes: 'Restart Thoth',
       openKeys: 'Open Keys',
       openGateways: 'Open Gateways',
       openMaintenance: 'Open Maintenance'
@@ -489,7 +489,7 @@ export const en: Translations = {
       liveEndedConnectionLost: 'The live voice session lost its connection.',
       liveEndedClosed: 'The live voice session was closed by the service.',
       liveError: 'Live voice',
-      liveDelegationFailed: 'Could not hand the request to Hermes',
+      liveDelegationFailed: 'Could not hand the request to Thoth',
       liveUnavailable: reason => `GPT-Live voice chat is not available: ${reason}. Using speech-to-text instead.`
     },
     native: {
@@ -499,8 +499,8 @@ export const en: Translations = {
       rejectAction: 'Reject',
       inputTitle: 'Input needed',
       inputTitleNamed: session => `Input needed — ${session}`,
-      inputBody: 'Hermes is waiting for your response.',
-      turnDoneTitle: 'Hermes finished',
+      inputBody: 'Thoth is waiting for your response.',
+      turnDoneTitle: 'Thoth finished',
       turnDoneBody: 'Message complete.',
       turnErrorTitle: 'Turn failed',
       backgroundDoneTitle: 'Background task finished',
@@ -756,7 +756,7 @@ export const en: Translations = {
     exportConfig: 'Export config',
     importConfig: 'Import config',
     resetToDefaults: 'Reset to defaults',
-    resetConfirm: 'Reset all settings to Hermes defaults?',
+    resetConfirm: 'Reset all settings to Thoth defaults?',
     exportFailed: 'Export failed',
     resetFailed: 'Reset failed',
     pluginPages: {
@@ -808,7 +808,7 @@ export const en: Translations = {
         agentTargetLocal: (profile, dir) => `Installs into the ${profile} backend (${dir})`,
         agentTargetRemote: profile => `Installs into the connected ${profile} backend`,
         catalogPinned: (name, sha) =>
-          `Hermes catalog entry "${name}" — the agent component installs at the reviewed pin${sha ? ` ${sha}` : ''}, not the branch tip.`,
+          `Thoth catalog entry "${name}" — the agent component installs at the reviewed pin${sha ? ` ${sha}` : ''}, not the branch tip.`,
         reviewedHeading: 'Reviewed catalog entry',
         reviewedIntro:
           'This entry was human-reviewed at its pinned commit. You can still inspect the exact code below.',
@@ -846,7 +846,7 @@ export const en: Translations = {
         desktopSuccess: name => `Desktop plugin ${name} installed`,
         agentFailed: 'Agent plugin install failed',
         installUncertain:
-          'Hermes stopped waiting for the install result, but the plugin may still be installing. Close this dialog and use Rescan in Plugins before trying Install again.',
+          'Thoth stopped waiting for the install result, but the plugin may still be installing. Close this dialog and use Rescan in Plugins before trying Install again.',
         desktopFailed: 'Desktop plugin install failed',
         missingEnv: (name, vars) =>
           `${name} is installed but needs a key before it can work: ${vars}. Add it now, or the plugin's tools will fail.`
@@ -898,7 +898,7 @@ export const en: Translations = {
       deleteAction: 'Remove saved item',
       otpField: 'Authenticator key',
       otpPlaceholder: 'Base32 secret or otpauth:// link',
-      otpHint: 'The "setup key" the site shows when you enable 2FA. With it saved, Hermes generates the codes itself.',
+      otpHint: 'The "setup key" the site shows when you enable 2FA. With it saved, Thoth generates the codes itself.',
       twoFactorBadge: '2FA auto',
       deleteTitle: 'Delete this item?',
       deleteDescription: label => `"${label}" will be removed. This cannot be undone.`,
@@ -909,10 +909,10 @@ export const en: Translations = {
           'Installed password managers are picked up automatically. The agent asks you to unlock one the first time it needs a login from it (once per session); only a session token stays in memory, and the agent never sees your master password or any login.',
         toggleFailed: 'Could not update password manager',
         notInstalled: name =>
-          `Not detected. Install the ${name} command-line tool and sign in to it; Hermes picks it up automatically.`,
-        disabledDesc: 'Detected but turned off for Hermes.',
+          `Not detected. Install the ${name} command-line tool and sign in to it; Thoth picks it up automatically.`,
+        disabledDesc: 'Detected but turned off for Thoth.',
         lockedDesc: 'Detected. The agent will ask you to unlock it when it needs a login, or unlock now.',
-        unlockedDesc: 'Unlocked for this session. Locks automatically after 30 minutes idle or when Hermes closes.',
+        unlockedDesc: 'Unlocked for this session. Locks automatically after 30 minutes idle or when Thoth closes.',
         statusLocked: 'Locked',
         statusNotDetected: 'Not detected',
         statusOff: 'Off',
@@ -932,7 +932,7 @@ export const en: Translations = {
       intro: 'OS notifications (not in-app toasts). Per device.',
       enableAll: 'Enable notifications',
       enableAllDesc: 'Off silences every notification below.',
-      focusedHint: 'Completion alerts only fire while Hermes is in the background.',
+      focusedHint: 'Completion alerts only fire while Thoth is in the background.',
       kinds: {
         approval: {
           label: 'Approval needed',
@@ -940,11 +940,11 @@ export const en: Translations = {
         },
         input: {
           label: 'Input needed',
-          description: 'Hermes asked a question or needs a password or secret.'
+          description: 'Thoth asked a question or needs a password or secret.'
         },
         turnDone: {
           label: 'Response ready',
-          description: 'A turn finished while Hermes was in the background.'
+          description: 'A turn finished while Thoth was in the background.'
         },
         turnError: {
           label: 'Turn failed',
@@ -960,11 +960,11 @@ export const en: Translations = {
         },
         plugin: {
           label: 'Plugin notifications',
-          description: 'A desktop plugin sent a notification while Hermes was in the background.'
+          description: 'A desktop plugin sent a notification while Thoth was in the background.'
         }
       },
       test: 'Send test notification',
-      testTitle: 'Hermes',
+      testTitle: 'Thoth',
       testBody: 'Notifications are working.',
       testSent: 'Test sent. If nothing appears, check your OS notification permissions and Focus/Do Not Disturb.',
       testUnsupported: 'This system does not support native notifications.',
@@ -983,7 +983,7 @@ export const en: Translations = {
       advanced: 'Advanced'
     },
     searchPlaceholder: {
-      about: 'About Hermes Desktop',
+      about: 'About Thoth Desktop',
       config: 'Search settings...',
       gateway: 'Gateway connection...',
       keys: 'Search API keys...',
@@ -1002,7 +1002,7 @@ export const en: Translations = {
       title: 'Appearance',
       intro: 'Desktop-only. Mode is brightness; theme is palette and chat chrome.',
       colorMode: 'Color Mode',
-      colorModeDesc: 'Pick a fixed mode or let Hermes follow your system setting.',
+      colorModeDesc: 'Pick a fixed mode or let Thoth follow your system setting.',
       toolViewTitle: 'Tool Call Display',
       toolViewDesc: 'Product hides raw tool payloads; Technical shows full input/output.',
       hideCodeDiffsTitle: 'Hide code diffs',
@@ -1075,14 +1075,14 @@ export const en: Translations = {
       modelPricingTitle: 'Model Pricing',
       modelPricingDesc: 'Show input, output, and cache-read prices per million tokens in the model picker.',
       reactionsTitle: 'Message Reactions',
-      reactionsDesc: 'iMessage-style emoji tapbacks — react to messages, and Hermes can react to yours.',
+      reactionsDesc: 'iMessage-style emoji tapbacks — react to messages, and Thoth can react to yours.',
       tipsTitle: 'In-App Tips',
       tipsDesc:
-        'Occasional hints from the app and Hermes. Each tip appears once. Turns off automatically after your first 30 days; you can turn it back on.',
+        'Occasional hints from the app and Thoth. Each tip appears once. Turns off automatically after your first 30 days; you can turn it back on.',
       tipsReset: (count: number) => `Show ${count} ${count === 1 ? 'tip' : 'tips'} again`,
       toursTitle: 'Guided Tours',
       toursDesc:
-        'Let Hermes spotlight each step as it guides you through the app. Turns off automatically after your first 30 days; you can turn it back on.',
+        'Let Thoth spotlight each step as it guides you through the app. Turns off automatically after your first 30 days; you can turn it back on.',
       composerPopoutTitle: 'Floating Composer',
       composerPopoutDesc: 'Allow dragging the composer out of its dock. When off, it stays docked at the bottom.',
       fileBrowserTitle: 'File Browser',
@@ -1122,9 +1122,9 @@ export const en: Translations = {
       pet: {
         title: 'Pet',
         intro:
-          'Adopt an animated petdex mascot that floats over the app and reacts to what Hermes is doing — running while tools execute, celebrating on success, sulking on errors.',
+          'Adopt an animated petdex mascot that floats over the app and reacts to what Thoth is doing — running while tools execute, celebrating on success, sulking on errors.',
         restartHint:
-          'Pets need a quick restart — the running app started before this feature was added. Quit and reopen Hermes, then come back here.',
+          'Pets need a quick restart — the running app started before this feature was added. Quit and reopen Thoth, then come back here.',
         scaleTitle: 'Size',
         scaleDesc: 'Resize the floating mascot. Applies everywhere instantly.',
         roamTitle: 'Roam',
@@ -1218,7 +1218,7 @@ export const en: Translations = {
     config: {
       minimizeToTrayTitle: 'Minimize to tray',
       minimizeToTrayDesc:
-        'Minimize windows or close the main window to hide them in the system tray (menu bar on macOS) and keep Hermes running. Use Quit Hermes from the tray menu or Cmd+Q to exit. Off by default; applies only to this device.',
+        'Minimize windows or close the main window to hide them in the system tray (menu bar on macOS) and keep Thoth running. Use Quit Thoth from the tray menu or Cmd+Q to exit. Off by default; applies only to this device.',
       minimizeToTrayUnavailable:
         'The system tray is unavailable. Windows will minimize and close normally. Turn this off and on to retry.',
       none: 'None',
@@ -1229,7 +1229,7 @@ export const en: Translations = {
       searchPlaceholder: 'Search…',
       noResults: 'No results found',
       systemDefault: 'System default',
-      loading: 'Loading Hermes configuration...',
+      loading: 'Loading Thoth configuration...',
       emptyTitle: 'Nothing to configure',
       emptyDesc: 'This section has no adjustable settings.',
       failedLoad: 'Settings failed to load',
@@ -1270,27 +1270,27 @@ export const en: Translations = {
       description:
         'Tap and release ⌘ + Option on Mac, or Ctrl + Alt on Windows/Linux, to bring the HUD forward from any app. Off by default; applies only to this device.',
       permission:
-        'Allow Hermes in System Settings → Privacy & Security → Input Monitoring, then retry. This gesture does not record keystrokes or capture your screen.',
+        'Allow Thoth in System Settings → Privacy & Security → Input Monitoring, then retry. This gesture does not record keystrokes or capture your screen.',
       unavailable:
-        'The HUD gesture helper could not start or stopped unexpectedly. Retry, or restart Hermes. The existing HUD shortcut still works inside Hermes.',
+        'The HUD gesture helper could not start or stopped unexpectedly. Retry, or restart Thoth. The existing HUD shortcut still works inside Thoth.',
       missingHelper:
-        'This Hermes installation is missing the HUD gesture helper. Update or reinstall Hermes, then retry.',
+        'This Thoth installation is missing the HUD gesture helper. Update or reinstall Thoth, then retry.',
       unsupportedSession:
         'This desktop session does not support global modifier taps. Linux requires X11; Wayland is not supported.'
     },
     screenshot: {
       enabledTitle: 'Screenshot shortcut',
       enabledDesc:
-        'Press both Command keys together from any app to capture its frontmost window and attach it to your current Hermes draft. Never sends automatically. Off by default; applies only to this Mac. Window contents may be sensitive — review the attachment before sending.',
+        'Press both Command keys together from any app to capture its frontmost window and attach it to your current Thoth draft. Never sends automatically. Off by default; applies only to this Mac. Window contents may be sensitive — review the attachment before sending.',
       statusTitle: 'Screenshot shortcut status',
       checking: 'Checking screenshot shortcut…',
       disabled: 'Screenshot shortcut is off.',
       starting: 'Starting the shortcut listener. It is not ready yet.',
       ready: 'Shortcut is ready. Screenshots attach to your current draft without sending.',
       inputPermission:
-        'Input Monitoring permission lets Hermes detect both Command keys while another app is active. Allow Hermes in System Settings → Privacy & Security → Input Monitoring, then return here and retry.',
+        'Input Monitoring permission lets Thoth detect both Command keys while another app is active. Allow Thoth in System Settings → Privacy & Security → Input Monitoring, then return here and retry.',
       screenPermission:
-        'Screen Recording permission lets Hermes capture the frontmost app window when you use this shortcut. Allow Hermes in System Settings → Privacy & Security → Screen Recording, then return here and retry. Restart Hermes if macOS asks.',
+        'Screen Recording permission lets Thoth capture the frontmost app window when you use this shortcut. Allow Thoth in System Settings → Privacy & Security → Screen Recording, then return here and retry. Restart Thoth if macOS asks.',
       openSettings: 'Open System Settings',
       retry: 'Retry',
       unavailable: 'The screenshot shortcut is unavailable. Retry, or turn it off.',
@@ -1304,7 +1304,7 @@ export const en: Translations = {
     quickEntry: {
       enabledTitle: 'Quick Entry',
       enabledDesc:
-        'Summon a small composer from anywhere with a global shortcut and fire a prompt without opening Hermes.',
+        'Summon a small composer from anywhere with a global shortcut and fire a prompt without opening Thoth.',
       shortcutTitle: 'Quick Entry shortcut',
       shortcutDesc: 'Needs at least one modifier, e.g. CommandOrControl+Shift+Space.',
       active: 'Shortcut is active.',
@@ -1334,7 +1334,7 @@ export const en: Translations = {
     // v2 multi-connection registry: Settings → Gateways.
     connections: {
       title: 'Registered gateways',
-      intro: 'Manage this device and every Hermes gateway it can reach through remote, SSH, or Cloud connections.',
+      intro: 'Manage this device and every Thoth gateway it can reach through remote, SSH, or Cloud connections.',
       stagedNote:
         'Switch gateways from Sessions. Profiles, chats, messaging, and cron jobs stay with their gateway; work on other gateways keeps running.',
       launchModeTitle: 'At startup, return to Sessions on the last-used gateway',
@@ -1361,15 +1361,15 @@ export const en: Translations = {
       updateAllRunning: 'Updating all instances…',
       updateAllDone: 'Updates dispatched',
       updateAllFailed: 'Update fan-out failed',
-      updateSkippedCloud: 'Managed by Hermes Cloud',
+      updateSkippedCloud: 'Managed by Thoth Cloud',
       kindLocal: 'Local',
       kindRemote: 'Remote gateway',
-      kindCloud: 'Hermes Cloud',
+      kindCloud: 'Thoth Cloud',
       kindSsh: 'SSH',
-      kindLocalDesc: 'The Hermes runtime managed by this app.',
-      kindRemoteDesc: 'A Hermes gateway reachable over HTTP(S) — LAN, Tailscale, or the internet.',
-      kindCloudDesc: 'A hosted instance discovered through your Hermes Cloud account.',
-      kindSshDesc: 'A Hermes install reached over SSH.',
+      kindLocalDesc: 'The Thoth runtime managed by this app.',
+      kindRemoteDesc: 'A Thoth gateway reachable over HTTP(S) — LAN, Tailscale, or the internet.',
+      kindCloudDesc: 'A hosted instance discovered through your Thoth Cloud account.',
+      kindSshDesc: 'A Thoth install reached over SSH.',
       labelTitle: 'Name',
       labelDesc: 'Required. Shown everywhere this instance appears; must be unique (e.g. “Homelab”, “Work laptop”).',
       labelPlaceholder: 'Homelab',
@@ -1377,7 +1377,7 @@ export const en: Translations = {
       sshHostTitle: 'SSH host',
       headersTitle: 'Extra gateway headers',
       headersDesc:
-        'Sent with every HTTP and WebSocket request to this gateway — for access proxies such as Cloudflare Access (CF-Access-Client-Id / CF-Access-Client-Secret). Values are stored encrypted. Headers Hermes manages (Authorization, Cookie, Host…) are ignored.',
+        'Sent with every HTTP and WebSocket request to this gateway — for access proxies such as Cloudflare Access (CF-Access-Client-Id / CF-Access-Client-Secret). Values are stored encrypted. Headers Thoth manages (Authorization, Cookie, Host…) are ignored.',
       headerValuePlaceholder: 'Value',
       headerValueSaved: 'Saved — leave blank to keep',
       headerAdd: 'Add header',
@@ -1388,7 +1388,7 @@ export const en: Translations = {
       sameBackendHint: (label: string) => `Same backend as “${label}”`,
       localAddHint: 'Local is unavailable: the managed local connection already exists (there is only ever one).',
       cloudAddHint:
-        'Tip: signing in under Hermes Cloud above discovers your agents automatically — use this form only to register a known instance URL by hand.',
+        'Tip: signing in under Thoth Cloud above discovers your agents automatically — use this form only to register a known instance URL by hand.',
       save: 'Save connection',
       saving: 'Saving…',
       cancel: 'Cancel',
@@ -1416,26 +1416,26 @@ export const en: Translations = {
       loading: 'Loading gateway settings...',
       unavailableTitle: 'Gateway settings unavailable',
       unavailableDesc:
-        'Connection settings can only be changed from the Hermes Desktop app on the computer running it.',
+        'Connection settings can only be changed from the Thoth Desktop app on the computer running it.',
       title: 'Gateway Connection',
       envOverride: 'env override',
       intro:
-        'Local by default. Use remote when this app should drive a Hermes backend elsewhere. Gateway connections are machine-level; profiles are discovered from the gateways you connect.',
-      envOverrideTitle: 'This connection was fixed by the way Hermes was launched.',
+        'Local by default. Use remote when this app should drive a Thoth backend elsewhere. Gateway connections are machine-level; profiles are discovered from the gateways you connect.',
+      envOverrideTitle: 'This connection was fixed by the way Thoth was launched.',
       envOverrideDesc:
-        'A startup setting outside the app chose this connection, so the options below are read-only. Restart Hermes without that setting — or ask whoever set it up — to change it here.',
+        'A startup setting outside the app chose this connection, so the options below are read-only. Restart Thoth without that setting — or ask whoever set it up — to change it here.',
       modeTitle: 'Connection mode',
       localTitle: 'Local gateway',
-      localDesc: 'Start a private Hermes backend on localhost. This is the default and works offline.',
+      localDesc: 'Start a private Thoth backend on localhost. This is the default and works offline.',
       remoteTitle: 'Remote gateway',
-      remoteDesc: 'Connect this desktop shell to a remote Hermes backend.',
+      remoteDesc: 'Connect this desktop shell to a remote Thoth backend.',
       remoteAuthHint: 'Hosted gateways use OAuth or a username and password; self-hosted ones may use a session token.',
-      cloudTitle: 'Hermes Cloud',
-      cloudDesc: 'Sign in once to Hermes Cloud and pick from the agents on your account — no URL to paste.',
-      cloudSignInTitle: 'Hermes Cloud',
-      cloudSignIn: 'Sign in to Hermes Cloud',
-      cloudSignedIn: 'Signed in to Hermes Cloud',
-      cloudNeedsSignIn: 'Sign in to Hermes Cloud to discover the agents on your account.',
+      cloudTitle: 'Thoth Cloud',
+      cloudDesc: 'Sign in once to Thoth Cloud and pick from the agents on your account — no URL to paste.',
+      cloudSignInTitle: 'Thoth Cloud',
+      cloudSignIn: 'Sign in to Thoth Cloud',
+      cloudSignedIn: 'Signed in to Thoth Cloud',
+      cloudNeedsSignIn: 'Sign in to Thoth Cloud to discover the agents on your account.',
       cloudSignedInDesc: 'You are signed in. Pick an agent below; the session refreshes automatically.',
       cloudAgentsTitle: 'Your agents',
       cloudOrgPickerTitle: 'Choose an organization',
@@ -1456,11 +1456,11 @@ export const en: Translations = {
       cloudUseSaved: 'Use gateway',
       cloudActive: 'Active in this window',
       cloudConnecting: 'Connecting…',
-      cloudDiscoverFailed: 'Could not load your Hermes Cloud agents',
+      cloudDiscoverFailed: 'Could not load your Thoth Cloud agents',
       cloudConnectFailed: 'Could not connect to that agent',
-      cloudSignInFailed: 'Hermes Cloud sign-in failed',
-      cloudSignedOutTitle: 'Signed out of Hermes Cloud',
-      cloudSignedOutMessage: 'Cleared the Hermes Cloud session.',
+      cloudSignInFailed: 'Thoth Cloud sign-in failed',
+      cloudSignedOutTitle: 'Signed out of Thoth Cloud',
+      cloudSignedOutMessage: 'Cleared the Thoth Cloud session.',
       cloudConnectedTitle: 'Connected',
       cloudConnectedPill: 'Connected',
       cloudConnectedTo: name => `Connected to ${name}.`,
@@ -1470,7 +1470,7 @@ export const en: Translations = {
       remoteUrlDesc: 'Base URL for the remote dashboard backend. Path prefixes are supported, for example /hermes.',
       probing: 'Checking how this gateway authenticates…',
       probeError:
-        "Hermes can't reach that address. Check the URL and that the other computer is running Hermes — sign-in options appear once it answers.",
+        "Thoth can't reach that address. Check the URL and that the other computer is running Thoth — sign-in options appear once it answers.",
       signedIn: 'Signed in',
       signIn: 'Sign in',
       signOut: 'Sign out',
@@ -1511,9 +1511,9 @@ export const en: Translations = {
       enterUrlFirst: 'Enter a remote URL first.',
       restartingTitle: 'Gateway connection restarting',
       savedTitle: 'Gateway settings saved',
-      restartingMessage: 'Hermes Desktop will reconnect using the saved settings — the shell stays open.',
+      restartingMessage: 'Thoth Desktop will reconnect using the saved settings — the shell stays open.',
       savedMessage: 'Saved for the next restart.',
-      connectedTo: (baseUrl, version) => `Connected to ${baseUrl}${version ? ` · Hermes ${version}` : ''}`,
+      connectedTo: (baseUrl, version) => `Connected to ${baseUrl}${version ? ` · Thoth ${version}` : ''}`,
       reachableTitle: 'Remote gateway reachable',
       signedOutTitle: 'Signed out',
       signedOutMessage: 'Cleared the remote gateway session.',
@@ -1525,7 +1525,7 @@ export const en: Translations = {
       saveFailed: 'Could not save gateway settings',
       sshTitle: 'Connect via SSH',
       sshDesc:
-        'Hermes is launched on the remote over SSH and tunneled to this app — nothing to start or expose yourself. Requires working key-based SSH access to the host.',
+        'Thoth is launched on the remote over SSH and tunneled to this app — nothing to start or expose yourself. Requires working key-based SSH access to the host.',
       sshTrustHint: 'The first presented host key is trusted and pinned; later changes fail closed.',
       sshHostTitle: 'Host',
       sshHostDesc: 'user@host, or a Host alias from ~/.ssh/config.',
@@ -1540,27 +1540,27 @@ export const en: Translations = {
       sshPortDesc: 'Blank = 22 or the ~/.ssh/config port.',
       sshKeyTitle: 'Identity file',
       sshKeyDesc: 'Private key path. Blank = ssh-agent or ~/.ssh/config.',
-      sshHermesPathTitle: 'Hermes path (optional)',
+      sshHermesPathTitle: 'Thoth path (optional)',
       sshHermesPathDesc: 'Full path to the remote hermes binary. Blank = auto-detect.',
       sshHermesPathPlaceholder: 'auto-detect',
       sshTestConnection: 'Test SSH',
       sshConnect: 'Connect',
       sshButtonsHint: 'Save applies on the next launch. Connect reconnects now.',
-      sshReachable: (host, platform) => `Reachable: ${host} (${platform}) — Hermes found`,
+      sshReachable: (host, platform) => `Reachable: ${host} (${platform}) — Thoth found`,
       sshIncompleteHost: 'Enter an SSH host before connecting.',
       sshErrUnreachable: 'Could not reach that host over SSH. Check the host, port, and your network.',
       sshErrAuth:
-        'SSH authentication failed. Load your key into the ssh-agent (ssh-add) or set an IdentityFile in ~/.ssh/config — Hermes runs ssh non-interactively.',
+        'SSH authentication failed. Load your key into the ssh-agent (ssh-add) or set an IdentityFile in ~/.ssh/config — Thoth runs ssh non-interactively.',
       sshErrHostKey:
         'The host key has CHANGED since you last connected. Verify this is expected, then run ssh-keygen -R <host> and reconnect.',
       sshErrNotInstalled:
-        'Hermes is not installed on the remote host. Install it there (curl -fsSL https://hermes-agent.nousresearch.com/install.sh | sh) or set the Hermes path.',
+        'Thoth is not installed on the remote host. Install it there (curl -fsSL https://hermes-agent.nousresearch.com/install.sh | sh) or set the Thoth path.',
       sshErrPlatform:
-        'Unsupported remote platform. Hermes Desktop SSH mode supports Linux, macOS, and Windows remote hosts.',
+        'Unsupported remote platform. Thoth Desktop SSH mode supports Linux, macOS, and Windows remote hosts.',
       sshErrTimeout: 'SSH connection timed out. The host may be unreachable or asleep.',
-      sshErrUpdateRequired: 'Update Hermes on the remote host before connecting with Desktop SSH.',
+      sshErrUpdateRequired: 'Update Thoth on the remote host before connecting with Desktop SSH.',
       sshErrInteractiveAuth:
-        'Tailscale SSH requires an interactive browser check. In Terminal, run `ssh <host> true`, complete the check, then retry — Hermes runs SSH non-interactively.',
+        'Tailscale SSH requires an interactive browser check. In Terminal, run `ssh <host> true`, complete the check, then retry — Thoth runs SSH non-interactively.',
       sshErrUnknown: 'SSH connection failed.'
     },
     keys: {
@@ -1607,7 +1607,7 @@ export const en: Translations = {
       noOutput: 'No output yet.',
       deepLinkTitle: 'Add MCP server?',
       deepLinkDescription:
-        'A link asked to add this MCP server to Hermes. Review the exact configuration below — it comes from the link, not from Hermes.',
+        'A link asked to add this MCP server to Thoth. Review the exact configuration below — it comes from the link, not from Thoth.',
       deepLinkStdioWarning:
         'This server runs a local process on your machine with the command shown below. Only continue if you trust its source.',
       deepLinkConfirm: 'Add server',
@@ -1893,7 +1893,7 @@ export const en: Translations = {
         cliBillingDisabled: {
           title: 'Remote spending is off',
           message:
-            "Remote spending is off for this account — a billing admin can turn it on from the portal's Hermes Agent page."
+            "Remote spending is off for this account — a billing admin can turn it on from the portal's Thoth Agent page."
         },
         roleRequired: {
           title: 'Admin role required',
@@ -1958,7 +1958,7 @@ export const en: Translations = {
       connectAccount: 'Connect an account',
       haveApiKey: 'Have an API key instead?',
       intro:
-        'Sign in with a subscription — no API key to copy. Hermes runs the browser sign-in for you, right here in the app.',
+        'Sign in with a subscription — no API key to copy. Thoth runs the browser sign-in for you, right here in the app.',
       connected: 'Connected',
       collapse: 'Collapse',
       connectAnother: 'Connect another provider',
@@ -1979,7 +1979,7 @@ export const en: Translations = {
       noKeysMatch: 'No providers match your search.',
       localEndpoint: {
         title: 'Local / custom endpoint',
-        description: 'Point Hermes at any OpenAI-compatible endpoint (Zyphra, vLLM, llama.cpp, Ollama, etc).'
+        description: 'Point Thoth at any OpenAI-compatible endpoint (Zyphra, vLLM, llama.cpp, Ollama, etc).'
       },
       loading: 'Loading providers...'
     },
@@ -2106,7 +2106,7 @@ export const en: Translations = {
         needsSetupConfirmAction: 'Select anyway',
         unavailableTitle: 'Terminal commands are unavailable',
         unavailableMessage: backend =>
-          `Hermes can't run shell commands right now: ${backend} isn't ready. Switch to Local, or finish setting up ${backend} and try again.`,
+          `Thoth can't run shell commands right now: ${backend} isn't ready. Switch to Local, or finish setting up ${backend} and try again.`,
         openBackendSettings: 'Open terminal settings',
         useLocal: 'Use Local',
         switchedToLocal: 'Terminal commands now run locally. Applies to new sessions.'
@@ -2122,7 +2122,7 @@ export const en: Translations = {
         failedSave: 'Could not save the real-profile setting',
         prompt: {
           title: 'Stay signed in to your sites',
-          body: 'Let Hermes browse with a snapshot of your default browser profile, so sites open already signed in.',
+          body: 'Let Thoth browse with a snapshot of your default browser profile, so sites open already signed in.',
           bulletSnapshot: 'Cookies and logins are copied into a managed snapshot.',
           bulletLiveProfile: 'Your live browser profile is never opened directly.',
           bulletLocal: 'Nothing leaves this computer.',
@@ -2210,7 +2210,7 @@ export const en: Translations = {
       halfDesktopHint: 'this app, same for every profile',
       halfAgent: 'Agent',
       halfAgentIn: (profile: string) => `Agent in ${profile}`,
-      defaultProfile: 'Hermes (default)',
+      defaultProfile: 'Thoth (default)',
       kindAgent: 'Agent',
       kindDesktop: 'Desktop',
       kindBoth: 'Agent + Desktop',
@@ -2234,7 +2234,7 @@ export const en: Translations = {
       toolsetOff: (name: string, profile: string) => `${name} agent tools disabled for ${profile}`,
       toolsetToggleFailed: (name: string) =>
         `Could not toggle the ${name} agent tools; the Desktop panel was left unchanged`,
-      legacyBackend: 'This backend predates key-addressed plugin toggles — update Hermes to manage it here.',
+      legacyBackend: 'This backend predates key-addressed plugin toggles — update Thoth to manage it here.',
       portableBadge: 'portable',
       serverStates: {
         connected: 'connected',
@@ -2253,7 +2253,7 @@ export const en: Translations = {
       catalogHint:
         'Hit "+ Add to this Agent" on any plugin — reviewed entries install at their pinned commit into the selected profile. Bundled agent+desktop plugins offer both halves.',
       alreadyInstalled: (name: string) => `${name} is already installed in this profile.`,
-      catalogProvenance: (sha: string) => `Installed from the Hermes catalog${sha ? ` at pin ${sha}` : ''}.`,
+      catalogProvenance: (sha: string) => `Installed from the Thoth catalog${sha ? ` at pin ${sha}` : ''}.`,
       pinnedProvenance: (sha: string) =>
         `Pinned to commit ${sha}. Updates are refused until it is reinstalled with a new pin.`,
       pinnedBadge: (sha: string) => `pinned @ ${sha}`,
@@ -2280,9 +2280,9 @@ export const en: Translations = {
       deepLinkErrorTitle: 'Plugin install link rejected',
       deepLinkCatalogInvalidName: 'The link\u2019s catalog name is missing or invalid.',
       deepLinkCatalogUnknown: (name: string) =>
-        `\u201C${name}\u201D is not in the Hermes plugin catalog. Nothing was installed.`,
+        `\u201C${name}\u201D is not in the Thoth plugin catalog. Nothing was installed.`,
       deepLinkCatalogUnavailable:
-        'Could not load the Hermes plugin catalog. Check your connection and open the link again.',
+        'Could not load the Thoth plugin catalog. Check your connection and open the link again.',
       settingsToggle: (name: string) => `Settings: ${name}`,
       settingsForm: {
         save: 'Save settings',
@@ -2369,7 +2369,7 @@ export const en: Translations = {
     loadFailed: 'Could not load memory graph',
     loading: 'Loading…',
     emptyTitle: 'Nothing learned yet',
-    emptyDesc: 'As Hermes builds skills and memories for your work, they appear here.',
+    emptyDesc: 'As Thoth builds skills and memories for your work, they appear here.',
     share: 'Share map',
     shareHint:
       'Copy the code to share this map, or paste one to load. It only includes the layout, not your memory or skill text.',
@@ -2451,7 +2451,7 @@ export const en: Translations = {
       placeholder: 'Search pets…',
       loading: 'Loading petdex gallery…',
       error: 'Could not reach the petdex gallery.',
-      staleBackend: 'Restart Hermes to use pets — the backend predates this feature.',
+      staleBackend: 'Restart Thoth to use pets — the backend predates this feature.',
       empty: 'No matching pets.',
       turnOff: 'Turn off',
       turnOn: 'Turn on',
@@ -2478,8 +2478,8 @@ export const en: Translations = {
       hatchComposing: 'Piecing it together…',
       hatchSaving: 'Almost there…',
       namePlaceholder: 'Name your pet',
-      staleBackend: 'Update Hermes to generate pets.',
-      backgroundHint: 'You can close this — Hermes will notify you when it’s done.',
+      staleBackend: 'Update Thoth to generate pets.',
+      backgroundHint: 'You can close this — Thoth will notify you when it’s done.',
       slowProviderHint: 'This can take several minutes',
       remix: 'Remix',
       remixConfirmTitle: 'Remix this look?',
@@ -2509,7 +2509,7 @@ export const en: Translations = {
     sections: { maintenance: 'Maintenance', sessions: 'Sessions', system: 'System', usage: 'Usage' },
     nav: {
       newChat: { title: 'New session', detail: 'Start a fresh session' },
-      settings: { title: 'Settings', detail: 'Configure Hermes desktop' },
+      settings: { title: 'Settings', detail: 'Configure Thoth desktop' },
       capabilities: { title: 'Capabilities', detail: 'Skills, tools, MCP servers, and plugins' },
       messaging: { title: 'Messaging', detail: 'Set up Telegram, Slack, Discord, and more' },
       artifacts: { title: 'Artifacts', detail: 'Browse generated outputs' }
@@ -2531,7 +2531,7 @@ export const en: Translations = {
     noSessions: 'No sessions yet.',
     gatewayRunning: 'Messaging gateway running',
     gatewayStopped: 'Messaging gateway stopped',
-    hermesActiveSessions: (version, count) => `Hermes ${version} · Active sessions ${count}`,
+    hermesActiveSessions: (version, count) => `Thoth ${version} · Active sessions ${count}`,
     restartGateway: 'Restart gateway',
     openBrowser: 'Toggle browser',
     toggleBrowser: 'Toggle browser',
@@ -2540,7 +2540,7 @@ export const en: Translations = {
     sharedGatewayRestartDescription: bots => `All bots on this device reconnect: ${bots}`,
     sharedGatewayRestartConfirm: 'Restart all',
     sharedGatewayRestarted: count => `Shared gateway restarted (${count} ${count === 1 ? 'bot' : 'bots'})`,
-    updateHermes: 'Update Hermes',
+    updateHermes: 'Update Thoth',
     reloadWindow: 'Reload window',
     actionRunning: 'running',
     actionDone: 'done',
@@ -2697,17 +2697,17 @@ export const en: Translations = {
     restartNeeded: 'Saved. Restart the messaging gateway so the new settings take effect.',
     restartNow: 'Restart now',
     restarting: 'Restarting…',
-    restartFailedManual: "Hermes couldn't restart to apply your messaging settings",
+    restartFailedManual: "Thoth couldn't restart to apply your messaging settings",
     restartFailedManualDetail: 'Try Restart again; if it still fails, open the logs and send diagnostics.',
     restartAgain: 'Restart again',
     openLogs: 'Open logs',
     telegramQr: {
       title: 'Choose how to connect your Telegram bot',
-      subtitle: 'Both options connect a bot you control and save its credentials only to this Hermes installation.',
+      subtitle: 'Both options connect a bot you control and save its credentials only to this Thoth installation.',
       quickSetup: 'Quick setup',
       recommended: 'Recommended',
       quickHelp:
-        'Scan a QR code and confirm in Telegram. Hermes creates the bot and detects your Telegram user ID automatically.',
+        'Scan a QR code and confirm in Telegram. Thoth creates the bot and detects your Telegram user ID automatically.',
       createWithQr: 'Create with QR',
       starting: 'Starting…',
       replaceWarning:
@@ -2910,14 +2910,14 @@ export const en: Translations = {
       onGateway: (name, gateway) => `${name} · ${gateway}`,
       switchTo: (name, gateway) => `Switch to ${name} on ${gateway}`,
       deleteOn: gateway => ` on ${gateway}`,
-      localDevice: 'This device (local backend — installs Hermes if missing, otherwise opens a fresh session)',
+      localDevice: 'This device (local backend — installs Thoth if missing, otherwise opens a fresh session)',
       switchDeviceTitle: 'Switch to This device?',
       switchDeviceDesc:
         'This opens a fresh session on this computer. The conversation you are in stays on the other gateway.',
       switchDeviceConfirm: 'Switch',
       installDeviceTitle: 'Switch to This device?',
       installDeviceDesc:
-        'This will install Hermes locally, then open a fresh session on this computer. Nothing is installed until you confirm.',
+        'This will install Thoth locally, then open a fresh session on this computer. Nothing is installed until you confirm.',
       installDeviceConfirm: 'Install locally',
       connectExistingInstead: 'Connect to existing instead'
     },
@@ -2931,7 +2931,7 @@ export const en: Translations = {
       menuItem: 'Connect to a remote host…',
       badge: (host: string) => `Runs on ${host}`,
       title: (profile: string) => `Connect ${profile} to a remote host`,
-      description: 'Sessions in this profile will run on the remote Hermes you point it at, instead of this computer.',
+      description: 'Sessions in this profile will run on the remote Thoth you point it at, instead of this computer.',
       urlLabel: 'Remote address',
       urlPlaceholder: 'https://hermes.example.com',
       urlInvalid: 'Enter a full address starting with http:// or https://',
@@ -2966,7 +2966,7 @@ export const en: Translations = {
     setAsDefault: 'Set as default',
     defaultProfile: 'Default profile',
     defaultSet: name => `${name} is now the default`,
-    defaultDescription: 'Used when Hermes opens and for new chats. Existing sessions stay in their profiles.',
+    defaultDescription: 'Used when Thoth opens and for new chats. Existing sessions stay in their profiles.',
     failedSetDefault: 'Could not set the default profile',
     setColor: color => `Set color ${color}`,
     autoColor: 'Auto',
@@ -3004,7 +3004,7 @@ export const en: Translations = {
     deleteDescMid: ' and remove its ',
     deleteDescSuffix: ' directory. This cannot be undone.',
     deleting: 'Deleting...',
-    createDesc: 'Profiles are independent Hermes environments: separate config, skills, and SOUL.md.',
+    createDesc: 'Profiles are independent Thoth environments: separate config, skills, and SOUL.md.',
     nameLabel: 'Name',
     cloneFrom: 'Clone from',
     cloneFromNone: 'None (blank)',
@@ -3038,7 +3038,7 @@ export const en: Translations = {
   },
 
   modelAssignment: {
-    saveFailed: 'Hermes did not save that model change.',
+    saveFailed: 'Thoth did not save that model change.',
     confirmTitle: 'Model Selection Warning',
     confirmDetail: 'Confirm only if you accept this trade-off.',
     confirmAction: 'Confirm',
@@ -3107,7 +3107,7 @@ export const en: Translations = {
     everyHourAt: minute => `Every hour at :${minute}`,
     newCron: 'New cron',
     emptyDescNew:
-      'Schedule a prompt to run on a cron expression. Hermes will run it and deliver results to the destination you pick.',
+      'Schedule a prompt to run on a cron expression. Thoth will run it and deliver results to the destination you pick.',
     emptyDescSearch: 'Try a broader search query.',
     emptyTitleNew: 'No scheduled jobs yet',
     emptyTitleSearch: 'No matches',
@@ -3323,8 +3323,8 @@ export const en: Translations = {
     storageCorrupt: {
       title: 'Session database is damaged',
       body: (profiles: string) =>
-        `Hermes can't read all of the session history for ${profiles}. Chats missing from this list were not deleted; the file they are stored in is damaged.`,
-      action: 'Quit Hermes on this profile, then inspect the file without changing it, or restore a snapshot:',
+        `Thoth can't read all of the session history for ${profiles}. Chats missing from this list were not deleted; the file they are stored in is damaged.`,
+      action: 'Quit Thoth on this profile, then inspect the file without changing it, or restore a snapshot:',
       guide: 'Recovery guide'
     },
     noFilterMatches: 'No sessions match these filters',
@@ -3398,12 +3398,12 @@ export const en: Translations = {
   composer: {
     message: 'Message',
     wakingProfile: profile => `Waking up ${profile}…`,
-    placeholderStarting: 'Starting Hermes...',
-    placeholderReconnecting: 'Reconnecting to Hermes…',
+    placeholderStarting: 'Starting Thoth...',
+    placeholderReconnecting: 'Reconnecting to Thoth…',
     placeholderFollowUp: 'Send follow-up',
     newSessionPlaceholders: [
       'What are we building?',
-      'Give Hermes a task',
+      'Give Thoth a task',
       "What's on your mind?",
       'Describe what you need',
       'What should we tackle?',
@@ -3440,8 +3440,8 @@ export const en: Translations = {
     transcribingDictation: 'Transcribing dictation',
     voiceControls: 'Voice',
     voiceEngine: 'Voice chat engine',
-    voiceEngineChained: 'Speech-to-text + Hermes voice',
-    voiceEngineLive: 'GPT-Live (full-duplex, delegates to Hermes)',
+    voiceEngineChained: 'Speech-to-text + Thoth voice',
+    voiceEngineLive: 'GPT-Live (full-duplex, delegates to Thoth)',
     voiceEngineLiveNeedsKey: 'Needs an OpenAI API key',
     voiceEngineChangeFailed: 'Could not change the voice chat engine',
     voiceEngineChainedShort: 'speech-to-text',
@@ -3490,7 +3490,7 @@ export const en: Translations = {
       '/journey': 'Open the memory graph — skills + memories over time',
       '/queue': 'Queue a prompt for the next turn, or list/edit/rm/move/clear queued prompts',
       '/steer': 'Inject a message after the next tool call without interrupting',
-      '/goal': 'Set a standing goal Hermes works on across turns until achieved',
+      '/goal': 'Set a standing goal Thoth works on across turns until achieved',
       '/heartbeat': 'Set a recurring prompt that re-enters this session when idle',
       '/refine': 'Review this conversation now and save lessons to memory/skills',
       '/review': 'Spawn an independent subagent to review the work just discussed (PR, code, docs)',
@@ -3503,7 +3503,7 @@ export const en: Translations = {
       '/context':
         'Show detailed context window view with usage gauge, category breakdown, compression stats, and throughput',
       '/whoami': 'Show your slash command access (admin / user)',
-      '/profile': 'Switch the active Hermes profile',
+      '/profile': 'Switch the active Thoth profile',
       '/codex-runtime': 'Toggle codex app-server runtime for OpenAI/Codex models',
       '/personality': 'Set a predefined personality',
       '/battery': 'Toggle a color-coded battery indicator in the status bar',
@@ -3530,7 +3530,7 @@ export const en: Translations = {
       '/subscription': 'View your Nous plan and change it in the browser',
       '/topup': 'Show your Nous balance and manage billing on the portal',
       '/platform': 'Pause, resume, or list a failing gateway platform',
-      '/version': 'Show Hermes Agent version',
+      '/version': 'Show Thoth Agent version',
       '/debug': 'Upload debug report (system info + logs) and get shareable links',
       '/model': 'Switch the model for this session'
     },
@@ -3545,7 +3545,7 @@ export const en: Translations = {
       'composer.history': 'cycle popover / history'
     },
     attachUrlTitle: 'Attach a URL',
-    attachUrlDesc: 'Hermes will fetch the page and include it as context for this turn.',
+    attachUrlDesc: 'Thoth will fetch the page and include it as context for this turn.',
     urlPlaceholder: 'https://example.com/post',
     urlHintPre: 'Include the full URL, e.g. ',
     attach: 'Attach',
@@ -3807,7 +3807,7 @@ export const en: Translations = {
       createPr: 'Create PR',
       openPr: 'Open PR',
       ghMissing: 'Install the GitHub CLI (gh) and sign in to open PRs',
-      agentShip: 'Ask Hermes to open PR',
+      agentShip: 'Ask Thoth to open PR',
       agentShipUnavailable: "The chat that owns these changes isn't on screen.",
       agentShipPrompt:
         'Review the current changes, commit them with a clear conventional-commit message, push the branch, and open a pull request.',
@@ -3820,23 +3820,23 @@ export const en: Translations = {
   },
 
   updates: {
-    discontinuedTitle: 'This build of Hermes is no longer supported',
+    discontinuedTitle: 'This build of Thoth is no longer supported',
     discontinuedBody:
-      'This build of Hermes is no longer supported and may break — uninstall it. Your data stays on disk.',
+      'This build of Thoth is no longer supported and may break — uninstall it. Your data stays on disk.',
     channels: { stable: 'Stable', canary: 'Canary' },
     bundleSwapPending: 'Restart to finish the update',
     bundleSwapPendingDesc:
-      'The updated app is already installed — Hermes only needs to restart to load it. Chats and settings are untouched.',
-    bundleSwapPendingAction: 'Restart Hermes',
+      'The updated app is already installed — Thoth only needs to restart to load it. Chats and settings are untouched.',
+    bundleSwapPendingAction: 'Restart Thoth',
     stages: {
       idle: 'Getting ready…',
       prepare: 'Getting ready…',
       fetch: 'Downloading…',
       pull: 'Almost there…',
       pydeps: 'Finishing up…',
-      update: 'Updating Hermes…',
+      update: 'Updating Thoth…',
       rebuild: 'Rebuilding the desktop app…',
-      restart: 'Restarting Hermes…',
+      restart: 'Restarting Thoth…',
       done: 'Update complete',
       manual: 'Update from your terminal',
       guiSkew: 'Update the desktop app',
@@ -3846,59 +3846,59 @@ export const en: Translations = {
     checkFailedTitle: 'Couldn’t check for updates',
     tryAgain: 'Try again',
     notAvailableTitle: 'Update not available',
-    unsupportedMessage: 'This version of Hermes can’t update itself from inside the app.',
+    unsupportedMessage: 'This version of Thoth can’t update itself from inside the app.',
     connectionRetry:
-      "Hermes couldn't reach the update server. Check your internet connection and try again. If you use a remote Hermes, make sure it is online.",
-    gitUnusable: 'Hermes could not run Git on this computer, so it could not check for updates.',
+      "Thoth couldn't reach the update server. Check your internet connection and try again. If you use a remote Thoth, make sure it is online.",
+    gitUnusable: 'Thoth could not run Git on this computer, so it could not check for updates.',
     connectionSettings: 'Connection settings',
     openDownloadPage: 'Open download page',
     latestBody: 'You’re running the latest version.',
     latestBodyBackend: 'The backend is running the latest version.',
     allSetTitle: 'You’re all set',
     availableTitle: 'New update available',
-    availableBody: 'A new version of Hermes is ready to install.',
+    availableBody: 'A new version of Thoth is ready to install.',
     availableTitleBackend: 'Backend update available',
-    availableBodyBackend: 'A newer version of the connected Hermes backend is ready to install.',
+    availableBodyBackend: 'A newer version of the connected Thoth backend is ready to install.',
     availableBodyNoChangelog: 'A newer version is ready. Release notes aren’t available for this install type.',
     availableBodyAppInstaller:
-      'A new version of Hermes is ready. Hermes will close, Windows will finish the update, and Hermes will reopen on its own.',
+      'A new version of Thoth is ready. Thoth will close, Windows will finish the update, and Thoth will reopen on its own.',
     updateNow: 'Update now',
     maybeLater: 'Maybe later',
     moreChanges: count => `+ ${count} more change${count === 1 ? '' : 's'} included.`,
     copyFullLog: 'Copy full changelog',
     manualTitle: 'Update from your terminal',
     manualUnavailableTitle: "Can't update from here",
-    manualBody: 'You installed Hermes from the command line, so updates run there too. Paste this into your terminal:',
-    manualBodyBackend: 'The Hermes backend is managed outside this app. Run this on the server that hosts it:',
-    manualPickedUp: 'Hermes will pick up the new version next time you launch it.',
+    manualBody: 'You installed Thoth from the command line, so updates run there too. Paste this into your terminal:',
+    manualBodyBackend: 'The Thoth backend is managed outside this app. Run this on the server that hosts it:',
+    manualPickedUp: 'Thoth will pick up the new version next time you launch it.',
     manualPickedUpBackend: 'The backend picks up the new version after the update completes.',
     guiSkewTitle: 'Update the desktop app',
     guiSkewBody:
-      'The backend was updated, but this desktop app package wasn’t changed. Update or reinstall the Hermes desktop app (your AppImage / .deb / .rpm) to match.',
+      'The backend was updated, but this desktop app package wasn’t changed. Update or reinstall the Thoth desktop app (your AppImage / .deb / .rpm) to match.',
     copy: 'Copy',
     copied: 'Copied',
     done: 'Done',
     applyingBody:
-      'The Hermes updater takes over in its own window and reopens Hermes automatically when it’s done. Please don’t reopen Hermes yourself while it’s updating.',
+      'The Thoth updater takes over in its own window and reopens Thoth automatically when it’s done. Please don’t reopen Thoth yourself while it’s updating.',
     applyingBodyBackend:
-      'The remote backend is applying the update and will restart. Hermes reconnects automatically when it’s back.',
-    applyingClose: 'This window will close while the update runs, then Hermes reopens on its own.',
+      'The remote backend is applying the update and will restart. Thoth reconnects automatically when it’s back.',
+    applyingClose: 'This window will close while the update runs, then Thoth reopens on its own.',
     applyingBodyAppInstaller:
-      'Hermes will close and Windows will finish the update. Hermes will reopen when it’s done — you don’t need to do anything.',
-    applyingCloseAppInstaller: 'This window will close, Windows finishes the update, and Hermes reopens on its own.',
+      'Thoth will close and Windows will finish the update. Thoth will reopen when it’s done — you don’t need to do anything.',
+    applyingCloseAppInstaller: 'This window will close, Windows finishes the update, and Thoth reopens on its own.',
     checkUnknownTitleAppInstaller: 'Couldn’t check for updates',
     checkUnknownBodyAppInstaller:
-      'Windows couldn’t check for updates right now. Updates also install automatically when you restart Hermes.',
+      'Windows couldn’t check for updates right now. Updates also install automatically when you restart Thoth.',
     errorTitle: 'Update didn’t finish',
     errorBody: 'No worries — nothing was lost. You can try again now.',
-    blockerTitle: 'Close local previews to update Hermes?',
+    blockerTitle: 'Close local previews to update Thoth?',
     blockerBody:
-      'Hermes needs to stop these local previews before updating. This will not modify or delete your files.',
-    foreignBlockerTitle: 'Close other processes to update Hermes',
+      'Thoth needs to stop these local previews before updating. This will not modify or delete your files.',
+    foreignBlockerTitle: 'Close other processes to update Thoth',
     foreignBlockerBody:
-      'Hermes can’t safely close these processes automatically. Close the app, terminal, or service that owns each one, then try the update again.',
+      'Thoth can’t safely close these processes automatically. Close the app, terminal, or service that owns each one, then try the update again.',
     mixedBlockerBody:
-      'Hermes can close the local previews listed below. Other processes must be closed manually before the update can continue.',
+      'Thoth can close the local previews listed below. Other processes must be closed manually before the update can continue.',
     closePreviewsAndUpdate: 'Close previews and update',
     closePreviewsAndCheckAgain: 'Close previews and check again',
     localPreview: 'Local preview',
@@ -3930,7 +3930,7 @@ export const en: Translations = {
       noReturn: 'Backend didn’t come back online. The update may not have completed — check the backend host.',
       owed: steps => `Backend updated, but still owed: ${steps}. Re-run \`hermes update\` to finish them.`
     },
-    appName: 'Hermes', // Update-status overlay + version-details (mechanism-aware update UI).
+    appName: 'Thoth', // Update-status overlay + version-details (mechanism-aware update UI).
     version: (value: string) => `Version ${value}`,
     versionUnavailable: 'Version unavailable',
     checkNow: 'Check now',
@@ -3952,7 +3952,7 @@ export const en: Translations = {
     justNowSuffix: ' · just now',
     bundleOutOfSync: 'App build out of date',
     bundleOutOfSyncDesc:
-      'The Hermes runtime was updated, but the desktop app itself is still an older build. Update it to pick up the latest fixes.',
+      'The Thoth runtime was updated, but the desktop app itself is still an older build. Update it to pick up the latest fixes.',
     bundleOutOfSyncAction: 'Get the installer',
     checkingShort: 'Checking…',
     releaseAvailable: tag => `Version ${tag} is available.`,
@@ -3986,7 +3986,7 @@ export const en: Translations = {
       skipped: 'Skipped',
       failed: 'Failed'
     },
-    oneTimeTitle: 'Hermes needs a one-time install',
+    oneTimeTitle: 'Thoth needs a one-time install',
     unsupportedDesc: platform =>
       `Automated first-launch install isn’t available on ${platform} yet. Open Terminal and run the command below, then relaunch this app. Subsequent launches will skip this step.`,
     installCommand: 'Install command',
@@ -3994,27 +3994,27 @@ export const en: Translations = {
     viewDocs: 'View install docs',
     installTo: 'Will install to',
     retryAfterRun: 'I’ve run it -- retry',
-    setupChoiceTitle: 'Set up Hermes Desktop',
+    setupChoiceTitle: 'Set up Thoth Desktop',
     setupChoiceDesc:
-      'Connect this app to a Hermes gateway you already run, or install Hermes locally on this computer.',
-    setupChoiceDescLocal: 'Install Hermes on this computer, or connect to a Hermes gateway you already run.',
-    connectExistingTitle: 'Connect to existing Hermes',
+      'Connect this app to a Thoth gateway you already run, or install Thoth locally on this computer.',
+    setupChoiceDescLocal: 'Install Thoth on this computer, or connect to a Thoth gateway you already run.',
+    connectExistingTitle: 'Connect to existing Thoth',
     connectExistingShort: 'Connect existing',
     connectExistingDesc: 'Use a remote backend with a session token or browser sign-in. No local install will start.',
-    installLocalTitle: 'Install Hermes locally',
-    installLocalDesc: 'Download Hermes, create its Python environment, and run the backend on this computer.',
-    useLocalTitle: 'Use Hermes on this computer',
-    useLocalDesc: 'A Hermes runtime is already installed here — start it with one click. Nothing downloads.',
-    bundledLocalDesc: 'Use the Hermes runtime included with this app — the bundled backend is the local install.',
-    localStartUnavailable: 'Local installation could not start. Restart Hermes Desktop and try again.',
-    remoteSetupTitle: 'Connect to existing Hermes',
-    remoteSetupDesc: 'Enter your gateway URL. Hermes Desktop will detect whether it needs a token or browser sign-in.',
+    installLocalTitle: 'Install Thoth locally',
+    installLocalDesc: 'Download Thoth, create its Python environment, and run the backend on this computer.',
+    useLocalTitle: 'Use Thoth on this computer',
+    useLocalDesc: 'A Thoth runtime is already installed here — start it with one click. Nothing downloads.',
+    bundledLocalDesc: 'Use the Thoth runtime included with this app — the bundled backend is the local install.',
+    localStartUnavailable: 'Local installation could not start. Restart Thoth Desktop and try again.',
+    remoteSetupTitle: 'Connect to existing Thoth',
+    remoteSetupDesc: 'Enter your gateway URL. Thoth Desktop will detect whether it needs a token or browser sign-in.',
     remoteUrlTitle: 'Gateway URL',
-    remoteUrlDesc: 'Use the base URL of the Hermes gateway, including https:// when remote.',
+    remoteUrlDesc: 'Use the base URL of the Thoth gateway, including https:// when remote.',
     remoteUrlPlaceholder: 'https://gateway.example.com/hermes',
     probing: 'Detecting gateway authentication...',
     probeError:
-      "Hermes can't reach that address. Check the URL and that the other computer is running Hermes — sign-in options appear once it answers.",
+      "Thoth can't reach that address. Check the URL and that the other computer is running Thoth — sign-in options appear once it answers.",
     probeErrorDetails: 'Details',
     identityProvider: 'your identity provider',
     authTitle: 'Authentication',
@@ -4035,12 +4035,12 @@ export const en: Translations = {
     applyRemote: 'Apply and reconnect',
     backToSetup: 'Back',
     failedTitle: 'Installation failed',
-    settingUpTitle: 'Setting up Hermes Agent',
+    settingUpTitle: 'Setting up Thoth Agent',
     finishingTitle: 'Finishing up',
     failedDesc:
-      'One of the setup steps did not finish. This can happen when another copy of Hermes is running, the internet connection dropped, or antivirus blocked the installer. Close other Hermes windows, then choose Reload and retry. If it fails again, open the logs and send them to support.',
+      'One of the setup steps did not finish. This can happen when another copy of Thoth is running, the internet connection dropped, or antivirus blocked the installer. Close other Thoth windows, then choose Reload and retry. If it fails again, open the logs and send them to support.',
     activeDesc:
-      'This is a one-time setup. The Hermes installer is downloading dependencies and configuring your machine. Subsequent launches will skip this step.',
+      'This is a one-time setup. The Thoth installer is downloading dependencies and configuring your machine. Subsequent launches will skip this step.',
     progress: (completed, total) => `${completed} of ${total} steps complete`,
     currentStage: stage => ` -- now: ${stage}`,
     fetchingManifest: 'Fetching installer manifest...',
@@ -4063,7 +4063,7 @@ export const en: Translations = {
   freeTier: {
     providerRowTitle: 'Nous · free tier',
     providerRowPitch: 'Sign in with a Nous account to unlock more models and tools.',
-    readyTitle: 'Hermes is ready.',
+    readyTitle: 'Thoth is ready.',
     readyCaption: 'Free · connectors included',
     begin: 'Begin',
     signInInstead: 'Sign in with a Nous account instead',
@@ -4098,36 +4098,36 @@ export const en: Translations = {
     timedOutHeading: 'That sign-in link has expired',
     timedOutBody: "Start again whenever you're ready. You're still on the free Nous service.",
     retiredBody:
-      "Your session ended before the sign-in finished. Hermes will start a new one; then sign in again whenever you're ready.",
+      "Your session ended before the sign-in finished. Thoth will start a new one; then sign in again whenever you're ready.",
     errorBody: "Sign-in didn't finish. Try again whenever you're ready.",
     busyHeading: 'Almost there',
     busyBody: wait =>
-      `Hermes couldn't finish signing you in because the Nous service is busy. Try again in ${wait}. Your session is still here in the meantime.`,
+      `Thoth couldn't finish signing you in because the Nous service is busy. Try again in ${wait}. Your session is still here in the meantime.`,
     unreachableBody:
-      "Hermes couldn't reach the Nous service to finish signing you in. Check your internet connection and try again. Your session is still here.",
+      "Thoth couldn't reach the Nous service to finish signing you in. Check your internet connection and try again. Your session is still here.",
     alreadySignedInHeading: 'Already signed in.',
-    alreadySignedInBody: 'This Hermes is already signed in to a Nous account.',
+    alreadySignedInBody: 'This Thoth is already signed in to a Nous account.',
     offer: {
-      heading: 'Keep going with Hermes',
-      body: "You're on the free allowance. If you keep using Hermes, you'll start running into limits. Sign in with a free Nous account for a bigger allowance.",
+      heading: 'Keep going with Thoth',
+      body: "You're on the free allowance. If you keep using Thoth, you'll start running into limits. Sign in with a free Nous account for a bigger allowance.",
       signIn: 'Sign in',
       notNow: 'Not now'
     },
     setupFailed: {
       gateClosed:
-        "This version of Hermes can't start without a Nous account. Sign in or create one, it's free and only takes a minute.",
+        "This version of Thoth can't start without a Nous account. Sign in or create one, it's free and only takes a minute.",
       paused:
-        'Using Hermes without signing in is paused for a moment. Hermes will keep checking. Signing in is free and gets you going right now.',
+        'Using Thoth without signing in is paused for a moment. Thoth will keep checking. Signing in is free and gets you going right now.',
       rateLimited: wait =>
-        `Lots of people are getting started right now, so Hermes will try again in ${wait}. Signing in is free and skips the wait.`,
+        `Lots of people are getting started right now, so Thoth will try again in ${wait}. Signing in is free and skips the wait.`,
       unreachable:
-        "Hermes couldn't reach the Nous service. Check your internet connection, then tap Try again. Or connect another provider for now.",
+        "Thoth couldn't reach the Nous service. Check your internet connection, then tap Try again. Or connect another provider for now.",
       serverError: 'The Nous service had a hiccup. Tap Try again in a moment, or connect another provider for now.',
       powRequired:
         "The Nous server asked for a proof of work, but that isn't implemented in your Agent yet. Sign in or create a free Nous account to continue.",
       locked: "This session can't continue without signing in. Sign in or create a free Nous account to keep going.",
       generic:
-        "Hermes couldn't set up free access without signing in. Signing in is free, or connect another provider.",
+        "Thoth couldn't set up free access without signing in. Signing in is free, or connect another provider.",
       signInBelow: 'Signing in is free. Pick Nous below.',
       tryAgain: 'Try again',
       retrying: 'Trying again…'
@@ -4228,13 +4228,13 @@ export const en: Translations = {
       updateInProgress: 'Update in progress',
       commitsBehind: (count, branch) => `${count} commit${count === 1 ? '' : 's'} behind ${branch}`,
       releaseAvailable: (tag: string) => `Version ${tag} is available.`,
-      desktopVersion: version => `Hermes Desktop v${version}`,
+      desktopVersion: version => `Thoth Desktop v${version}`,
       backendVersion: version => `Backend v${version}`,
       clientLabel: version => `client v${version}`,
       connectionSsh: host => `SSH: ${host}`,
       connectionRemote: host => `Remote: ${host}`,
       connectionCloud: host => `Cloud: ${host}`,
-      connectionCloudTooltip: host => `Hermes Cloud · ${host}`,
+      connectionCloudTooltip: host => `Thoth Cloud · ${host}`,
       connectionSshTooltip: host => `SSH · ${host}`,
       connectionRemoteTooltip: host => `Remote · ${host}`,
       backendLabel: version => `backend v${version}`,
@@ -4403,7 +4403,7 @@ export const en: Translations = {
     binaryTitle: 'This looks like a binary file',
     binaryBody: label => `Previewing ${label} may show unreadable text.`,
     largeTitle: 'This file is large',
-    largeBody: (label, size) => `${label} is ${size}. Hermes will only show the first 512 KB.`,
+    largeBody: (label, size) => `${label} is ${size}. Thoth will only show the first 512 KB.`,
     previewAnyway: 'Preview anyway',
     truncated: 'Showing first 512 KB.',
     noInlineTitle: 'No inline preview',
@@ -4445,11 +4445,11 @@ export const en: Translations = {
         'This address points at the machine running your agent, not this one. The browser pane loads pages locally, so a remote dev server needs a port forward or a reachable hostname.',
       failedToLoad: 'Preview failed to load',
       tryAgain: 'Try again',
-      restarting: 'Hermes is restarting...',
-      askRestart: 'Ask Hermes to restart the server',
-      lookingRestart: taskId => `Hermes is looking for a preview server to restart (${taskId})`,
+      restarting: 'Thoth is restarting...',
+      askRestart: 'Ask Thoth to restart the server',
+      lookingRestart: taskId => `Thoth is looking for a preview server to restart (${taskId})`,
       restartingTitle: 'Restarting preview server',
-      restartingMessage: 'Hermes is working in the background. Watch the preview console for progress.',
+      restartingMessage: 'Thoth is working in the background. Watch the preview console for progress.',
       startRestartFailed: message => `Could not start server restart: ${message}`,
       restartFailed: 'Server restart failed',
       hideConsole: 'Hide preview console',
@@ -4461,16 +4461,16 @@ export const en: Translations = {
       reload: 'Reload page',
       address: 'Address',
       addressPlaceholder: 'Enter address',
-      blankPageBody: 'Type an address above to browse, or ask Hermes to open a page.',
-      finishedRestarting: message => `Hermes finished restarting the preview server${message ? `: ${message}` : ''}`,
+      blankPageBody: 'Type an address above to browse, or ask Thoth to open a page.',
+      finishedRestarting: message => `Thoth finished restarting the preview server${message ? `: ${message}` : ''}`,
       failedRestarting: message => `Server restart failed: ${message}`,
       unknownError: 'unknown error',
       restartedTitle: 'Preview server restarted',
       reloadingNow: 'Reloading the preview now.',
       restartFailedTitle: 'Preview restart failed',
-      restartFailedMessage: 'Hermes could not restart the server.',
+      restartFailedMessage: 'Thoth could not restart the server.',
       stillWorking:
-        'Hermes is still working, but no restart result has arrived yet. The server command may be running in the foreground.',
+        'Thoth is still working, but no restart result has arrived yet. The server command may be running in the foreground.',
       workspaceReloading: 'Workspace changed, reloading preview',
       fileChanged: url => `File changed, reloading preview: ${url}`,
       filesChanged: (count, url) => `${count} file changes, reloading preview: ${url}`,
@@ -4496,11 +4496,11 @@ export const en: Translations = {
 
   interfaceMode: {
     title: 'Interface mode',
-    hint: 'Changes what is shown, not what Hermes can do.',
+    hint: 'Changes what is shown, not what Thoth can do.',
     sessionNote: 'Set by Simple mode. A change here lasts for this session; switch to Advanced to make it yours.',
     simple: {
       label: 'Simple',
-      description: 'For talking to Hermes. Sidebar and chat; no terminal, file or diff panes.'
+      description: 'For talking to Thoth. Sidebar and chat; no terminal, file or diff panes.'
     },
     advanced: {
       label: 'Advanced',
@@ -4586,7 +4586,7 @@ export const en: Translations = {
     thread: {
       loadingSession: 'Loading session',
       showEarlier: 'Show earlier messages',
-      loadingResponse: 'Hermes is loading a response',
+      loadingResponse: 'Thoth is loading a response',
       loadingLocalModel: model => `Loading ${model} into memory`,
       processingPrompt: 'Processing prompt',
       resumeWhenBackgroundDone: count =>
@@ -4612,24 +4612,24 @@ export const en: Translations = {
         billing: 'Out of credits',
         disk: 'Disk full',
         endpoint: "Can't reach your model server",
-        gateway: 'Hermes hit a problem',
-        generic: "Hermes couldn't finish this reply",
+        gateway: 'Thoth hit a problem',
+        generic: "Thoth couldn't finish this reply",
         provider: 'The AI service returned an error',
-        runtime: 'Hermes hit a problem',
+        runtime: 'Thoth hit a problem',
         streaming: 'The reply was cut off'
       },
       errorLayerBodies: {
         auth: 'The AI service rejected your sign-in. Check the credentials for this provider, then send your message again.',
         billing: 'Your account has no credits left for this provider. Top up or switch provider, then send again.',
-        disk: 'Your disk is full, so Hermes could not save this conversation. Free some space, then retry.',
+        disk: 'Your disk is full, so Thoth could not save this conversation. Free some space, then retry.',
         endpoint:
-          "Hermes can't reach your custom model server. Check that it is running, then send your message again.",
+          "Thoth can't reach your custom model server. Check that it is running, then send your message again.",
         gateway:
-          'Hermes hit an internal problem starting this reply. Send your message again; if it keeps happening, send diagnostics.',
-        generic: 'Something went wrong while Hermes was replying. Retry, or copy the details if it keeps happening.',
+          'Thoth hit an internal problem starting this reply. Send your message again; if it keeps happening, send diagnostics.',
+        generic: 'Something went wrong while Thoth was replying. Retry, or copy the details if it keeps happening.',
         provider: 'The AI service could not complete this request. Retry in a moment or switch provider.',
         runtime:
-          'Hermes hit an internal problem starting this reply. Send your message again; if it keeps happening, send diagnostics.',
+          'Thoth hit an internal problem starting this reply. Send your message again; if it keeps happening, send diagnostics.',
         streaming: 'The connection dropped before the reply finished. Retry to send it again.'
       },
       errorCodes: {
@@ -4674,7 +4674,7 @@ export const en: Translations = {
         },
         no_reply: {
           title: "The reply didn't finish",
-          body: 'Hermes ended this turn without a reply. Retry to send it again.'
+          body: 'Thoth ended this turn without a reply. Retry to send it again.'
         },
         upstream_blocked: {
           title: 'A firewall blocked the request',
@@ -4684,7 +4684,7 @@ export const en: Translations = {
         ssl_cert_verification: {
           title: 'Secure connection failed',
           body: provider =>
-            `Hermes could not verify the secure connection to ${provider}. Check your network or proxy settings, or switch provider, then send your message again.`
+            `Thoth could not verify the secure connection to ${provider}. Check your network or proxy settings, or switch provider, then send your message again.`
         },
         context_overflow: {
           title: 'This conversation is too long',
@@ -4719,28 +4719,28 @@ export const en: Translations = {
         },
         invalid_response: {
           title: 'The AI service sent an unreadable reply',
-          body: provider => `${provider} returned something Hermes could not read. Retry in a moment.`
+          body: provider => `${provider} returned something Thoth could not read. Retry in a moment.`
         },
         empty_response: {
           title: 'The AI service sent an empty reply',
           body: provider => `${provider} returned nothing for this message. Retry in a moment.`
         },
         loop_error: {
-          title: 'Hermes got stuck in a loop',
-          body: 'The reply kept repeating the same steps, so Hermes stopped it. Retry, or start a new chat if it happens again.'
+          title: 'Thoth got stuck in a loop',
+          body: 'The reply kept repeating the same steps, so Thoth stopped it. Retry, or start a new chat if it happens again.'
         },
         SESSION_NOT_OWNED: {
           title: 'This chat is open somewhere else',
-          body: 'This chat is currently open in another Hermes window or terminal. Close it there and send your message again, or start a new chat here.'
+          body: 'This chat is currently open in another Thoth window or terminal. Close it there and send your message again, or start a new chat here.'
         },
         disk_full: {
           title: 'Disk full',
-          body: 'Your disk is full, so Hermes could not save this conversation. Free some space, then retry.'
+          body: 'Your disk is full, so Thoth could not save this conversation. Free some space, then retry.'
         },
         // Nous free tier. The body is normally the backend's own sentence (it names the wait
         // and the way forward); these bodies stand in for an older backend that sent none.
         free_tier_disabled: {
-          title: 'Using Hermes without signing in is switched off right now',
+          title: 'Using Thoth without signing in is switched off right now',
           body: "Sign in with a Nous account to keep chatting, it's free."
         },
         free_tier_rate_limited: {
@@ -4753,10 +4753,10 @@ export const en: Translations = {
         },
         free_tier_model_not_free: {
           title: "That model isn't available without signing in",
-          body: "Hermes uses the free model for now. Sign in with a Nous account for more models, it's free."
+          body: "Thoth uses the free model for now. Sign in with a Nous account for more models, it's free."
         },
         free_tier_route: {
-          title: "Hermes couldn't reach the free model on this route",
+          title: "Thoth couldn't reach the free model on this route",
           body: "Sign in with a Nous account, it's free, or check the NOUS_INFERENCE_BASE_URL setting."
         },
         free_tier_outage: {
@@ -4764,7 +4764,7 @@ export const en: Translations = {
           body: 'Try sending your message again in a minute.'
         },
         free_tier_refused: {
-          title: "Hermes couldn't send that without signing in",
+          title: "Thoth couldn't send that without signing in",
           body: 'Signing in with a Nous account is free.'
         }
       },
@@ -4779,7 +4779,7 @@ export const en: Translations = {
       },
       errorDetails: 'Details',
       errorGenericProvider: 'The AI service',
-      errorToastTitle: "Hermes couldn't finish the reply",
+      errorToastTitle: "Thoth couldn't finish the reply",
       errorRetry: 'Retry',
       errorLimitResets: time => `Limit resets at ${time}`,
       errorRetryAtReset: time => `Retry when the limit resets (${time})`,
@@ -4790,8 +4790,8 @@ export const en: Translations = {
       errorChooseModel: 'Choose a model',
       errorCompressConversation: 'Compress conversation',
       errorCompressFailed: 'Could not compress the conversation',
-      errorOpenHermesFolder: 'Open Hermes folder',
-      errorOpenHermesFolderFailed: 'Could not open the Hermes folder',
+      errorOpenHermesFolder: 'Open Thoth folder',
+      errorOpenHermesFolderFailed: 'Could not open the Thoth folder',
       errorUpdateApiKey: 'Update API key',
       errorSignInAgain: provider => `Sign in to ${provider} again`,
       errorSignInFreeTier: 'Sign in with a Nous account',
@@ -4828,11 +4828,11 @@ export const en: Translations = {
     },
     approval: {
       gatewayDisconnected:
-        'Hermes is offline right now. The command is still waiting for your answer (until the approval timeout). Reconnect, then send it again.',
+        'Thoth is offline right now. The command is still waiting for your answer (until the approval timeout). Reconnect, then send it again.',
       sendFailed: 'Could not send your answer',
       reconnect: 'Reconnect',
       timedOutSystemLine:
-        'Approval timed out — the command was not run. Ask Hermes to try again, or raise the limit in Settings → Safety → Approval timeout.',
+        'Approval timed out — the command was not run. Ask Thoth to try again, or raise the limit in Settings → Safety → Approval timeout.',
       openSafetySettings: 'Open Safety settings',
       run: 'Run',
       command: 'Command',
@@ -4844,12 +4844,12 @@ export const en: Translations = {
       reject: 'Reject',
       alwaysTitle: 'Always allow this command?',
       alwaysDescription: pattern =>
-        `This adds the “${pattern}” pattern to your permanent allowlist (~/.hermes/config.yaml). Hermes won’t ask again for commands like this — in this session or any future one.`,
+        `This adds the “${pattern}” pattern to your permanent allowlist (~/.hermes/config.yaml). Thoth won’t ask again for commands like this — in this session or any future one.`,
       alwaysAllow: 'Always allow'
     },
     clarify: {
       notReady: 'Clarify request is not ready yet',
-      gatewayDisconnected: 'Hermes is offline right now. Reconnect, then send it again.',
+      gatewayDisconnected: 'Thoth is offline right now. Reconnect, then send it again.',
       sendFailed: 'Could not send clarify response',
       loadingQuestion: 'Loading question…',
       other: 'Other (type your answer)',
@@ -4906,7 +4906,7 @@ export const en: Translations = {
       envRequired: 'Fill in the required credentials first',
       sendFailed: 'Could not send MCP setup response',
       reloadFailed: 'Server saved, but reloading MCP tools failed — they load next session',
-      gatewayDisconnected: 'Hermes is offline right now. Reconnect, then send it again.'
+      gatewayDisconnected: 'Thoth is offline right now. Reconnect, then send it again.'
     },
     tool: {
       copyCode: 'Copy code',
@@ -5014,7 +5014,7 @@ export const en: Translations = {
   },
 
   prompts: {
-    gatewayDisconnected: 'Hermes is offline right now. Reconnect, then send it again.',
+    gatewayDisconnected: 'Thoth is offline right now. Reconnect, then send it again.',
     reconnect: 'Reconnect',
     sudoSendFailed: 'Could not send sudo password',
     secretSendFailed: 'Could not send secret',
@@ -5024,10 +5024,10 @@ export const en: Translations = {
     sudoCommandUnavailable:
       'This agent did not provide the command. Cancel if you cannot verify it in the conversation.',
     sudoInstallDesc:
-      'Hermes needs your sudo password to install the Bot Screen packages (TigerVNC + Xfce) on the gateway host. It is sent only to that host.',
+      'Thoth needs your sudo password to install the Bot Screen packages (TigerVNC + Xfce) on the gateway host. It is sent only to that host.',
     sudoPlaceholder: 'sudo password',
     secretTitle: 'Secret required',
-    secretDesc: 'Hermes needs a credential to continue.',
+    secretDesc: 'Thoth needs a credential to continue.',
     secretPlaceholder: 'secret value',
     vaultUnlockSendFailed: 'Could not send master password',
     vaultUnlockTitle: name => `Unlock ${name}`,
@@ -5039,7 +5039,7 @@ export const en: Translations = {
     vaultSaveSendFailed: 'Could not save the login',
     vaultSaveTitle: site => `Save your ${site} login?`,
     vaultSaveDesc: origin =>
-      `Hermes reached a sign-in page at ${origin} and has no login for it. Enter it once here; it is encrypted on this machine and filled into the page without the model ever seeing the password.`,
+      `Thoth reached a sign-in page at ${origin} and has no login for it. Enter it once here; it is encrypted on this machine and filled into the page without the model ever seeing the password.`,
     vaultSaveIdentifierLabel: 'Email or username',
     vaultSaveIdentifierPlaceholder: 'you@example.com',
     vaultSavePasswordPlaceholder: 'Password',
@@ -5049,10 +5049,10 @@ export const en: Translations = {
     vaultCodeSendFailed: 'Could not send the code',
     vaultCodeTitle: site => `Verification code for ${site}`,
     vaultCodeDesc: site =>
-      `${site} is asking for a one-time code (text message, email or authenticator app). Enter it here and Hermes types it into the page; the model never sees it.`,
+      `${site} is asking for a one-time code (text message, email or authenticator app). Enter it here and Thoth types it into the page; the model never sees it.`,
     vaultCodeLabel: 'Code',
     vaultCodeFootnote:
-      'Tip: save the authenticator key with this login in Settings → Passwords & Logins and Hermes enters codes for you.',
+      'Tip: save the authenticator key with this login in Settings → Passwords & Logins and Thoth enters codes for you.',
     vaultCodeSkip: 'Skip',
     vaultCodeConfirm: 'Enter code'
   },
@@ -5125,8 +5125,8 @@ export const en: Translations = {
     sessionExportFailed: 'Could not export session',
     imageSaved: 'Image saved',
     downloadStarted: 'Download started',
-    restartToUseSaveImage: 'Restart Hermes Desktop to use Save Image.',
-    restartToSaveImages: 'Restart Hermes Desktop to save images',
+    restartToUseSaveImage: 'Restart Thoth Desktop to use Save Image.',
+    restartToSaveImages: 'Restart Thoth Desktop to save images',
     imageDownloadFailed: 'Image download failed',
     openImage: 'Open image',
     downloadImage: 'Download image',
@@ -5151,7 +5151,7 @@ export const en: Translations = {
       systemNote: platform => `↻ Handed off to ${platform} — resume here anytime.`,
       failed: error => `Handoff failed: ${error}`,
       timedOut:
-        "Hermes couldn't reach your messaging connection. Start it from Settings → Messaging, then try the handoff again.",
+        "Thoth couldn't reach your messaging connection. Start it from Settings → Messaging, then try the handoff again.",
       startMessaging: 'Start messaging'
     }
   },
@@ -5165,14 +5165,14 @@ export const en: Translations = {
       },
       skills: {
         title: 'Teach it once',
-        text: 'Skills are folders of instructions Hermes loads when the work calls for them.'
+        text: 'Skills are folders of instructions Thoth loads when the work calls for them.'
       },
       messaging: {
-        title: 'Hermes away from your desk',
+        title: 'Thoth away from your desk',
         text: 'Connect Telegram, Discord, Slack and more — same agent, same memory.'
       },
       artifacts: {
-        title: 'Everything Hermes made',
+        title: 'Everything Thoth made',
         text: 'Images, files and links from every session, indexed in one place.'
       },
       cron: {
@@ -5185,7 +5185,7 @@ export const en: Translations = {
       },
       profiles: {
         title: 'Profiles are separate',
-        text: 'Each one is its own Hermes — own keys, own memory, own sessions.'
+        text: 'Each one is its own Thoth — own keys, own memory, own sessions.'
       },
       'composer-mentions': {
         title: 'Attach and command',

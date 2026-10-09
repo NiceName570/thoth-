@@ -183,7 +183,7 @@ export function createMinimizeToTray(options: Options) {
             height: process.platform === 'darwin' ? 18 : 24
           })
         )
-        tray.setToolTip('Hermes')
+        tray.setToolTip('Thoth')
         tray.setContextMenu(
           Menu.buildFromTemplate([
             { label: 'Show Hermes', click: restore },

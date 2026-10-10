@@ -1110,6 +1110,13 @@ export const zhHantSettings = {
       noRecommendationTitle: '此裝置暫無自動推薦模型',
       noRecommendationDetail:
         '自動設定需要一個可完全放入 GPU 記憶體或統一記憶體的精選模型。你仍可在下方自行選擇，或瀏覽更多模型。',
+      ollamaTitle: 'Ollama',
+      ollamaDetected: url => `來自 ${url} 上 Ollama 程式庫的模型。用 \`ollama pull <model>\` 下載更多。`,
+      ollamaNotFoundTitle: '未偵測到 Ollama',
+      ollamaNotFoundDetail: url => `${url} 沒有回應。啟動 Ollama（\`ollama serve\`）後此清單會自動填入。`,
+      ollamaEmpty: '你的 Ollama 程式庫是空的。用 `ollama pull <model>` 下載模型。',
+      ollamaUsing: model => `${model} 已設為預設——新對話將使用它。`,
+      ollamaUseFailed: model => `無法切換到 ${model}`,
       noRecommendationAction: '瀏覽模型',
       downloaded: '已下載',
       downloadAction: size => `下載 · ${size}`,

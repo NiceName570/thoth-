@@ -42,6 +42,15 @@ export const deLocalModels: TranslationOverride<Translations['settings']['localM
   downloadProgress: (done, total) => `${done} von ${total} werden heruntergeladen`,
   downloadDoneToast: model => `${model} ist bereit.`,
   installDoneToast: 'Lokale Laufzeit installiert und bereit.',
+  ollamaTitle: 'Ollama',
+  ollamaDetected: url =>
+    `Modelle aus deiner Ollama-Bibliothek unter ${url}. Weitere mit \`ollama pull <model>\` laden.`,
+  ollamaNotFoundTitle: 'Ollama nicht gefunden',
+  ollamaNotFoundDetail: url =>
+    `Unter ${url} antwortet nichts. Starte Ollama (\`ollama serve\`), dann füllt sich diese Liste.`,
+  ollamaEmpty: 'Deine Ollama-Bibliothek ist leer. Lade ein Modell mit `ollama pull <model>`.',
+  ollamaUsing: model => `${model} ist jetzt dein Standard — neue Chats nutzen es.`,
+  ollamaUseFailed: model => `Wechsel zu ${model} fehlgeschlagen`,
   quickstartDoneToast: model => `${model} ist eingerichtet — neue Chats laufen auf diesem Rechner.`,
   quickstartFailed: 'Einrichtung des lokalen Modells fehlgeschlagen',
   useAction: 'Verwenden',

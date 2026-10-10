@@ -42,18 +42,8 @@ export const deLocalModels: TranslationOverride<Translations['settings']['localM
   downloadProgress: (done, total) => `${done} von ${total} werden heruntergeladen`,
   downloadDoneToast: model => `${model} ist bereit.`,
   installDoneToast: 'Lokale Laufzeit installiert und bereit.',
-  quickstartTitle: 'Ein Modell auf diesem Rechner ausführen',
-  quickstartDetail: (model, size) =>
-    `Ein Klick richtet alles ein: die lokale Engine, ${model} (${size} Download) und Ihre Voreinstellung für neue Chats. Nichts verlässt diesen Computer.`,
-  quickstartDetailReady: model =>
-    `Ein Klick macht ${model} zu Ihrer Voreinstellung für neue Chats. Alles läuft auf diesem Rechner.`,
-  quickstartAction: 'Für mich einrichten',
-  quickstartConfigure: 'Konfigurieren…',
   quickstartDoneToast: model => `${model} ist eingerichtet — neue Chats laufen auf diesem Rechner.`,
   quickstartFailed: 'Einrichtung des lokalen Modells fehlgeschlagen',
-  quickstartStageEngine: 'Engine',
-  quickstartStageModel: 'Modell',
-  quickstartStageFinish: 'Fertig',
   useAction: 'Verwenden',
   activePill: 'Voreinstellung',
   updateTitle: 'Engine-Update verfügbar',

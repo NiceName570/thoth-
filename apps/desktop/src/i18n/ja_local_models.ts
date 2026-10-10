@@ -37,7 +37,6 @@ export const jaLocalModels: TranslationOverride<Translations['settings']['localM
   noRecommendationDetail:
     '自動セットアップには、GPU メモリまたはユニファイドメモリに完全に収まる厳選モデルが必要です。下の一覧から選ぶか、ほかのモデルを探すこともできます。',
   noRecommendationAction: 'モデルを探す',
-  quickstartConfigure: '自分で選ぶ',
   downloaded: 'ダウンロード済み',
   downloadAction: size => `ダウンロード · ${size}`,
   downloadProgress: (done, total) => `${done} / ${total}`,

@@ -42,18 +42,8 @@ export const frLocalModels: TranslationOverride<Translations['settings']['localM
   downloadProgress: (done, total) => `Téléchargement de ${done} sur ${total}`,
   downloadDoneToast: model => `${model} est prêt.`,
   installDoneToast: 'Le moteur local est installé et prêt.',
-  quickstartTitle: 'Exécuter un modèle sur cette machine',
-  quickstartDetail: (model, size) =>
-    `Un clic configure tout : le moteur local, ${model} (téléchargement de ${size}) et votre modèle par défaut pour les nouvelles conversations. Aucune donnée ne quitte cet ordinateur.`,
-  quickstartDetailReady: model =>
-    `Un clic définit ${model} comme modèle par défaut pour les nouvelles conversations. Tout s'exécute sur cette machine.`,
-  quickstartAction: 'Configurer pour moi',
-  quickstartConfigure: 'Configuration…',
   quickstartDoneToast: model => `${model} est configuré : les nouvelles conversations s'exécutent sur cette machine.`,
   quickstartFailed: 'Échec de la configuration du modèle local',
-  quickstartStageEngine: 'Moteur',
-  quickstartStageModel: 'Modèle',
-  quickstartStageFinish: 'Terminer',
   useAction: 'Utiliser',
   activePill: 'Par défaut',
   updateTitle: 'Mise à jour du moteur disponible',

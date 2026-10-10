@@ -524,6 +524,22 @@ def local_models_status():
     }
 
 
+@router.get("/api/local-models/ollama")
+def local_models_ollama():
+    """The user's own Ollama install: reachable or not, and the models its library already holds
+    (native ``/api/tags``). Activation goes through ``/api/model/set`` as a custom endpoint."""
+    from hermes_cli.models import _get_model_config_dict, _get_ollama_base_url
+    from hermes_cli.models_local import _root_for_ollama_native_api, fetch_ollama_local_models
+
+    root = _root_for_ollama_native_api(_get_ollama_base_url())
+    models = fetch_ollama_local_models(root)
+    model_cfg = _get_model_config_dict()
+    active_root = _root_for_ollama_native_api(str(model_cfg.get("base_url") or ""))
+    active = (str(model_cfg.get("default") or "") or None) if active_root == root else None
+    return {"reachable": models is not None, "base_url": f"{root}/v1", "models": models or [],
+            "active_model": active}
+
+
 # ── hardware: what this machine can do ───────────────────────
 def _nvidia_smi_facts() -> dict:
     """GPU identity + live utilization (NVIDIA only; other vendors degrade to {} and the UI hides those readouts).

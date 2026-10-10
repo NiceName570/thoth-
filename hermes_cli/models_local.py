@@ -113,7 +113,23 @@ def _get_ollama_base_url() -> str:
         except (OSError, RuntimeError, TypeError, ValueError):
             pass
     env_host = os.getenv("OLLAMA_HOST", "").strip()
-    return _ollama_host_from_env(env_host) if env_host else "http://localhost:11434"
+    return _connectable_ollama_host(_ollama_host_from_env(env_host)) if env_host else "http://localhost:11434"
+
+
+# ``OLLAMA_HOST=0.0.0.0`` (or ``::``) is the server's listen-on-every-interface setting; as a client
+# destination it fails on Windows, so the probe dials loopback, which that server also answers.
+_BIND_ALL_HOSTS = ("0.0.0.0", "[::]")
+
+
+def _connectable_ollama_host(host: str) -> str:
+    scheme, sep, rest = host.partition("://")
+    if not sep:
+        scheme, rest = "", host
+    for bind_all in _BIND_ALL_HOSTS:
+        if rest == bind_all or rest.startswith((bind_all + ":", bind_all + "/")):
+            rest = "127.0.0.1" + rest[len(bind_all):]
+            break
+    return f"{scheme}://{rest}" if sep else rest
 
 
 def _api_key_from_provider_config(entry: dict, *env_keys: str) -> str:

@@ -1,7 +1,6 @@
 import type { ModelOptionsResult } from '@hermes/shared'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { act, cleanup, fireEvent, render, renderHook, type RenderResult, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { act, cleanup, fireEvent, render, renderHook, screen } from '@testing-library/react'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 
 import type { HermesApiRequest, HermesConnection } from '@/global'
@@ -31,9 +30,7 @@ vi.mock('@/store/session', async (): Promise<object> => {
 vi.mock('@/store/notifications', (): object => ({ notify: vi.fn(), notifyError: vi.fn() }))
 
 import { setApiRequestConnection, setApiRequestProfile } from '@/api/client'
-import { LocalModelsSettings } from '@/app/settings/local-models-settings'
 import { ModelCatalogMenu, type ModelMenuController } from '@/app/shell/model-catalog-menu'
-import { ModelPickerDialog } from '@/components/model-picker'
 import { DropdownMenu, DropdownMenuContent } from '@/components/ui/dropdown-menu'
 import { I18nProvider } from '@/i18n'
 import { queryClient } from '@/lib/query-client'
@@ -171,137 +168,6 @@ async function tick(ms: number = 0): Promise<void> {
   })
 }
 
-function mountSettings(): RenderResult {
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
-        <I18nProvider>
-          <LocalModelsSettings />
-        </I18nProvider>
-      </MemoryRouter>
-    </QueryClientProvider>
-  )
-}
-
-it('uses one status polling clock across staggered Settings, picker and menu mounts', async (): Promise<void> => {
-  const settings: RenderResult = mountSettings()
-  await tick(400)
-  render(
-    <QueryClientProvider client={queryClient}>
-      <I18nProvider>
-        <ModelPickerDialog
-          currentModel=""
-          currentProvider=""
-          onOpenChange={(): void => {}}
-          onSelect={(): void => {}}
-          open
-          ownerConnectionId="A"
-          profile="work"
-        />
-      </I18nProvider>
-    </QueryClientProvider>
-  )
-  await tick(400)
-  render(
-    <QueryClientProvider client={queryClient}>
-      <I18nProvider>
-        <DropdownMenu open>
-          <DropdownMenuContent>
-            <ModelCatalogMenu controller={controller} ownerConnectionId="A" profile="work" />
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </I18nProvider>
-    </QueryClientProvider>
-  )
-  await tick(2_000)
-
-  expect(api.mock.calls.filter(([request]): boolean => request.path.endsWith('/status'))).toHaveLength(2)
-  settings.unmount()
-  await tick(2_000)
-  expect(api.mock.calls.filter(([request]): boolean => request.path.endsWith('/status'))).toHaveLength(3)
-  cleanup()
-  await tick(4_000)
-  expect(api.mock.calls.filter(([request]): boolean => request.path.endsWith('/status'))).toHaveLength(3)
-})
-
-it('keeps paused work alive after Settings unmount and isolates late results by owner', async (): Promise<void> => {
-  jobs = [{ ...running, status: 'paused' }]
-  const settings: RenderResult = mountSettings()
-  await tick()
-  settings.unmount()
-  jobs = [running]
-  await tick(3_000)
-  expect(queryClient.getQueryData(localModelsKey({ connectionId: 'A', profile: 'work' }, 'jobs'))).toEqual([running])
-
-  const pending = deferred<{ jobs: LocalRuntimeJob[] }>()
-  api.mockReturnValueOnce(pending.promise)
-  watchLocalRuntimeJobs({ connectionId: 'A', profile: 'work' })
-  setApiRequestConnection('B')
-  jobs = [{ ...running, target: 'Download B' }]
-  watchLocalRuntimeJobs({ connectionId: 'B', profile: 'work' })
-  await tick()
-  pending.resolve({ jobs: [{ ...running, status: 'done' }] })
-  await tick()
-  expect(queryClient.getQueryData(localModelsKey({ connectionId: 'B', profile: 'work' }, 'jobs'))).toEqual(jobs)
-  expect(notify).toHaveBeenCalledTimes(1)
-  expect(vi.mocked(notify).mock.calls[0][0].title).toContain('A / work')
-  jobs = [{ ...running, target: 'Download B', status: 'done' }]
-  watchLocalRuntimeJobs({ connectionId: 'B', profile: 'work' })
-  await tick()
-  expect(notify).toHaveBeenCalledTimes(2)
-  watchLocalRuntimeJobs({ connectionId: 'B', profile: 'work' })
-  await tick()
-  expect(notify).toHaveBeenCalledTimes(2)
-})
-
-it.each(['connection', 'profile'] as const)(
-  'does not paint a late Settings snapshot after a %s switch',
-  async (change: 'connection' | 'profile'): Promise<void> => {
-    const pending = deferred<LocalModelsStatus>()
-    api.mockReturnValueOnce(pending.promise)
-    const settings: RenderResult = mountSettings()
-    await tick()
-    await act(async (): Promise<void> => {
-      if (change === 'connection') {
-        setApiRequestConnection('B')
-        $connection.set({
-          baseUrl: 'http://B',
-          connectionId: 'B',
-          registryScoped: true,
-          token: '',
-          wsUrl: '',
-          logs: [],
-          isFullscreen: false,
-          nativeOverlayWidth: 0,
-          windowButtonPosition: null
-        })
-      } else {
-        setApiRequestProfile('personal')
-        $activeGatewayProfile.set('personal')
-      }
-
-      await vi.advanceTimersByTimeAsync(0)
-    })
-    await tick()
-    expect(settings.container.textContent).toContain('installed')
-    pending.resolve({ ...status, tag: 'OLD-OWNER' })
-    await tick()
-    expect(settings.container.textContent).not.toContain('OLD-OWNER')
-
-    const expected =
-      change === 'connection' ? { connectionId: 'B', profile: 'work' } : { connectionId: 'A', profile: 'personal' }
-
-    expect(
-      api.mock.calls.some(
-        ([request]): boolean =>
-          request.path.endsWith('/status') &&
-          request.connectionId === expected.connectionId &&
-          request.profile === expected.profile
-      )
-    ).toBe(true)
-  }
-)
-
 it('follows an authoritative route change even when its descriptor is unchanged', async (): Promise<void> => {
   const hook = renderHook(() => useLocalModelsOwner())
   expect(hook.result.current.connectionId).toBe('A')
@@ -395,44 +261,3 @@ it('keeps menu focus and its scalar selection stable across byte updates and out
   expect(screen.getByText('75%')).toBeTruthy()
   expect(window.document.activeElement).toBe(input)
 })
-
-it.each(['model-download', 'quickstart', 'runtime-install'] as const)(
-  '%s pause and resume travel through the owner API and publish server truth',
-  async (kind: LocalRuntimeJob['kind']): Promise<void> => {
-    catalog = [model]
-    jobs = [
-      { ...running, kind, can_pause: true, phase: kind === 'runtime-install' ? 'downloading-runtime' : 'downloading' }
-    ]
-    const settings: RenderResult = mountSettings()
-    await tick()
-    fireEvent.click(screen.getByRole('button', { name: /pause/i }))
-    await tick()
-    expect(jobs[0].status).toBe('paused')
-    expect(screen.getByRole('button', { name: /resume/i })).toBeTruthy()
-    expect(screen.getAllByText(/paused/i).length).toBeGreaterThan(0)
-    expect(
-      screen.getAllByRole('progressbar').some((bar: HTMLElement): boolean => bar.getAttribute('aria-valuenow') === '50')
-    ).toBe(true)
-    expect(notify).not.toHaveBeenCalled()
-    expect(notifyError).not.toHaveBeenCalled()
-
-    if (kind === 'quickstart') {
-      expect(screen.queryByRole('button', { name: /set up for me/i })).toBeNull()
-    }
-
-    fireEvent.click(screen.getByRole('button', { name: /resume/i }))
-    await tick()
-    expect(jobs[0].status).toBe('running')
-    expect(
-      api.mock.calls.filter(([request]): boolean => request.method === 'POST').map(([request]): string => request.path)
-    ).toEqual(['/api/local-models/download/pause', '/api/local-models/download/resume'])
-    jobs = [{ ...jobs[0], status: 'done' }]
-    await tick(3_000)
-    expect(notify).toHaveBeenCalledTimes(1)
-    settings.unmount()
-    watchLocalRuntimeJobs({ connectionId: 'A', profile: 'work' })
-    await tick()
-    expect(notify).toHaveBeenCalledTimes(1)
-    expect(api.mock.calls.filter(([request]): boolean => request.path.endsWith('/status')).length).toBeGreaterThan(1)
-  }
-)

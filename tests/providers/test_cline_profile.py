@@ -31,3 +31,20 @@ def test_clinepass_models_are_offered_without_a_live_catalog():
 
     assert profile is not None and profile.name == "cline"
     assert "cline-pass/glm-5.3" in profile.fallback_models
+
+
+def test_cline_is_offered_as_a_key_provider_before_it_is_configured(tmp_path, monkeypatch):
+    monkeypatch.setenv("HERMES_HOME", str(tmp_path / ".hermes"))
+    monkeypatch.delenv("CLINE_API_KEY", raising=False)
+    from fastapi.testclient import TestClient
+    from hermes_cli import web_server
+
+    client = TestClient(web_server.app)
+    client.headers[web_server._SESSION_HEADER_NAME] = web_server._SESSION_TOKEN
+    providers = client.get(
+        "/api/model/options", params={"include_unconfigured": "true", "explicit_only": "false"}
+    ).json()["providers"]
+
+    cline = next(p for p in providers if p.get("slug") == "cline")
+    assert cline.get("key_env") == "CLINE_API_KEY"
+    assert cline.get("auth_type") in (None, "api_key")

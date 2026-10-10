@@ -1,61 +1,92 @@
 import { type ReactElement, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { CheckCircle2, Loader2, Zap } from '@/lib/icons'
-import { cn } from '@/lib/utils'
+import type { OllamaStatus } from '@/hermes'
+import { Cpu, Loader2 } from '@/lib/icons'
+import {
+  isCurrentLocalModelsOwner,
+  localModelsKey,
+  localModelsNotificationTitle,
+  localModelsRequestScope
+} from '@/store/local-runtime-jobs'
 import { setMainModelAssignment } from '@/store/model-assignment'
 import { notify, notifyError } from '@/store/notifications'
-import type { LocalOllama } from '@/types/hermes'
 
-import { useLocalModelsActionScope } from './local-models-actions'
+import { type LocalModelsActionScope, useLocalModelsActionScope } from './local-models-actions'
 import { ListRow, Pill, SettingsSection } from './primitives'
 
-// An Ollama the user already runs is offered as-is: one click points the main
-// model at its OpenAI-compatible /v1 root instead of installing a second engine.
-export function LocalModelsOllamaSection({ ollama }: { ollama: LocalOllama }): ReactElement {
-  const { copy, owner } = useLocalModelsActionScope()
-  const [busy, setBusy] = useState<boolean>(false)
-  const [inUse, setInUse] = useState<boolean>(false)
-  const model: string = ollama.models[0] ?? ''
+export interface LocalModelsOllamaSectionProps {
+  status: OllamaStatus
+}
 
-  async function useOllama(): Promise<void> {
-    setBusy(true)
+async function assignOllamaModel({ owner, client, copy }: LocalModelsActionScope, status: OllamaStatus, model: string) {
+  try {
+    await setMainModelAssignment(
+      { provider: 'custom', model, base_url: status.base_url },
+      localModelsRequestScope(owner)
+    )
+    notify({
+      durationMs: 3_000,
+      kind: 'success',
+      message: copy.ollamaUsing(model),
+      title: localModelsNotificationTitle(owner)
+    })
+    await client.invalidateQueries({ queryKey: localModelsKey(owner, 'ollama') })
+  } catch (err) {
+    if (isCurrentLocalModelsOwner(owner)) {
+      notifyError(err, copy.ollamaUseFailed(model))
+    }
+  }
+}
+
+// The user's own Ollama install leads the pane: its library is the model list,
+// and "Use" points new chats at Ollama's OpenAI-compatible endpoint.
+export function LocalModelsOllamaSection({ status }: LocalModelsOllamaSectionProps): ReactElement {
+  const scope: LocalModelsActionScope = useLocalModelsActionScope()
+  const { copy } = scope
+  const [busy, setBusy] = useState<null | string>(null)
+  const root: string = status.base_url.replace(/\/v1$/, '')
+
+  if (!status.reachable) {
+    return (
+      <SettingsSection icon={Cpu} title={copy.ollamaTitle}>
+        <ListRow description={copy.ollamaNotFoundDetail(root)} title={copy.ollamaNotFoundTitle} />
+      </SettingsSection>
+    )
+  }
+
+  async function handleUse(model: string): Promise<void> {
+    setBusy(model)
 
     try {
-      await setMainModelAssignment(
-        { provider: 'custom', model, base_url: ollama.base_url },
-        { connectionId: owner.connectionId, profile: owner.profile }
-      )
-      setInUse(true)
-      notify({ durationMs: 3_000, kind: 'success', message: model, title: copy.ollamaInUse })
-    } catch (err) {
-      notifyError(err, copy.ollamaFailed)
+      await assignOllamaModel(scope, status, model)
     } finally {
-      setBusy(false)
+      setBusy(null)
     }
   }
 
   return (
-    <SettingsSection
-      aside={inUse ? <Pill tone="primary">{copy.ollamaInUse}</Pill> : undefined}
-      icon={Zap}
-      title={copy.ollamaTitle}
-    >
-      <ListRow
-        action={
-          <Button
-            className={cn(busy && '[&_svg]:animate-spin')}
-            disabled={busy || inUse || !model}
-            onClick={() => void useOllama()}
-            size="sm"
-          >
-            {busy ? <Loader2 /> : inUse ? <CheckCircle2 /> : <Zap />}
-            {inUse ? copy.ollamaInUse : copy.ollamaUse}
-          </Button>
-        }
-        description={copy.ollamaDetail(ollama.base_url)}
-        title={copy.ollamaDetected(ollama.models.length)}
-      />
+    <SettingsSection icon={Cpu} meta={`${status.models.length}`} title={copy.ollamaTitle}>
+      <p className="text-[0.75rem] text-muted-foreground">{copy.ollamaDetected(root)}</p>
+      {status.models.length === 0 && <ListRow title={copy.ollamaEmpty} />}
+      <div className="grid gap-1">
+        {status.models.map(model => (
+          <ListRow
+            action={
+              model === status.active_model ? (
+                <Pill tone="success">{copy.activePill}</Pill>
+              ) : (
+                <Button disabled={busy !== null} onClick={() => void handleUse(model)} size="sm">
+                  {busy === model && <Loader2 className="animate-spin" />}
+                  {copy.useAction}
+                </Button>
+              )
+            }
+            key={model}
+            title={model}
+          />
+        ))}
+      </div>
     </SettingsSection>
   )
 }

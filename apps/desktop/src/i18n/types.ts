@@ -1425,12 +1425,6 @@ export interface Translations extends NoticeTranslations {
     }
     localModels: {
       connectionChanged: string
-      ollamaTitle: string
-      ollamaDetected: (count: number) => string
-      ollamaDetail: (baseUrl: string) => string
-      ollamaUse: string
-      ollamaInUse: string
-      ollamaFailed: string
       title: string
       runtimeTitle: string
       runtimeReady: (backend: string) => string
@@ -1471,16 +1465,15 @@ export interface Translations extends NoticeTranslations {
       downloadResumeAction: string
       downloadDoneToast: (model: string) => string
       installDoneToast: string
-      quickstartTitle: string
-      quickstartDetail: (model: string, size: string) => string
-      quickstartDetailReady: (model: string) => string
-      quickstartAction: string
-      quickstartConfigure: string
+      ollamaTitle: string
+      ollamaDetected: (url: string) => string
+      ollamaNotFoundTitle: string
+      ollamaNotFoundDetail: (url: string) => string
+      ollamaEmpty: string
+      ollamaUsing: (model: string) => string
+      ollamaUseFailed: (model: string) => string
       quickstartDoneToast: (model: string) => string
       quickstartFailed: string
-      quickstartStageEngine: string
-      quickstartStageModel: string
-      quickstartStageFinish: string
       useAction: string
       activePill: string
       updateTitle: string

@@ -524,6 +524,22 @@ def local_models_status():
     }
 
 
+@router.get("/api/local-models/ollama")
+def local_models_ollama():
+    """The user's own Ollama install: reachable or not, and the models its library already holds
+    (native ``/api/tags``). Activation goes through ``/api/model/set`` as a custom endpoint."""
+    from hermes_cli.models import _get_model_config_dict, _get_ollama_base_url
+    from hermes_cli.models_local import _root_for_ollama_native_api, fetch_ollama_local_models
+
+    root = _root_for_ollama_native_api(_get_ollama_base_url())
+    models = fetch_ollama_local_models(root)
+    model_cfg = _get_model_config_dict()
+    active_root = _root_for_ollama_native_api(str(model_cfg.get("base_url") or ""))
+    active = (str(model_cfg.get("default") or "") or None) if active_root == root else None
+    return {"reachable": models is not None, "base_url": f"{root}/v1", "models": models or [],
+            "active_model": active}
+
+
 # ── hardware: what this machine can do ───────────────────────
 def _nvidia_smi_facts() -> dict:
     """GPU identity + live utilization (NVIDIA only; other vendors degrade to {} and the UI hides those readouts).
@@ -633,19 +649,6 @@ def local_models_catalog():
     # mid-download model never reads as downloaded.
     staged_ids = set(bootstrap.staged_model_ids())
     return {"models": [_catalog_row(e, budget, recommended_id, recommended_reason, staged_ids) for e in catalog.CATALOG]}
-
-
-# ── an Ollama the user already runs ─────────────────────────
-@router.get("/api/local-models/ollama")
-def local_models_ollama():
-    """A running Ollama on this machine (or wherever ``OLLAMA_HOST`` / ``providers.ollama.base_url``
-    points), so the pane can offer it instead of installing a second engine. Sync def: blocking probe."""
-    from hermes_cli.models_local import _get_ollama_base_url, _root_for_ollama_native_api, probe_ollama_local_models
-
-    # 127.0.0.1, not localhost: resolving localhost costs ~2s per request on Windows.
-    root = _root_for_ollama_native_api(_get_ollama_base_url()).replace("://localhost", "://127.0.0.1", 1)
-    models = _quiet(lambda: probe_ollama_local_models(root, timeout=1.5), None, debug="ollama probe failed: %r")
-    return {"detected": models is not None, "base_url": f"{root}/v1", "models": list(models or [])}
 
 
 # ── runtime install (job) ────────────────────────────────────

@@ -1454,12 +1454,6 @@ export interface LocalModelLoadProgress {
   percent: number
 }
 
-export interface LocalOllama {
-  base_url: string
-  detected: boolean
-  models: string[]
-}
-
 export interface LocalModelsStatus {
   enabled: boolean
   tag: string

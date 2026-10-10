@@ -5,7 +5,6 @@ import {
   deleteLocalModel,
   downloadLocalModel,
   ejectLocalModel,
-  quickstartLocalModels,
   setLocalServer
 } from '@/hermes'
 import { useI18n } from '@/i18n'
@@ -47,17 +46,6 @@ export function isActiveStatus(status: LocalRuntimeJob['status']): boolean {
 
 // The actions below never reject: a failure toasts only while its owner is
 // still the one on screen, so a late error cannot land on the next connection.
-
-export async function runQuickstart({ owner, client, copy }: LocalModelsActionScope): Promise<void> {
-  try {
-    await quickstartLocalModels(undefined, localModelsRequestScope(owner))
-    watchLocalRuntimeJobs(owner, client)
-  } catch (err) {
-    if (isCurrentLocalModelsOwner(owner)) {
-      notifyError(err, copy.quickstartFailed)
-    }
-  }
-}
 
 export async function downloadCatalogModel(
   { owner, client, copy }: LocalModelsActionScope,

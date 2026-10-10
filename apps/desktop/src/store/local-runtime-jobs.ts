@@ -15,13 +15,13 @@ import {
 import { useEffect, useMemo } from 'react'
 
 import { $apiRequestScope, getApiRequestConnection, getApiRequestProfile } from '@/api/client'
-import type { LocalModelsScope } from '@/api/local-models'
+import type { LocalModelsScope, OllamaStatus } from '@/api/local-models'
 import {
   getLocalCatalog,
   getLocalHardware,
   getLocalModelsJobs,
   getLocalModelsStatus,
-  getLocalOllama,
+  getOllamaStatus,
   installLocalRuntime
 } from '@/hermes'
 import { translateNow } from '@/i18n'
@@ -29,7 +29,7 @@ import { queryClient } from '@/lib/query-client'
 import { useStoresSelector } from '@/lib/use-session-slice'
 import { notify, notifyError } from '@/store/notifications'
 import { $connection } from '@/store/session'
-import type { LocalCatalogModel, LocalHardware, LocalModelsStatus, LocalOllama, LocalRuntimeJob } from '@/types/hermes'
+import type { LocalCatalogModel, LocalHardware, LocalModelsStatus, LocalRuntimeJob } from '@/types/hermes'
 
 export interface LocalModelsOwner extends LocalModelsScope {
   // Legacy primary routes have no registry pin. Fence them by endpoint instead.
@@ -197,11 +197,11 @@ export function localModelsCatalogOptions(owner: LocalModelsOwner): UseQueryOpti
   })
 }
 
-export function localModelsOllamaOptions(owner: LocalModelsOwner): UseQueryOptions<LocalOllama> {
+export function localModelsOllamaOptions(owner: LocalModelsOwner): UseQueryOptions<OllamaStatus> {
   return queryOptions({
     queryKey: localModelsKey(owner, 'ollama'),
-    queryFn: async (): Promise<LocalOllama> => {
-      const ollama: LocalOllama = await getLocalOllama(localModelsRequestScope(owner))
+    queryFn: async (): Promise<OllamaStatus> => {
+      const ollama: OllamaStatus = await getOllamaStatus(localModelsRequestScope(owner))
       assertLocalModelsOwnerLive(owner)
 
       return ollama

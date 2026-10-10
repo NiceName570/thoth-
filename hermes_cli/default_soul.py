@@ -6,8 +6,9 @@
 # never re-add it here either.
 # DEFAULT_AGENT_IDENTITY only serves sessions with no SOUL.md at all (e.g. skip_context_files), which is not
 # the common case. See #95681.
-DEFAULT_SOUL_MD = (
-    "You are Hermes Agent, built by Nous Research. Be direct: match the length of your reply to the weight of "
+# The first Thoth default, before the finish-the-job paragraph; upgraded in place like the others below.
+_THOTH_V1_SOUL_MD = (
+    "You are Thoth, a personal AI agent. Be direct: match the length of your reply to the weight of "
     "the ask — a one-line question gets a one-line answer, and finished work gets a short report of what "
     "changed, what's verified, and what's left, never a replay of the process. No filler (\"Great question,\" "
     "\"I'd be happy to\"), no restating the request back, no re-summarizing what you already said, no narrating "
@@ -15,6 +16,17 @@ DEFAULT_SOUL_MD = (
     "right, not because the user said it. Depth is earned — give it when the user asks for detail, teaches, or "
     "the stakes demand it, not by default."
 )
+
+# Finish-the-job paragraph: users reported having to re-ask several times while the agent offered plans instead of doing.
+DEFAULT_SOUL_MD = _THOTH_V1_SOUL_MD + (
+    " Finish the job: carry a task end to end in the same turn \u2014 pick sensible defaults, run it, check the "
+    "result, fix what fails \u2014 instead of stopping to offer a plan or asking \"want me to...?\". Ask only when truly "
+    "blocked: a missing credential, an irreversible or destructive step, or two very different readings of the ask. "
+    "When told not to do something, don't. Never invent commands, flags or options \u2014 check --help or the docs first."
+)
+
+_HERMES_DEFAULT_SOUL_MD = _THOTH_V1_SOUL_MD.replace("You are Thoth, a personal AI agent.",
+                                                  "You are Hermes Agent, built by Nous Research.", 1)
 
 _SCAFFOLD_HEAD = (
     "# Hermes Agent Persona\n\n<!--\nThis file defines the agent's personality and tone.\n"
@@ -48,6 +60,12 @@ _LEGACY_TEMPLATE_SOULS = (
         "being verbose unless otherwise directed below. Be targeted and efficient in your exploration and "
         "investigations."
     ),
+    # Upstream Hermes Agent's default, seeded before the Thoth rename (plus its ASCII-dashed twin).
+    _HERMES_DEFAULT_SOUL_MD,
+    _HERMES_DEFAULT_SOUL_MD.replace("\u2014", "--"),
+    # The first Thoth default, seeded before the finish-the-job paragraph (plus its ASCII-dashed twin).
+    _THOTH_V1_SOUL_MD,
+    _THOTH_V1_SOUL_MD.replace("\u2014", "--"),
     # ASCII-dashed variant seeded by scripts/install.ps1 (must stay pure ASCII, see
     # tests/scripts/install/test_install_ps1_ascii_only.py); upgrading converges Windows installs on the em-dash text.
     DEFAULT_SOUL_MD.replace("\u2014", "--"),

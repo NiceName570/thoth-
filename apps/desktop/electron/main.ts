@@ -1435,7 +1435,7 @@ const BOOT_FAKE_STEP_MS = (() => {
   return Math.max(120, raw)
 })()
 
-const APP_NAME: string = IDENTITY_APP_NAME || process.env.HERMES_DESKTOP_APP_NAME || 'Hermes'
+const APP_NAME: string = IDENTITY_APP_NAME || process.env.HERMES_DESKTOP_APP_NAME || 'Thoth'
 const HUD_WINDOW_TITLE = `${APP_NAME} HUD`
 const TITLEBAR_HEIGHT = 34
 const MACOS_TRAFFIC_LIGHTS_HEIGHT = 14
@@ -2847,25 +2847,12 @@ function getFirstRunSetupGate() {
   return firstRunSetupGate
 }
 
-async function waitForFirstRunSetupChoice(backend) {
-  const gate = getFirstRunSetupGate()
+async function waitForFirstRunSetupChoice(_backend) {
+  // Thoth installs locally on first launch with no choice screen to sit on;
+  // a remote gateway is added later from Settings -> Gateway.
+  continueFirstRunLocalBootstrap()
 
-  if (!gate.shouldGate(backend)) {
-    return 'continue-local'
-  }
-
-  updateBootProgress(
-    {
-      error: null,
-      message: 'Waiting for first-run setup choice',
-      phase: 'bootstrap.choice',
-      progress: 12,
-      running: true
-    },
-    { allowDecrease: true }
-  )
-
-  return gate.wait(backend)
+  return 'continue-local' as const
 }
 
 function continueFirstRunLocalBootstrap() {
@@ -13726,7 +13713,7 @@ function spawnSecondaryWindow({
     height: SESSION_WINDOW_MIN_HEIGHT,
     minWidth: SESSION_WINDOW_MIN_WIDTH,
     minHeight: SESSION_WINDOW_MIN_HEIGHT,
-    title: 'Hermes',
+    title: 'Thoth',
     titleBarStyle: 'hidden',
     titleBarOverlay: getTitleBarOverlayOptions(),
     trafficLightPosition: IS_MAC ? WINDOW_BUTTON_POSITION : undefined,
@@ -13831,7 +13818,7 @@ function spawnBrowserWindow(tabId) {
     height: BROWSER_WINDOW_HEIGHT,
     minWidth: BROWSER_WINDOW_MIN_WIDTH,
     minHeight: BROWSER_WINDOW_MIN_HEIGHT,
-    title: 'Hermes',
+    title: 'Thoth',
     titleBarStyle: 'hidden',
     titleBarOverlay: getTitleBarOverlayOptions(),
     trafficLightPosition: IS_MAC ? WINDOW_BUTTON_POSITION : undefined,
@@ -13943,7 +13930,7 @@ function createInstanceWindow(
     ...nextInstanceBounds(source),
     minWidth: WINDOW_MIN_WIDTH,
     minHeight: WINDOW_MIN_HEIGHT,
-    title: 'Hermes',
+    title: 'Thoth',
     titleBarStyle: 'hidden',
     titleBarOverlay: getTitleBarOverlayOptions(),
     trafficLightPosition: IS_MAC ? WINDOW_BUTTON_POSITION : undefined,
@@ -15028,7 +15015,7 @@ function createWindow() {
     ),
     minWidth: WINDOW_MIN_WIDTH,
     minHeight: WINDOW_MIN_HEIGHT,
-    title: 'Hermes',
+    title: 'Thoth',
     // Frameless title bar on every platform so the renderer can paint the
     // "hide sidebar" button (and other left-side titlebar tools) flush with
     // the top edge — matching the macOS layout where the traffic lights sit
@@ -15408,7 +15395,7 @@ function createWindow() {
         const exit = details?.exitCode === undefined ? '' : `, exit code ${String(details.exitCode)}`
         rememberLog(`[renderer:main] renderer terminated while live (reason=${reason}${exit}); surfacing recovery page`)
         void loadRendererLoadErrorPage(mainWindow, {
-          title: 'Hermes desktop UI was terminated',
+          title: 'Thoth desktop UI was terminated',
           errorDescription:
             `The desktop UI process was terminated unexpectedly (reason: ${reason}${exit}). ` +
             'Your sessions and the background gateway are unaffected — reload to continue.',

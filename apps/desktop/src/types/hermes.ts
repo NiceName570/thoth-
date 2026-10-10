@@ -1839,6 +1839,19 @@ export interface MemoryStatusResponse {
   builtin_files: { memory: number; user: number }
 }
 
+export type MemoryTarget = 'memory' | 'user'
+
+/** One built-in memory file (`MEMORY.md` / `USER.md`) as the Memories page lists it. */
+export interface MemoryFileEntries {
+  chars: number
+  enabled: boolean
+  entries: string[]
+  limit: number
+}
+
+/** `GET /api/memory/entries`. */
+export type MemoryEntriesResponse = Record<MemoryTarget, MemoryFileEntries>
+
 /** `GET /api/curator` — background skill-curator status. */
 export interface CuratorStatusResponse {
   enabled: boolean

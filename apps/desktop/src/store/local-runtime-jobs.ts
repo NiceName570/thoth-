@@ -15,12 +15,13 @@ import {
 import { useEffect, useMemo } from 'react'
 
 import { $apiRequestScope, getApiRequestConnection, getApiRequestProfile } from '@/api/client'
-import type { LocalModelsScope } from '@/api/local-models'
+import type { LocalModelsScope, OllamaStatus } from '@/api/local-models'
 import {
   getLocalCatalog,
   getLocalHardware,
   getLocalModelsJobs,
   getLocalModelsStatus,
+  getOllamaStatus,
   installLocalRuntime
 } from '@/hermes'
 import { translateNow } from '@/i18n'
@@ -191,6 +192,19 @@ export function localModelsCatalogOptions(owner: LocalModelsOwner): UseQueryOpti
       assertLocalModelsOwnerLive(owner)
 
       return models
+    },
+    retry: false
+  })
+}
+
+export function localModelsOllamaOptions(owner: LocalModelsOwner): UseQueryOptions<OllamaStatus> {
+  return queryOptions({
+    queryKey: localModelsKey(owner, 'ollama'),
+    queryFn: async (): Promise<OllamaStatus> => {
+      const ollama: OllamaStatus = await getOllamaStatus(localModelsRequestScope(owner))
+      assertLocalModelsOwnerLive(owner)
+
+      return ollama
     },
     retry: false
   })

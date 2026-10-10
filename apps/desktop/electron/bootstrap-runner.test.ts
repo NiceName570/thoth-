@@ -11,6 +11,7 @@ import {
   cachedScriptPath,
   cleanInstallerLogLine,
   hasExistingGitCheckout,
+  installerEnv,
   installRefForStamp,
   isPinnedCommit,
   resolveInstallScript,
@@ -319,3 +320,22 @@ test.skipIf(process.platform === 'win32')(
     assert.equal(result.error, 'install.sh --manifest failed: exit 3\n✗ manifest broke')
   }
 )
+
+test.runIf(process.platform === 'win32')('installer env drops an inherited PowerShell 7 module path', () => {
+  const saved = process.env.PSModulePath
+  process.env.PSModulePath = 'C:\\Program Files\\PowerShell\\7\\Modules'
+
+  try {
+    const env = installerEnv(os.tmpdir())
+    assert.equal(
+      Object.keys(env).some(name => name.toLowerCase() === 'psmodulepath'),
+      false
+    )
+  } finally {
+    if (saved === undefined) {
+      delete process.env.PSModulePath
+    } else {
+      process.env.PSModulePath = saved
+    }
+  }
+})

@@ -9,9 +9,12 @@ import type {
   CuratorStatusResponse,
   DebugShareResponse,
   ElevenLabsVoicesResponse,
+  MemoryEntriesResponse,
+  MemoryFileEntries,
   MemoryProviderConfig,
   MemoryProviderOAuthStatus,
-  MemoryStatusResponse
+  MemoryStatusResponse,
+  MemoryTarget
 } from '@/types/hermes'
 
 import {
@@ -117,6 +120,24 @@ export function resetMemory(target: 'all' | 'memory' | 'user'): Promise<{ ok: bo
     path: '/api/memory/reset',
     method: 'POST',
     body: { target }
+  })
+}
+
+export function getMemoryEntries(): Promise<MemoryEntriesResponse> {
+  return hermesApi<MemoryEntriesResponse>({
+    ...profileScoped(),
+    path: '/api/memory/entries'
+  })
+}
+
+/** Rewrites one entry (`content`) or deletes it (`content` null). `entry` is the full
+ *  listed text, so a stale page is refused instead of overwriting a newer entry. */
+export function editMemoryEntry(target: MemoryTarget, entry: string, content: null | string): Promise<MemoryFileEntries> {
+  return hermesApi<MemoryFileEntries>({
+    ...profileScoped(),
+    path: '/api/memory/entries',
+    method: 'POST',
+    body: { target, entry, content }
   })
 }
 

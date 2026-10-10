@@ -1,6 +1,5 @@
 import { createContext, memo, useContext } from 'react'
 
-import { DecodeText } from '@/components/ui/decode-text'
 
 import { StatusbarControls } from '../shell/statusbar-controls'
 
@@ -25,11 +24,7 @@ export const WiredPane = memo(function WiredPane({ part }: { part: keyof WiringA
       return <StatusbarControls items={[]} leftItems={[]} />
     }
 
-    return (
-      <div className="grid h-full place-items-center">
-        <DecodeText className="text-(--ui-text-quaternary)" cursor prefix={1} text="HERMES" />
-      </div>
-    )
+    return <div className="h-full" />
   }
 
   return <>{api[part]}</>

@@ -36,8 +36,15 @@ export const jaLocalModels: TranslationOverride<Translations['settings']['localM
   noRecommendationTitle: 'このマシン向けの自動推奨モデルはありません',
   noRecommendationDetail:
     '自動セットアップには、GPU メモリまたはユニファイドメモリに完全に収まる厳選モデルが必要です。下の一覧から選ぶか、ほかのモデルを探すこともできます。',
+  ollamaTitle: 'Ollama',
+  ollamaDetected: url => `${url} の Ollama ライブラリにあるモデルです。\`ollama pull <model>\` で追加できます。`,
+  ollamaNotFoundTitle: 'Ollama が見つかりません',
+  ollamaNotFoundDetail: url =>
+    `${url} から応答がありません。Ollama を起動すると（\`ollama serve\`）一覧が表示されます。`,
+  ollamaEmpty: 'Ollama ライブラリは空です。`ollama pull <model>` でモデルを取得してください。',
+  ollamaUsing: model => `${model} を既定にしました。新しいチャットで使われます。`,
+  ollamaUseFailed: model => `${model} に切り替えられませんでした`,
   noRecommendationAction: 'モデルを探す',
-  quickstartConfigure: '自分で選ぶ',
   downloaded: 'ダウンロード済み',
   downloadAction: size => `ダウンロード · ${size}`,
   downloadProgress: (done, total) => `${done} / ${total}`,

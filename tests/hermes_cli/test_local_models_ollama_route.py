@@ -75,3 +75,14 @@ def test_reports_unreachable_when_nothing_listens(tmp_path, monkeypatch):
 
     assert data == {"reachable": False, "base_url": f"http://127.0.0.1:{port}/v1", "models": [],
                     "active_model": None}
+
+
+def test_bind_all_ollama_host_is_reached_on_loopback(tmp_path, monkeypatch, ollama_root):
+    """``OLLAMA_HOST=0.0.0.0:<port>`` is a listen address; dialling it fails on Windows."""
+    port = ollama_root.rsplit(":", 1)[1]
+    client = _client(tmp_path, monkeypatch, f"0.0.0.0:{port}")
+
+    data = client.get("/api/local-models/ollama").json()
+
+    assert data["reachable"] is True
+    assert data["base_url"] == f"http://127.0.0.1:{port}/v1"

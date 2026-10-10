@@ -1254,7 +1254,7 @@ class TestLocalOllamaModelDiscovery:
         from hermes_cli.models import _get_ollama_base_url, _root_for_ollama_native_api
 
         monkeypatch.setenv("OLLAMA_HOST", "0.0.0.0")
-        assert _root_for_ollama_native_api(_get_ollama_base_url()) == "http://0.0.0.0:11434"
+        assert _root_for_ollama_native_api(_get_ollama_base_url()) == "http://127.0.0.1:11434"
         monkeypatch.setenv("OLLAMA_HOST", ":22434")
         assert _root_for_ollama_native_api(_get_ollama_base_url()) == "http://127.0.0.1:22434"
         monkeypatch.setenv("OLLAMA_HOST", "::1")

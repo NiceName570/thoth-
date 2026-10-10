@@ -1012,6 +1012,7 @@ from hermes_cli.web_routers import (
     sessions as _sessions_routes,
     profiles as _profiles_routes,
     memory_providers as _memory_providers_routes,
+    memory_entries as _memory_entries_routes,
     config_env as _config_env_routes,
     models as _models_routes,
     messaging as _messaging_routes,
@@ -1040,6 +1041,7 @@ app.include_router(_sessions_routes.list_router)
 app.include_router(_profiles_routes.sessions_router)
 app.include_router(_sessions_routes.search_router)
 app.include_router(_memory_providers_routes.router)
+app.include_router(_memory_entries_routes.router)
 app.include_router(_config_env_routes.config_router)
 app.include_router(_models_routes.router)
 app.include_router(_config_env_routes.router)

@@ -195,6 +195,9 @@ def _rewrite_with_auxiliary_model(
 # --- Edge TTS (free default) ---
 async def _generate_edge_tts(text: str, output_path: str, tts_config: dict[str, Any]) -> str:
     edge_tts = _origin()._import_edge_tts()
+    from tools.tts_edge_endpoint import configure_edge_synthesis_endpoint
+
+    configure_edge_synthesis_endpoint(edge_tts)
     edge_config = tts_config.get("edge") or {}
     speed = float(edge_config.get("speed", tts_config.get("speed", 1.0)))
     kwargs = {"voice": edge_config.get("voice", DEFAULT_EDGE_VOICE)}

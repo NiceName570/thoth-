@@ -238,6 +238,23 @@ def _synthesize_builtin(engine: str, text: str, file_str: str, tts_config: dict[
         globals()[entry[2]](text, file_str, tts_config)
 
 
+def _synthesize_with_piper_fallback(
+    engine: str, text: str, file_str: str, tts_config: dict[str, Any], instructions: Optional[str],
+) -> str:
+    """Run *engine* -> the engine that spoke. Edge failing falls back to local Piper when installed:
+    Microsoft moved Edge read-aloud to a new host and token scheme in Oct 2026 (rany2/edge-tts#490),
+    and a dead free voice should not silence the agent."""
+    try:
+        _synthesize_builtin(engine, text, file_str, tts_config, instructions)
+        return engine
+    except Exception as exc:
+        if engine in _BUILTIN_DISPATCH or not _importable(_import_piper):
+            raise
+        logger.warning("Edge TTS failed (%s); falling back to Piper (local)", exc)
+        _synthesize_builtin("piper", text, file_str, tts_config, instructions)
+        return "piper"
+
+
 def _finalize_voice_delivery(
     file_str: str, provider: str, command_provider_config: Optional[dict[str, Any]], want_opus: bool,
 ) -> tuple:
@@ -395,7 +412,7 @@ def _text_to_speech_single(
             provider, error = _select_builtin_engine(provider)
             if error:
                 return error
-            _synthesize_builtin(provider, text, file_str, tts_config, instructions)
+            provider = _synthesize_with_piper_fallback(provider, text, file_str, tts_config, instructions)
         if not os.path.exists(file_str) or os.path.getsize(file_str) == 0:
             return _error_json(f"TTS generation produced no output (provider: {provider})")
 

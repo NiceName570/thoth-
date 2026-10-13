@@ -13,7 +13,7 @@ from fastapi.testclient import TestClient
 
 
 class _TagsHandler(BaseHTTPRequestHandler):
-    def do_GET(self):  # noqa: N802 - http.server API
+    def do_GET(self):
         if self.path != "/api/tags":
             self.send_error(404)
             return
@@ -63,6 +63,18 @@ def test_lists_the_ollama_library_and_marks_the_active_model(tmp_path, monkeypat
     assert data["models"] == ["llama3.2:3b", "qwen3:8b"]
     assert data["base_url"] == f"{ollama_root}/v1"
     assert data["active_model"] == "qwen3:8b"
+
+
+def test_a_wildcard_ollama_host_is_reached_over_loopback(tmp_path, monkeypatch, ollama_root):
+    """``OLLAMA_HOST=0.0.0.0:<port>`` (Ollama serving the LAN) is the bind address, not a dialable one."""
+    port = ollama_root.rsplit(":", 1)[1]
+    client = _client(tmp_path, monkeypatch, f"0.0.0.0:{port}")
+
+    data = client.get("/api/local-models/ollama").json()
+
+    assert data["reachable"] is True
+    assert data["models"] == ["llama3.2:3b", "qwen3:8b"]
+    assert data["base_url"] == f"http://127.0.0.1:{port}/v1"
 
 
 def test_reports_unreachable_when_nothing_listens(tmp_path, monkeypatch):

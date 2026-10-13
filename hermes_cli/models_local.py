@@ -65,7 +65,30 @@ def _configured_ollama_base_url() -> str:
 
 
 def _ollama_host_from_env(env_host: str) -> str:
-    """Apply Ollama's own ``OLLAMA_HOST`` defaulting rules (port 11434, IPv6 bracketing)."""
+    """Apply Ollama's own ``OLLAMA_HOST`` defaulting rules (port 11434, IPv6 bracketing), dialing a
+    wildcard bind address over loopback: ``OLLAMA_HOST=0.0.0.0`` (serve on the LAN) is where the
+    server listens, and Windows refuses a connect to ``0.0.0.0`` / ``::``."""
+    return _dial_wildcard_as_loopback(_ollama_host_url(env_host))
+
+
+_WILDCARD_LOOPBACK = {"0.0.0.0": "127.0.0.1", "::": "[::1]"}
+
+
+def _dial_wildcard_as_loopback(url: str) -> str:
+    try:
+        parts = urllib.parse.urlsplit(url if "://" in url else "http://" + url)
+        loopback = _WILDCARD_LOOPBACK.get(parts.hostname or "")
+        port = parts.port
+    except ValueError:
+        return url
+    if not loopback:
+        return url
+    userinfo = parts.netloc.rsplit("@", 1)[0] + "@" if "@" in parts.netloc else ""
+    dialed = parts._replace(netloc=f"{userinfo}{loopback}" + (f":{port}" if port else "")).geturl()
+    return dialed if "://" in url else dialed.split("://", 1)[1]
+
+
+def _ollama_host_url(env_host: str) -> str:
     port = _OLLAMA_DEFAULT_PORT
     if env_host.startswith(":") and not env_host.startswith("::"):
         return "127.0.0.1" + env_host

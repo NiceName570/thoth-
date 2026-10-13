@@ -135,6 +135,15 @@ export function ejectLocalModel(modelId: string, scope?: LocalModelsScope): Prom
   })
 }
 
+/** Free every model the configured Ollama server(s) hold in memory; they reload on the next message. */
+export function ejectOllamaModels(scope?: LocalModelsScope): Promise<{ ejected: string[]; ok: boolean }> {
+  return hermesApi<{ ejected: string[]; ok: boolean }>({
+    ...(scope ?? profileScoped()),
+    method: 'POST',
+    path: '/api/local-models/ollama/eject'
+  })
+}
+
 export function setLocalServer(action: 'start' | 'stop', scope?: LocalModelsScope): Promise<{ ok: boolean }> {
   return hermesApi<{ ok: boolean }>({
     ...(scope ?? profileScoped()),

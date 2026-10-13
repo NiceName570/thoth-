@@ -254,6 +254,10 @@ export const zhHantChrome = {
       editModels: '編輯模型…',
       followDefault: '使用設定中的預設模型',
       refreshModels: '重新整理模型',
+      ejectOllama: '卸載 Ollama 模型',
+      ejectedOllama: (count: number) =>
+        count === 0 ? '沒有已載入的 Ollama 模型' : `已從記憶體卸載 ${count} 個 Ollama 模型`,
+      ejectOllamaFailed: '無法卸載 Ollama 模型',
       favorites: '我的最愛',
       addFavorite: '加入我的最愛',
       removeFavorite: '從我的最愛移除',

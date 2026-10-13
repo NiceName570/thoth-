@@ -4,6 +4,10 @@ export const zhModelMenu = {
   editModels: '编辑模型…',
   followDefault: '使用设置中的默认模型',
   refreshModels: '刷新模型',
+  ejectOllama: '卸载 Ollama 模型',
+  ejectedOllama: (count: number) =>
+    count === 0 ? '没有已加载的 Ollama 模型' : `已从内存卸载 ${count} 个 Ollama 模型`,
+  ejectOllamaFailed: '无法卸载 Ollama 模型',
   favorites: '收藏',
   addFavorite: '添加到收藏',
   removeFavorite: '从收藏中移除',

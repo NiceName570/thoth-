@@ -906,6 +906,26 @@ def local_models_eject(body: ModelEjectBody):
     return {"ok": True}
 
 
+@router.post("/api/local-models/ollama/eject")
+def local_models_ollama_eject(profile: Optional[str] = None):
+    """Free every model an Ollama server holds in memory, for each Ollama endpoint the profile's
+    config points at. Sync def: blocking urlopen calls run in the threadpool."""
+    from hermes_cli.models_local import configured_ollama_roots, unload_ollama_models
+
+    with _config_profile_scope(profile):
+        roots = configured_ollama_roots(config_mod.load_config())
+    ejected: list[str] = []
+    found = False
+    with _http_error(502):
+        for root in roots:
+            names = unload_ollama_models(root)
+            found = found or names is not None
+            ejected += names or []
+    if not found:
+        raise HTTPException(status_code=404, detail="no reachable Ollama server")
+    return {"ok": True, "ejected": ejected}
+
+
 @router.post("/api/local-models/activate")
 async def local_models_activate(body: ModelActivateBody, profile: Optional[str] = None):
     """Make a downloaded model the default for new chats: a config write via the same machinery as

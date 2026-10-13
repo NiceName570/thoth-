@@ -364,6 +364,45 @@ def _ollama_local_catalog(force_refresh: bool) -> list[str]:
     return fetch_api_models(fallback_key, fallback_base, headers=fallback_headers or None) or []
 
 
+def configured_ollama_roots(config: dict) -> list[str]:
+    """Native API roots of every endpoint config.yaml points at that could be a local Ollama: the
+    resolved Ollama URL, ``model.base_url`` and each ``providers:``/``custom_providers:`` URL.
+    Ollama Cloud is excluded — it has no server-side residency to drop."""
+    from hermes_cli.config import get_compatible_custom_providers
+    urls = [_get_ollama_base_url(), str((config.get("model") or {}).get("base_url") or "")]
+    urls += [str(entry.get("base_url") or "") for entry in get_compatible_custom_providers(config)]
+    roots: list[str] = []
+    for url in urls:
+        root = _root_for_ollama_native_api(url).rstrip("/")
+        host = (urllib.parse.urlsplit(root).hostname or "").lower() if root else ""
+        if host and host != "ollama.com" and not host.endswith(".ollama.com") and root not in roots:
+            roots.append(root)
+    return roots
+
+
+def unload_ollama_models(root: str, probe_timeout: float = 2.0, timeout: float = 30.0) -> Optional[list[str]]:
+    """Drop every model resident on the Ollama server at *root* from RAM/VRAM (``/api/ps``, then
+    ``keep_alive: 0`` per model): frees memory like a restart without killing the server, and the
+    next request reloads on demand. ``None`` when *root* does not answer as an Ollama server."""
+    from hermes_cli.models import _get_json, _urlopen_model_catalog_request
+    try:
+        payload = _get_json(root + "/api/ps", timeout=probe_timeout)
+    except (ValueError, OSError, http.client.HTTPException):
+        return None
+    running = payload.get("models") if isinstance(payload, dict) else None
+    if not isinstance(running, list):
+        return None
+    names = [str(m.get("name") or m.get("model")) for m in running
+             if isinstance(m, dict) and (m.get("name") or m.get("model"))]
+    for name in names:
+        req = urllib.request.Request(
+            root + "/api/generate", data=json.dumps({"model": name, "keep_alive": 0}).encode(),
+            headers={"Content-Type": "application/json"}, method="POST")
+        with _urlopen_model_catalog_request(req, timeout=timeout) as resp:
+            resp.read()
+    return names
+
+
 def _lmstudio_server_root(base_url: Optional[str]) -> Optional[str]:
     """LM Studio server root: users paste the OpenAI runtime URL (``.../v1``) or the native prefix
     (``.../api``, ``.../api/v1``); native probes append ``/api/v1/...`` themselves."""

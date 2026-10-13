@@ -354,6 +354,10 @@ export const arChrome = {
       editModels: 'تحرير النماذج',
       followDefault: 'استخدام الافتراضي من الإعدادات',
       refreshModels: 'تحديث النماذج',
+      ejectOllama: 'إخراج نماذج Ollama',
+      ejectedOllama: (count: number) =>
+        count === 0 ? 'لا توجد نماذج Ollama محمّلة' : `تم إخراج ${count} من نماذج Ollama من الذاكرة`,
+      ejectOllamaFailed: 'تعذّر إخراج نماذج Ollama',
       favorites: 'المفضلة',
       addFavorite: 'إضافة إلى المفضلة',
       removeFavorite: 'إزالة من المفضلة',

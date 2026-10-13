@@ -4,6 +4,10 @@ export const esModelMenu = {
   editModels: 'Editar modelos…',
   followDefault: 'Usar el predeterminado de Ajustes',
   refreshModels: 'Actualizar modelos',
+  ejectOllama: 'Expulsar modelos de Ollama',
+  ejectedOllama: (count: number) =>
+    count === 0 ? 'No había modelos de Ollama cargados' : `${count} modelo(s) de Ollama liberado(s) de la memoria`,
+  ejectOllamaFailed: 'No se pudieron expulsar los modelos de Ollama',
   favorites: 'Favoritos',
   addFavorite: 'Añadir a favoritos',
   removeFavorite: 'Quitar de favoritos',

@@ -4,6 +4,9 @@ export interface ModelMenuTranslations {
   editModels: string
   followDefault: string
   refreshModels: string
+  ejectOllama: string
+  ejectedOllama: (count: number) => string
+  ejectOllamaFailed: string
   favorites: string
   addFavorite: string
   removeFavorite: string

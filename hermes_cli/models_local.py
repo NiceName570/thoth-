@@ -388,17 +388,22 @@ def _ollama_local_catalog(force_refresh: bool) -> list[str]:
 
 
 def configured_ollama_roots(config: dict) -> list[str]:
-    """Native API roots of every endpoint config.yaml points at that could be a local Ollama: the
-    resolved Ollama URL, ``model.base_url`` and each ``providers:``/``custom_providers:`` URL.
-    Ollama Cloud is excluded — it has no server-side residency to drop."""
+    """Native API roots of every endpoint config.yaml points at that could be this machine's Ollama:
+    the resolved Ollama URL, ``model.base_url`` and each ``providers:``/``custom_providers:`` URL.
+    Loopback only (a wildcard bind is dialed as loopback): an eject must never probe a remote
+    provider or unload models from a shared LAN/cloud Ollama other people are using."""
+    from agent.proxy_bypass import is_loopback_host
     from hermes_cli.config import get_compatible_custom_providers
     urls = [_get_ollama_base_url(), str((config.get("model") or {}).get("base_url") or "")]
     urls += [str(entry.get("base_url") or "") for entry in get_compatible_custom_providers(config)]
     roots: list[str] = []
     for url in urls:
-        root = _root_for_ollama_native_api(url).rstrip("/")
-        host = (urllib.parse.urlsplit(root).hostname or "").lower() if root else ""
-        if host and host != "ollama.com" and not host.endswith(".ollama.com") and root not in roots:
+        root = _dial_wildcard_as_loopback(_root_for_ollama_native_api(url).rstrip("/")) if url else ""
+        try:
+            host = urllib.parse.urlsplit(root).hostname if root else None
+        except ValueError:
+            continue
+        if is_loopback_host(host) and root not in roots:
             roots.append(root)
     return roots
 

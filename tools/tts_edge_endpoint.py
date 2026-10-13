@@ -20,7 +20,9 @@ def configure_edge_synthesis_endpoint(sdk: Any) -> None:
     current = urlsplit(communication.WSS_URL)
     if current.hostname != "speech.platform.bing.com":
         return
-    token = parse_qs(current.query)["TrustedClientToken"][0]
+    token = next(iter(parse_qs(current.query).get("TrustedClientToken", [])), "")
+    if not token:
+        return
     communication.WSS_URL = (
         "wss://api.msedgeservices.com/tts/cognitiveservices/websocket/v1?"
         + urlencode({"Ocp-Apim-Subscription-Key": token})

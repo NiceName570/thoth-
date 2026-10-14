@@ -42,10 +42,11 @@ class SkinConfig:
 
 
 def _branding(who: str, symbol: str, goodbye: str, prompt: str = "", help_header: str = "") -> dict[str, str]:
-    """Branding block for a "<who> Agent" persona keyed by its glyph."""
+    """Branding block for a "<who> Agent" persona keyed by its glyph; Thoth goes by its bare name."""
+    name = who if who == "Thoth" else f"{who} Agent"
     return {
-        "agent_name": f"{who} Agent",
-        "welcome": f"Welcome to {who} Agent! Type your message or /help for commands.",
+        "agent_name": name,
+        "welcome": f"Welcome to {name}! Type your message or /help for commands.",
         "goodbye": goodbye, "response_label": f" {symbol} {who} ", "prompt_symbol": prompt or symbol,
         "help_header": help_header or f"({symbol}) Available Commands"}
 

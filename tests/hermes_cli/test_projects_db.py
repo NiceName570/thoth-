@@ -43,7 +43,7 @@ def test_create_get_list(conn):
     proj = pdb.get_project(conn, pid)
 
     assert proj is not None
-    assert proj.slug == "hermes-agent"
+    assert proj.slug == "thoth"
     assert proj.name == "Thoth"
     # First folder becomes primary.
     assert proj.primary_path == os.path.abspath("/tmp/hermes")

@@ -1613,7 +1613,7 @@ slash:
   voice:
     description: "Sprachmodus umschalten"
   wake:
-    description: "Aktivierungswort-Erkennung für 'Hey Thoth's umschalten"
+    description: "Aktivierungswort-Erkennung für 'Hey Thoth' umschalten"
   busy:
     description: "Steuern, wie Nachrichten behandelt werden, während Thoth arbeitet"
   tools:

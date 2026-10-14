@@ -1613,7 +1613,7 @@ slash:
   voice:
     description: "Ses modunu aç/kapat"
   wake:
-    description: "'Hey Thoth's uyandırma sözcüğü dinleyicisini aç/kapat"
+    description: "'Hey Thoth' uyandırma sözcüğü dinleyicisini aç/kapat"
   busy:
     description: "Thoth çalışırken mesajların nasıl işleneceğini denetle"
   tools:

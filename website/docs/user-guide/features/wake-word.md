@@ -1,7 +1,7 @@
 ---
 sidebar_position: 11
 title: "Wake Word"
-description: "Hands-free 'Hey Thoth's wake word — start a voice session by speaking, the 'Hey Siri' way"
+description: "Hands-free 'Hey Thoth' wake word — start a voice session by speaking, the 'Hey Siri' way"
 ---
 
 # Wake Word ("Hey Thoth")

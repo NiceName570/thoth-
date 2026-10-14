@@ -1,4 +1,4 @@
-"""jev-observer: passive Jev observation of completed Hermes exchanges.
+"""jev-observer: passive Jev observation of completed Thoth exchanges.
 
 ``post_llm_call`` captures the user message and final reply into a local ``pending`` row and hands
 Jev scoring to a background thread. The hook returns nothing and touches no prompt, reply or

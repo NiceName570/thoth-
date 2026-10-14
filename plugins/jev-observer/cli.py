@@ -12,7 +12,7 @@ from .jev_adapter import handoff
 def setup(parser) -> None:
     sub = parser.add_subparsers(dest="jev_action", required=True)
     exp = sub.add_parser("export", help="Compact handoff for one conversation (export only)")
-    exp.add_argument("--session", required=True, help="Hermes session id")
+    exp.add_argument("--session", required=True, help="Thoth session id")
     exp.add_argument("--recent", type=int, default=3, help="Observations to summarise (default 3)")
     exp.add_argument("--out", help="Write JSON here instead of stdout")
     chk = sub.add_parser("check", help="One live Jev call on a sample reply; prints probabilities")

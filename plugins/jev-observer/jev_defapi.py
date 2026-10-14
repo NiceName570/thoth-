@@ -1,6 +1,6 @@
 """DefAPI Jev-1.13 observer client. Requires DEFAPI_API_KEY in the environment.
 
-Vendored from personalitypersistence-/jev/jev_defapi.py. Hermes changes: relative import, and
+Vendored from personalitypersistence-/jev/jev_defapi.py. Thoth changes: relative import, and
 ``api_key`` is passed in (resolved through ``agent.secret_scope``) instead of read from os.environ.
 
 Usage: python jev_defapi.py "Assistant: I am curious about this idea."

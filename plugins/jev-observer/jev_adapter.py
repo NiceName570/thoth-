@@ -71,7 +71,7 @@ def handoff(observations, recent=3):
 if __name__ == "__main__":
     if len(sys.argv) != 3 or sys.argv[1] not in ("validate", "handoff"):
         raise SystemExit("Usage: python jev_adapter.py validate|handoff observations.json")
-    observations = validate(json.loads(Path(sys.argv[2]).read_text(encoding="utf-8")))  # windows-footgun: ok -- vendored verbatim; Hermes never runs this CLI path
+    observations = validate(json.loads(Path(sys.argv[2]).read_text(encoding="utf-8")))  # windows-footgun: ok -- vendored verbatim; Thoth never runs this CLI path
     if sys.argv[1] == "validate":
         print(f"Valid: {len(observations)} observations")
     else:

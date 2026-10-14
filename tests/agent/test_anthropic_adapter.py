@@ -35,7 +35,7 @@ def test_missing_sdk_error_reports_why_the_lazy_install_did_not_land(monkeypatch
     from agent import anthropic_adapter
     from pm.package import InstallError
 
-    restart = InstallError("venv", "anthropic installed; restart Hermes to activate the new dependency environment")
+    restart = InstallError("venv", "anthropic installed; restart Thoth to activate the new dependency environment")
 
     def ensure_import(extra):
         raise restart
@@ -83,7 +83,7 @@ class TestBuildAnthropicClient:
             kwargs = mock_sdk.Anthropic.call_args[1]
             headers = kwargs["default_headers"]
             assert headers["HTTP-Referer"] == "https://hermes-agent.nousresearch.com"
-            assert headers["X-Title"] == "Hermes Agent"
+            assert headers["X-Title"] == "Thoth"
             from hermes_cli.version_info import get_version_info
             assert headers["User-Agent"] == f"HermesAgent/{get_version_info().base_version}"
             # Auth branch is unchanged: x-api-key via api_key, betas kept.
@@ -280,7 +280,7 @@ class TestResolveAnthropicToken:
         monkeypatch.setattr("agent.anthropic_credentials.Path.home", lambda: tmp_path)
         # Isolate source #5 (credential_pool): ensure source #4 (Claude Code
         # creds, incl. the macOS keychain read which Path.home does not cover)
-        # returns nothing, mirroring a Hermes-PKCE-only setup.
+        # returns nothing, mirroring a Thoth-PKCE-only setup.
         monkeypatch.setattr("agent.anthropic_credentials.read_claude_code_credentials", lambda: None)
 
         pool_entry = PooledCredential.from_dict("anthropic", {
@@ -1808,7 +1808,7 @@ def test_oauth_system_prompt_sanitizer_preserves_docs_url():
             {
                 "role": "system",
                 "content": (
-                    "Hermes Agent by Nous Research uses hermes-agent skills. "
+                    "Thoth by Nous Research uses hermes-agent skills. "
                     "Docs: https://hermes-agent.nousresearch.com/docs ; "
                     "interpreter ~/.hermes/hermes-agent/venv/bin/python ; "
                     "source github.com/NousResearch/hermes-agent ; mail hermes-agent@example.com ; "

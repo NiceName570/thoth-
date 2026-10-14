@@ -1,4 +1,4 @@
-"""Pydantic request/response models for the Hermes dashboard web server."""
+"""Pydantic request/response models for the Thoth dashboard web server."""
 
 from __future__ import annotations
 
@@ -398,6 +398,11 @@ class MemoryProviderSelect(BaseModel):
 
 class MemoryReset(BaseModel):
     target: str = "all"  # "all" | "memory" | "user"
+
+class MemoryEntryEdit(BaseModel):
+    target: str  # "memory" | "user"
+    entry: str  # the full current entry, exactly as listed
+    content: Optional[str] = None  # None deletes the entry
 
 class BackupRequest(BaseModel):
     output: Optional[str] = None  # defaults to a timestamped zip in the home dir

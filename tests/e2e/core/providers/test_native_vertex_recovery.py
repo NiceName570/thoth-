@@ -150,7 +150,7 @@ def test_compacted_session_rows_keep_tool_pairs(results: dict[str, Any]) -> None
 
 
 def test_stream_drop_retried_without_duplicate_content(results: dict[str, Any]) -> None:
-    """The response after a signed tool step dies mid-body: Hermes resends the same valid request
+    """The response after a signed tool step dies mid-body: Thoth resends the same valid request
     (signature intact), prints the recovered answer, and persists it exactly once."""
     res = results["drop"]
     fake, nh = res["fake"], res["nh"]

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================================================
-# venv-style activation of the Hermes dev environment for an interactive shell.
+# venv-style activation of the Thoth dev environment for an interactive shell.
 #
 #   source ./activate       (bash / zsh, repo root)
 #   source ./activate.fish  (fish)

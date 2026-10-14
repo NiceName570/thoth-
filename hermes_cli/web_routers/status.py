@@ -74,7 +74,7 @@ def _safe_call(mod, fn_name: str, default):
 
 def _count_status_active_sessions() -> int:
     """Best-effort status garnish. Opens read-only (via the shared stale-schema heal) so
-    /api/status never routinely writes to state.db while another Hermes process uses it."""
+    /api/status never routinely writes to state.db while another Thoth process uses it."""
     from hermes_state import _default_db_path
     # The heal helper bootstraps a missing store; this garnish must not — on a fresh install
     # /api/status polls would otherwise create state.db before the user's first session.

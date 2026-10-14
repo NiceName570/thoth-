@@ -109,7 +109,7 @@ class PtyHermes:
         self.hermes_home = self.home / ".hermes"
         operator = (_operator_home() / ".hermes").resolve()
         assert operator not in (self.hermes_home.resolve(), *self.hermes_home.resolve().parents), (
-            f"sandbox {self.hermes_home} sits inside the operator's Hermes home")
+            f"sandbox {self.hermes_home} sits inside the operator's Thoth home")
         write_hermes_home(self.hermes_home, llm.base_url, extra_config=extra_config)
         self.llm = llm
         self.screen = Screen(rows, cols)

@@ -694,11 +694,11 @@ export function ConnectionsRegistrySection() {
 
       {editor ? (
         <div className="mt-4 space-y-3 rounded-lg border border-border/60 p-4">
-          <div className="grid grid-cols-2 gap-2 @2xl:grid-cols-4">
+          <div className="grid grid-cols-3 gap-2">
             {/* Kind is fixed once created (buttons disable on edit). On create
                 every kind is offered; Local is disabled while the managed
                 local entry exists (the registry holds at most one). */}
-            {(editor.id ? ([editor.kind] as const) : (['local', 'cloud', 'remote', 'ssh'] as const)).map(kind => (
+            {(editor.id ? ([editor.kind] as const) : (['local', 'remote', 'ssh'] as const)).map(kind => (
               <Button
                 disabled={Boolean(editor.id) || (kind === 'local' && hasLocal)}
                 key={kind}

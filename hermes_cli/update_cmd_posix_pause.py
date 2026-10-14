@@ -171,7 +171,7 @@ def _discover_launchd() -> list[dict]:
 
 
 def _home_of(pid: int) -> str | None:
-    """The Hermes home *pid* serves (its control socket lives there), or ``None``."""
+    """The Thoth home *pid* serves (its control socket lives there), or ``None``."""
     from hermes_cli.update_fleet_scope import gateway_pid_home
     with suppress(Exception):
         if home := gateway_pid_home(pid):
@@ -237,7 +237,7 @@ def _discover_bare(service_pids: set[int]) -> tuple[list[dict], list[str]]:
         argv, home = _capture_gateway_argv(pid), gateway_pid_home(pid)
         if marker or not argv or not home:
             why = f"supervised by {marker}" if marker else "its command line could not be read" if not argv \
-                else "its Hermes home could not be proved"
+                else "its Thoth home could not be proved"
             notices.append(f"  ↷ gateway PID {pid} keeps running until after the update ({why})")
             continue
         bare.append({"pid": pid, "argv": list(argv), "home": str(home), "ct": get_process_start_time(pid)})

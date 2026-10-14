@@ -565,10 +565,10 @@ def _longest_key_match(table: dict[str, int], model_lower: str) -> Optional[tupl
     return None
 
 
-def _ollama_show_context(data: dict[str, Any], *, gguf_first: bool, minimum: Optional[int] = None) -> Optional[int]:
-    """Context length from an Ollama ``/api/show`` payload. ``parameters.num_ctx`` is the RUNTIME
-    window (Modelfile override), ``model_info.*.context_length`` the GGUF training max. Local users
-    control num_ctx (prefer it); hosted operators may cap it arbitrarily (``gguf_first``)."""
+def _ollama_show_context(data: dict[str, Any], *, gguf_first: bool, minimum: Optional[int] = None, gguf_cap: Optional[int] = None) -> Optional[int]:
+    """Context from an Ollama ``/api/show`` payload: ``parameters.num_ctx`` (Modelfile RUNTIME window;
+    local users control it) or ``model_info.*.context_length`` (GGUF max; ``gguf_first`` for hosted
+    operators who cap arbitrarily; ``gguf_cap`` bounds it since a 128K+ KV cache spills to the CPU)."""
     def _num_ctx():
         for line in data.get("parameters", "").split("\n"):
             parts = line.strip().split()
@@ -580,7 +580,7 @@ def _ollama_show_context(data: dict[str, Any], *, gguf_first: bool, minimum: Opt
     def _gguf():
         for key, value in data.get("model_info", {}).items():
             if "context_length" in key and isinstance(value, (int, float)):
-                yield int(value)
+                yield int(value) if gguf_cap is None else min(int(value), gguf_cap)
     for reader in ((_gguf, _num_ctx) if gguf_first else (_num_ctx, _gguf)):
         for ctx in reader():
             if minimum is None or ctx >= minimum:
@@ -1449,18 +1449,18 @@ def _is_ollama_server(base_url: str, api_key: str) -> bool:
 
 
 def query_ollama_num_ctx(model: str, base_url: str, api_key: str = "") -> Optional[int]:
-    """Ollama ``/api/show`` context (Modelfile num_ctx, else GGUF max); the value to send as ``num_ctx``."""
+    """Ollama ``/api/show`` context (Modelfile num_ctx, else GGUF max capped at the 64K floor); sent as ``num_ctx``."""
     bare_model, server_url = _strip_provider_prefix(model), _server_root(base_url)
     if not _is_ollama_server(base_url, api_key):
         return None
     _disk_key = f"{server_url}|{bare_model}"
-    disk_hit = _local_probe_disk_get("ollama_num_ctx", _disk_key)
+    disk_hit = _local_probe_disk_get("ollama_num_ctx_capped", _disk_key)
     if isinstance(disk_hit, int) and disk_hit > 0:
         return disk_hit
     data = _ollama_show(server_url, api_key, bare_model)
-    ctx = _ollama_show_context(data, gguf_first=False) if data is not None else None
+    ctx = _ollama_show_context(data, gguf_first=False, gguf_cap=MINIMUM_CONTEXT_LENGTH) if data else None
     if ctx is not None:
-        _local_probe_disk_put("ollama_num_ctx", _disk_key, ctx)
+        _local_probe_disk_put("ollama_num_ctx_capped", _disk_key, ctx)
     return ctx
 
 
@@ -1943,7 +1943,7 @@ def _resolve_codex_oauth_context_length_with_source(model: str, access_token: st
             return bumped, source
         return ctx, source
     # The Codex catalog only knows the base slug (no -900k, no vendor/).
-    # ``-900k`` variants are Hermes picker aliases — the Codex catalog only knows the base slug, so resolve
+    # ``-900k`` variants are Thoth picker aliases — the Codex catalog only knows the base slug, so resolve
     # against the stripped id. Also drop any ``vendor/`` namespace (``openai/gpt-5.6-sol-900k``): the
     # main-agent path normalizes it away before reaching here, but display/auxiliary callers pass it through
     # (#92797 review).

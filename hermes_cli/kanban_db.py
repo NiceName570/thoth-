@@ -1,6 +1,6 @@
 """SQLite-backed Kanban board shared across profiles (the cross-profile coordination primitive).
 
-Lives under the shared Hermes root: ``default`` board DB at ``<root>/kanban.db`` (pre-boards
+Lives under the shared Thoth root: ``default`` board DB at ``<root>/kanban.db`` (pre-boards
 back-compat), other boards at ``<root>/kanban/boards/<slug>/``; a worker on one board never sees
 another. Board resolution: ``board=`` arg > ``HERMES_KANBAN_BOARD`` > ``HERMES_KANBAN_DB`` (pins the
 file path) > ``<root>/kanban/current`` > ``default`` — but only for unfenced callers; the dispatcher

@@ -42,7 +42,7 @@ const emptySessionsResponse = {
   total: 0
 }
 
-describe('Hermes REST helpers', () => {
+describe('Thoth REST helpers', () => {
   let api: ReturnType<typeof vi.fn>
 
   beforeEach(() => {

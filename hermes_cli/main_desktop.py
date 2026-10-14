@@ -50,7 +50,7 @@ def _packaged_resources_dir(desktop_dir: Path) -> Optional[Path]:
     executable = _desktop_packaged_executable(desktop_dir)
     if executable is None:
         return None
-    # macOS: …/Hermes.app/Contents/MacOS/Hermes → …/Contents/Resources
+    # macOS: …/Thoth.app/Contents/MacOS/Thoth → …/Contents/Resources
     return executable.parent.parent / "Resources" if sys.platform == "darwin" else executable.parent / "resources"
 
 
@@ -159,14 +159,14 @@ def _desktop_packaged_executable_in(release_dir: Path) -> Optional[Path]:
     stage-and-swap staging dir (#86443).
     """
     if sys.platform == "darwin":
-        candidates = list(release_dir.glob("mac*/Hermes.app/Contents/MacOS/Hermes"))
+        candidates = list(release_dir.glob("mac*/Thoth.app/Contents/MacOS/Thoth"))
     elif sys.platform == "win32":
         candidates = [
-            release_dir / d / "Hermes.exe" for d in ("win-unpacked", "win-ia32-unpacked", "win-arm64-unpacked")
+            release_dir / d / "Thoth.exe" for d in ("win-unpacked", "win-ia32-unpacked", "win-arm64-unpacked")
         ]
     else:
         candidates = [
-            release_dir / d / n for d in ("linux-unpacked", "linux-arm64-unpacked") for n in ("hermes", "Hermes")
+            release_dir / d / n for d in ("linux-unpacked", "linux-arm64-unpacked") for n in ("hermes", "Thoth")
         ]
 
     existing = [p for p in candidates if p.exists()]
@@ -174,11 +174,11 @@ def _desktop_packaged_executable_in(release_dir: Path) -> Optional[Path]:
         return None
     if sys.platform == "win32" and len(existing) > 1:
         # A stale win-arm64-unpacked next to the real win-unpacked: picking by
-        # mtime can hand a wrong-architecture Hermes.exe to the launcher. Prefer
+        # mtime can hand a wrong-architecture Thoth.exe to the launcher. Prefer
         # candidates whose PE machine matches the host; mtime when none parse.
         # Multiple unpacked trees can coexist (e.g. a stale win-arm64-unpacked left behind by a cross-arch
         # experiment next to the real win-unpacked). Picking purely by mtime can then hand a
-        # wrong-architecture Hermes.exe to the launcher, which Windows rejects with "This app can't run on
+        # wrong-architecture Thoth.exe to the launcher, which Windows rejects with "This app can't run on
         # your computer" (#69179).
         expected = _expected_windows_pe_machines()
         matching = [p for p in existing if _pe_machine_or_none(p) in expected]
@@ -188,7 +188,7 @@ def _desktop_packaged_executable_in(release_dir: Path) -> Optional[Path]:
 
 
 # ─── Desktop stage-and-swap pack (#86443) ─────────────────────────────────── electron-builder packs IN
-# PLACE: before-pack.mjs wipes ``release/<platform>- unpacked`` (or the mac ``Hermes.app``) and the Electron
+# PLACE: before-pack.mjs wipes ``release/<platform>- unpacked`` (or the mac ``Thoth.app``) and the Electron
 # unpack + asar + rename then rebuild it. Any failure after that wipe — corrupt cached zip, blocked
 # download, missing dep, disk full — leaves the user with NO app, and ``hermes update`` used to report
 # "partially complete" over an empty release/. Fix the class, not the predicate: build into a STAGING output
@@ -301,12 +301,12 @@ def _discard_desktop_staging(staging_dir: Path) -> None:
 
 # ─── Desktop exe integrity gate (#69179) ──────────────────────────────────── The desktop self-update chain
 # (Desktop → hermes-setup --update → `hermes update` → `hermes desktop --build-only` → relaunch) rebuilds
-# Hermes.exe on the end user's machine and used to verify only that the file EXISTS before declaring
+# Thoth.exe on the end user's machine and used to verify only that the file EXISTS before declaring
 # success. A corrupt cached Electron zip whose extraction produced a truncated electron.exe, an interrupted
 # rcedit resource rewrite, a disk-full pack, or a wrong-arch unpacked tree therefore shipped a broken binary
 # that Windows refuses to load ("This app can't run on your computer" / 此应用无法在你的电脑上运行). These helpers parse
 # the PE header — no signature infrastructure required — so a structurally broken or wrong-architecture
-# Hermes.exe is caught BEFORE the updater replaces the working app, and the previous build can be restored
+# Thoth.exe is caught BEFORE the updater replaces the working app, and the previous build can be restored
 # from the .bak tree that apps/desktop/scripts/before-pack.mjs now preserves.
 _PE_MACHINE_I386 = 0x014C
 _PE_MACHINE_AMD64 = 0x8664
@@ -726,7 +726,7 @@ def _desktop_macos_local_codesign(app: Path, *, desktop_dir: Path, identity: str
 
     # 1) Standalone Mach-O files (native modules, dylibs, crashpad handler),
     #    compared relative to the app root — the absolute path always contains
-    #    the outer Hermes.app component.
+    #    the outer Thoth.app component.
     contents = app / "Contents"
     standalone: list[Path] = []
     for root, _dirs, files in os.walk(contents):
@@ -793,7 +793,7 @@ def _desktop_macos_relaunchable_fixup(
     """Re-sign a locally-built macOS app so in-place self-update doesn't reset TCC grants.
 
     A rebuilt ad-hoc bundle (new cdhash, no stable Designated Requirement) reports
-    "Hermes is damaged" and loses every grant. Clear quarantine xattrs, then sign
+    "Thoth is damaged" and loses every grant. Clear quarantine xattrs, then sign
     with ``desktop.macos_signing_identity`` or identifier-pinned ad-hoc, keeping
     entitlements. When a configured identity fails (#121857): over a locally-signed
     install, retry identifier-pinned ad-hoc before the cdhash-only legacy sign;
@@ -816,7 +816,7 @@ def _desktop_macos_relaunchable_fixup(
     exe = _desktop_packaged_executable_in(release_dir or (desktop_dir / "release"))
     if exe is None:
         return True
-    # exe = .../Hermes.app/Contents/MacOS/Hermes  ->  app bundle = .../Hermes.app
+    # exe = .../Thoth.app/Contents/MacOS/Thoth  ->  app bundle = .../Thoth.app
     app = exe.parents[2]
     if not str(app).endswith(".app") or not app.is_dir():
         return True
@@ -933,14 +933,14 @@ def _swap_in_new_macos_bundle(tmp: Path, target: Path, old: Path) -> None:
 
 
 def _running_macos_app_bundles() -> set[Path]:
-    """``.app`` bundles of every live Hermes Desktop process. A running bundle is never swapped
+    """``.app`` bundles of every live Thoth process. A running bundle is never swapped
     under: Electron loads ``app.asar`` chunks and helper apps lazily, so renaming its bundle away
     and deleting the old tree crashes the live app (the detached updater waits for it to exit)."""
     import psutil
     bundles: set[Path] = set()
     for proc in psutil.process_iter(["exe"]):
         exe = proc.info.get("exe") or ""
-        if exe.endswith("/Contents/MacOS/Hermes"):
+        if exe.endswith("/Contents/MacOS/Thoth"):
             bundles.add(Path(exe).resolve().parents[2])
     return bundles
 
@@ -952,7 +952,7 @@ def _stage_macos_bundle_copy(src: Path, dst: Path) -> None:
 
 
 def _install_rebuilt_desktop_app(desktop_dir: Path, candidates: list[Path]) -> tuple[list[Path], list[str]]:
-    """Copy the rebuilt macOS bundle into every stale or missing installed ``Hermes.app`` in
+    """Copy the rebuilt macOS bundle into every stale or missing installed ``Thoth.app`` in
     *candidates* (``_installed_desktop_apps()``) (#52339).
 
     ``hermes desktop --build-only`` (what ``hermes update`` runs) packages into
@@ -971,7 +971,7 @@ def _install_rebuilt_desktop_app(desktop_dir: Path, candidates: list[Path]) -> t
     rebuilt_exe = _desktop_packaged_executable(desktop_dir)
     if rebuilt_exe is None:
         return [], []
-    # .../Hermes.app/Contents/MacOS/Hermes -> .../Hermes.app
+    # .../Thoth.app/Contents/MacOS/Thoth -> .../Thoth.app
     return _install_rebuilt_macos_bundles(
         rebuilt_exe.parents[2], candidates, running=_running_macos_app_bundles())
 
@@ -987,7 +987,7 @@ def _refresh_installed_desktop_apps(desktop_dir: Path) -> None:
     for app in installed:
         if app in missing:
             print(f"  ✓ Reinstalled the Desktop app at {app}: it had been removed, so Finder, "
-                  "the Dock and Spotlight could not find Hermes")
+                  "the Dock and Spotlight could not find Thoth")
         else:
             print(f"  ✓ Installed the rebuilt Desktop app at {app}")
     for problem in problems:
@@ -1025,7 +1025,7 @@ def _update_owned_macos_bundles(candidates: list[Path]) -> list[Path]:
 
 
 def _owns_installed_desktop_apps() -> bool:
-    """A packaged app runs the checkout under the default Hermes home, so only that checkout (on
+    """A packaged app runs the checkout under the default Thoth home, so only that checkout (on
     macOS) may build for it: a bundle from any other tree (a dev worktree) would split shell from
     backend."""
     if sys.platform != "darwin":
@@ -1036,12 +1036,12 @@ def _owns_installed_desktop_apps() -> bool:
 
 
 def _installed_desktop_apps() -> list[Path]:
-    """Installed macOS ``Hermes.app`` bundles this checkout's update owns.
+    """Installed macOS ``Thoth.app`` bundles this checkout's update owns.
 
     When no owned copy is left, a recorded one that has gone missing still counts: its ownership
     stamp left with the bundle, and without the record nothing would ever put it back (Finder, the
-    Dock and Spotlight lose Hermes for good). A copy moved to the other Applications folder keeps
-    its stamp, so it is found instead of doubled. Hermes' GUI uninstall deletes the record.
+    Dock and Spotlight lose Thoth for good). A copy moved to the other Applications folder keeps
+    its stamp, so it is found instead of doubled. Thoth's GUI uninstall deletes the record.
     """
     if not _owns_installed_desktop_apps():
         return []
@@ -1059,7 +1059,7 @@ def _installed_desktop_apps() -> list[Path]:
 def _installed_desktop_launch_target(desktop_dir: Path, packaged_executable: Path) -> Path:
     """The executable ``hermes desktop`` launches: the installed app once it IS the checkout build.
 
-    Finder, the Dock and Spotlight open the installed ``Hermes.app``; launching the ``release/``
+    Finder, the Dock and Spotlight open the installed ``Thoth.app``; launching the ``release/``
     bundle beside it ran the same app from a second path while the installed copy went stale
     (#52339). Refresh the installed copies, then launch the first one that matches the checkout
     build. The checkout bundle stays the fallback: nothing installed, or a copy that is running
@@ -1071,7 +1071,7 @@ def _installed_desktop_launch_target(desktop_dir: Path, packaged_executable: Pat
     rebuilt_hash = _app_asar_hash(packaged_executable.parents[2])
     for app in _installed_desktop_apps():
         if rebuilt_hash is not None and _app_asar_hash(app) == rebuilt_hash:
-            return app / "Contents" / "MacOS" / "Hermes"
+            return app / "Contents" / "MacOS" / "Thoth"
     return packaged_executable
 
 
@@ -1099,7 +1099,7 @@ def _install_rebuilt_macos_bundles(
             continue
         if app.resolve() in running:
             problems.append(
-                f"{app} is running and was not refreshed; quit Hermes Desktop and run "
+                f"{app} is running and was not refreshed; quit Thoth and run "
                 "`hermes update` again (or update from inside the app)")
             continue
         if codesign:
@@ -1201,7 +1201,7 @@ def _desktop_linux_sandbox_fixup(packaged_executable: Path) -> bool:
 
     sandbox, st = _sandbox_helper_lstat(packaged_executable)
     if not sandbox.exists():
-        print(f"✗ Hermes Desktop is missing Electron's Linux sandbox helper: {sandbox}")
+        print(f"✗ Thoth is missing Electron's Linux sandbox helper: {sandbox}")
         return False
     # Reject symlinks — chown/chmod must not follow an attacker-controlled link.
     if st is None:
@@ -1220,7 +1220,7 @@ def _desktop_linux_sandbox_fixup(packaged_executable: Path) -> bool:
 
     sudo = shutil.which("sudo")
     if not sudo:
-        print("✗ Hermes Desktop requires sudo to configure Electron's Linux sandbox helper.")
+        print("✗ Thoth requires sudo to configure Electron's Linux sandbox helper.")
         return False
 
     print("→ Configuring Electron Linux sandbox helper (sudo required)...")
@@ -1342,7 +1342,7 @@ def _desktop_launch_options() -> tuple[list[str], str, str, str, bool]:
 
 
 def _register_linux_desktop_entry(defer: bool = False):
-    """Install the XDG desktop entry for Hermes Desktop (Linux only, best-effort).
+    """Install the XDG desktop entry for Thoth (Linux only, best-effort).
 
     ``Exec`` and ``Icon`` are absolute so the entry works outside a login shell.
     ``hermes uninstall --gui`` removes it.
@@ -1438,7 +1438,7 @@ def build_prepared_desktop(desktop_dir: Path, *, source_mode: bool, npm: str, en
         # stamp stays stale, so `hermes desktop` run outside the app rebuilds it
         # (_desktop_build_needed), and the in-app update completes with desktop=True.
         print(f"  ⚠ Skipped rebuilding the desktop app: this update is running inside it (pid {ancestor}),")
-        print("    and Windows locks a running app's files. Quit Hermes Desktop and run `hermes desktop`")
+        print("    and Windows locks a running app's files. Quit Thoth and run `hermes desktop`")
         print("    from a terminal, or use Update now in Settings → About, to rebuild and reopen it.")
         return None
     build_label = "source build" if source_mode else "packaged app"
@@ -1610,20 +1610,20 @@ def _site_packages_install_kind(project_root: Path) -> Optional[str]:
 
 
 def _launch_installed_macos_desktop_app() -> bool:
-    """Launch a separately installed ``/Applications/Hermes.app``, if present.
+    """Launch a separately installed ``/Applications/Thoth.app``, if present.
 
     Returns True only when the app bundle exists and a detached launch was
     started — the caller then exits without touching the build ladder.
     """
     if sys.platform != "darwin":
         return False
-    executable = Path("/Applications/Hermes.app/Contents/MacOS/Hermes")
+    executable = Path("/Applications/Thoth.app/Contents/MacOS/Thoth")
     if not executable.is_file():
         return False
     from hermes_cli.bundled_app import launch_detached
 
     pid = launch_detached([str(executable)], cwd=executable.parent)
-    print(f"→ Launched the installed Hermes Desktop app: {executable} (pid {pid})")
+    print(f"→ Launched the installed Thoth app: {executable} (pid {pid})")
     return True
 
 
@@ -1650,7 +1650,7 @@ def cmd_gui(args: argparse.Namespace):
         print(f"Desktop GUI source not found at: {desktop_dir}")
         if install_kind == "homebrew":
             print(
-                "  This Hermes came from Homebrew, which does not ship the desktop app's\n"
+                "  This Thoth came from Homebrew, which does not ship the desktop app's\n"
                 "  source tree, so it cannot be built from this install.\n"
                 "  Install the desktop app from https://hermes-agent.nousresearch.com,\n"
                 "  or run `hermes desktop` from a source checkout."
@@ -1671,7 +1671,7 @@ def cmd_gui(args: argparse.Namespace):
     # grants survive rebuilds, then exit without building/launching.
     if getattr(args, "setup_tcc_identity", False):
         from hermes_cli.main_desktop_tcc import _desktop_macos_setup_tcc_identity
-        identity = getattr(args, "identity", None) or "Hermes Local Signing"
+        identity = getattr(args, "identity", None) or "Thoth Local Signing"
         sys.exit(0 if _desktop_macos_setup_tcc_identity(identity) else 1)
 
     if bundled:
@@ -1696,7 +1696,7 @@ def cmd_gui(args: argparse.Namespace):
             print("  Refusing to run npm without serialization; check the checkout permissions and retry.")
             sys.exit(1)
         if not acquired:
-            print("✗ A Hermes update or another desktop dependency install or build is already running.")
+            print("✗ A Thoth update or another desktop dependency install or build is already running.")
             print("  Wait for it to finish, then retry.")
             sys.exit(2)
 
@@ -1759,7 +1759,7 @@ def cmd_gui(args: argparse.Namespace):
         return
 
     if source_mode:
-        print("→ Launching Hermes Desktop from source build...")
+        print("→ Launching Thoth from source build...")
         # Launch only the prepared runtime. npm exec can provision a missing
         # Electron package, including when --skip-build was requested.
         electron = _electron_dir(PROJECT_ROOT)
@@ -1789,7 +1789,7 @@ def cmd_gui(args: argparse.Namespace):
         launch_command.append("--close-preview")
     launch_command.extend(_explicit_profile_args())
     if not source_mode:
-        desktop_launch_notice(f"→ Launching packaged Hermes Desktop: {' '.join(launch_command)}")
+        desktop_launch_notice(f"→ Launching packaged Thoth: {' '.join(launch_command)}")
     # The launch target is ready; the fixups above finished mutating the
     # packaged tree. Electron is the long-lived handoff, so release the build
     # lock now — an open Desktop window must never block a future rebuild.
@@ -1839,7 +1839,7 @@ def cmd_gui(args: argparse.Namespace):
             )
         if deferred_entry is not None:
             deferred_entry.finish()
-        desktop_launch_notice("✓ Hermes Desktop launched in a detached window; you can close this shell.")
+        desktop_launch_notice("✓ Thoth launched in a detached window; you can close this shell.")
         sys.exit(0)
     with desktop_console_output(source_mode=source_mode) as streams:
         try:
@@ -1851,7 +1851,7 @@ def cmd_gui(args: argparse.Namespace):
             # closing the Desktop, not a launcher crash. Exit cleanly instead
             # of dumping a KeyboardInterrupt traceback from subprocess.run
             # (#59848).
-            print("\n✓ Hermes Desktop closed.")
+            print("\n✓ Thoth closed.")
             sys.exit(0)
     if deferred_entry is not None:
         deferred_entry.finish()
@@ -1897,7 +1897,7 @@ def _launch_bundled_desktop(
         if getattr(args, name, False)
     ]
     if refused:
-        print(f"✗ {', '.join(refused)} cannot apply to a bundled Hermes install.")
+        print(f"✗ {', '.join(refused)} cannot apply to a bundled Thoth install.")
         print("  This app ships prebuilt and has no desktop source tree to build.")
         sys.exit(2)
 
@@ -1907,13 +1907,13 @@ def _launch_bundled_desktop(
         # The stamp says bundled, so a tree that is not one is a damaged or
         # mispackaged install. Report it — degrading to the build ladder
         # would run npm inside the app's own resources.
-        print(f"✗ This Hermes is stamped as a bundled desktop install, but {exc}.")
-        print("  The install is damaged — reinstall Hermes from the website.")
+        print(f"✗ This Thoth is stamped as a bundled desktop install, but {exc}.")
+        print("  The install is damaged — reinstall Thoth from the website.")
         sys.exit(1)
 
     if layout.launcher is None:
-        print(f"✗ Found no Hermes Desktop launcher in {layout.app_root}.")
-        print("  The install is damaged — reinstall Hermes from the website.")
+        print(f"✗ Found no Thoth launcher in {layout.app_root}.")
+        print("  The install is damaged — reinstall Thoth from the website.")
         sys.exit(1)
 
     launch_command = [str(layout.launcher)]
@@ -1927,7 +1927,7 @@ def _launch_bundled_desktop(
     launch_command.extend(electron_flags)
     launch_command.extend(_explicit_profile_args())
     pid = launch_detached(launch_command, env=env, cwd=layout.app_root)
-    print(f"→ Launched Hermes Desktop: {' '.join(launch_command)} (pid {pid})")
+    print(f"→ Launched Thoth: {' '.join(launch_command)} (pid {pid})")
     sys.exit(0)
 
 

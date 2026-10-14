@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Hermes Agent bootstrap: clone, acquire uv/Python, then hand the checkout to
+# Thoth bootstrap: clone, acquire uv/Python, then hand the checkout to
 # the same completion an update runs -- command publication, product builds and
 # post-build maintenance -- so a fresh install and a finished update land in one
 # state. Heavy dependencies (tool binaries, browsers, node) are pm's job:
 # `hermes pm install`.
 #
-# Stage protocol kept for Hermes-Setup:
+# Stage protocol kept for Thoth-Setup:
 #   --manifest            print the stage list as JSON
 #   --stage NAME [--json] run one stage
 #   --non-interactive     skip stages that need input
@@ -20,7 +20,7 @@ set -u
 # hygiene can't break the locked sync the way it used to before pm owned it.
 export UV_NO_CONFIG=1
 
-REPO_URL="${HERMES_REPO_URL:-https://github.com/NousResearch/hermes-agent.git}"
+REPO_URL="${HERMES_REPO_URL:-https://github.com/NiceName570/thoth-.git}"
 BRANCH="main"
 INSTALL_COMMIT=""
 INSTALL_DIR="${HERMES_INSTALL_DIR:-}"
@@ -88,7 +88,7 @@ export HERMES_HOME
 INSTALL_LOG="$HERMES_HOME/logs/install.log"
 
 # Same glyphs as the pre-pm installer. Colour only on a terminal, so CI
-# transcripts and the Hermes-Setup driver read plain text.
+# transcripts and the Thoth-Setup driver read plain text.
 if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
     C_RED=$'\033[0;31m' C_GREEN=$'\033[0;32m' C_YELLOW=$'\033[0;33m'
     C_CYAN=$'\033[0;36m' C_MAGENTA=$'\033[0;35m' C_BOLD=$'\033[1m'
@@ -106,7 +106,7 @@ fail() { STAGE_REASON="$1"; FAILURE_CLASS="${2:-other}"; log_error "$1"; exit 1;
 
 # One local receipt per full-ladder run, under the profile's shared-metrics dir.
 # Only closed tokens and two timestamps (never STAGE_REASON, paths or URLs); the
-# installer never sends anything. Hermes reports it as hermes.install.run on a
+# installer never sends anything. Thoth reports it as hermes.install.run on a
 # later start only while shared metrics collection is on, and deletes it
 # unreported when collection is off. Best effort: never fails the install.
 write_install_receipt() {
@@ -162,7 +162,7 @@ stage_signal() {
 print_banner() {
     printf '\n%s%s' "$C_MAGENTA" "$C_BOLD"
     printf '%s\n' "┌─────────────────────────────────────────────────────────┐"
-    printf '%s\n' "│             ☤ Hermes Agent Installer                    │"
+    printf '%s\n' "│             ☤ Thoth Installer                           │"
     printf '%s\n' "├─────────────────────────────────────────────────────────┤"
     printf '%s\n' "│  An open source AI agent by Nous Research.              │"
     printf '%s\n' "└─────────────────────────────────────────────────────────┘"
@@ -171,7 +171,7 @@ print_banner() {
 
 # Interactive runs collapse child-process output (git, uv, pm, the builds)
 # into one status line. CI, --verbose and a non-terminal stdout -- the
-# Hermes-Setup --json driver, E2E transcripts -- keep the full stream those
+# Thoth-Setup --json driver, E2E transcripts -- keep the full stream those
 # readers parse.
 quiet_output() {
     [ "$VERBOSE" = true ] && return 1
@@ -325,14 +325,14 @@ uv_bootstrap_target() {
 UV_CMD=""
 ensure_uv() {
     [ -n "$UV_CMD" ] && return 0
-    # Always the pinned artifact, never a uv already on PATH: Hermes runs only
+    # Always the pinned artifact, never a uv already on PATH: Thoth runs only
     # its own packaged toolchain.
     local _target
     if ! _target="$(uv_bootstrap_target)"; then
-        fail "no pinned uv build for this platform ($(uname -s) $(uname -m)); Hermes does not support this host" unsupported_platform
+        fail "no pinned uv build for this platform ($(uname -s) $(uname -m)); Thoth does not support this host" unsupported_platform
     fi
     if ! uv_bootstrap_pin "$_target"; then
-        fail "no pinned uv artifact for $_target; Hermes does not support this host" unsupported_platform
+        fail "no pinned uv artifact for $_target; Thoth does not support this host" unsupported_platform
     fi
     local _store="${HERMES_RUNTIME_DIR:-$HERMES_HOME/tools}"
     local _entry="$_store/uv-$UV_PIN_VERSION-$_target"
@@ -473,7 +473,7 @@ products_record() {
 stage_record() {
     case "$1" in
         prerequisites) echo "System prerequisites|runtime|false" ;;
-        repository)    echo "Download Hermes Agent|runtime|false" ;;
+        repository)    echo "Download Thoth|runtime|false" ;;
         venv)          echo "Create Python environment|runtime|false" ;;
         python-deps)   echo "Install Python dependencies|runtime|false" ;;
         config)        echo "Prepare config and skills|configuration|false" ;;
@@ -642,7 +642,7 @@ stage_repository() {
             if [ -d "$INSTALL_DIR" ] && [ ! -L "$INSTALL_DIR" ] && [ -z "$(ls -A "$INSTALL_DIR")" ]; then
                 rmdir "$INSTALL_DIR" || fail "cannot replace empty $INSTALL_DIR" filesystem_error
             else
-                fail "$INSTALL_DIR exists and is not a Hermes git checkout. Move it aside, or install elsewhere with --dir <path>." dir_not_checkout
+                fail "$INSTALL_DIR exists and is not a Thoth git checkout. Move it aside, or install elsewhere with --dir <path>." dir_not_checkout
             fi
         fi
         mkdir -p "$(dirname "$INSTALL_DIR")"
@@ -722,7 +722,7 @@ stage_repository() {
             || log_warn "could not disable gc.writeCommitGraph in $INSTALL_DIR"
         git -C "$INSTALL_DIR" config fetch.writeCommitGraph false \
             || log_warn "could not disable fetch.writeCommitGraph in $INSTALL_DIR"
-        log_success "Hermes Agent cloned"
+        log_success "Thoth cloned"
     fi
     if [ -n "$INSTALL_COMMIT" ] && [ "$pinned" = false ]; then
         # A rerun over an existing checkout pins here (a fresh clone pinned
@@ -822,7 +822,7 @@ append_shell_path() {
         return 0
     fi
     mkdir -p "$(dirname "$rc")"
-    printf '\n# Hermes Agent command\n%s\n' "$line" >> "$rc" || fail "cannot update PATH in $rc" filesystem_error
+    printf '\n# Thoth command\n%s\n' "$line" >> "$rc" || fail "cannot update PATH in $rc" filesystem_error
     log_success "added ~/.local/bin to PATH in $rc"
 }
 
@@ -929,7 +929,7 @@ stage_complete() {
             "$commit" "$BRANCH" "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)" > "$INSTALL_DIR/.hermes-bootstrap-complete.tmp"
         mv -f "$INSTALL_DIR/.hermes-bootstrap-complete.tmp" "$INSTALL_DIR/.hermes-bootstrap-complete"
     fi
-    log_success "Hermes Agent install complete. Run: hermes"
+    log_success "Thoth install complete. Run: hermes"
 }
 
 print_path_reload_hint() {

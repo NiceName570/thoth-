@@ -524,6 +524,22 @@ def local_models_status():
     }
 
 
+@router.get("/api/local-models/ollama")
+def local_models_ollama():
+    """The user's own Ollama install: reachable or not, and the models its library already holds
+    (native ``/api/tags``). Activation goes through ``/api/model/set`` as a custom endpoint."""
+    from hermes_cli.models import _get_model_config_dict, _get_ollama_base_url
+    from hermes_cli.models_local import _root_for_ollama_native_api, fetch_ollama_local_models
+
+    root = _root_for_ollama_native_api(_get_ollama_base_url())
+    models = fetch_ollama_local_models(root)
+    model_cfg = _get_model_config_dict()
+    active_root = _root_for_ollama_native_api(str(model_cfg.get("base_url") or ""))
+    active = (str(model_cfg.get("default") or "") or None) if active_root == root else None
+    return {"reachable": models is not None, "base_url": f"{root}/v1", "models": models or [],
+            "active_model": active}
+
+
 # ── hardware: what this machine can do ───────────────────────
 def _nvidia_smi_facts() -> dict:
     """GPU identity + live utilization (NVIDIA only; other vendors degrade to {} and the UI hides those readouts).
@@ -837,7 +853,7 @@ def _terminate_state_pid() -> None:
 
     if not stop_recorded_orphan():
         raise HTTPException(status_code=409, detail=(
-            "Another Hermes process owns this server, or its ownership could not be verified"))
+            "Another Thoth process owns this server, or its ownership could not be verified"))
 
 
 def _stop_server() -> None:
@@ -888,6 +904,26 @@ def local_models_eject(body: ModelEjectBody):
     with _http_error(502):
         _router_request(endpoint, "/models/unload", timeout=120, payload={"model": body.model_id})
     return {"ok": True}
+
+
+@router.post("/api/local-models/ollama/eject")
+def local_models_ollama_eject(profile: Optional[str] = None):
+    """Free every model an Ollama server holds in memory, for each Ollama endpoint the profile's
+    config points at. Sync def: blocking urlopen calls run in the threadpool."""
+    from hermes_cli.models_local import configured_ollama_roots, unload_ollama_models
+
+    with _config_profile_scope(profile):
+        roots = configured_ollama_roots(config_mod.load_config())
+    ejected: list[str] = []
+    found = False
+    with _http_error(502):
+        for root in roots:
+            names = unload_ollama_models(root)
+            found = found or names is not None
+            ejected += names or []
+    if not found:
+        raise HTTPException(status_code=404, detail="no reachable Ollama server")
+    return {"ok": True, "ejected": ejected}
 
 
 @router.post("/api/local-models/activate")
@@ -981,7 +1017,7 @@ async def local_models_download_browsed(body: BrowsedDownloadBody):
 @router.post("/api/local-models/sideload")
 async def local_models_sideload(body: SideloadBody):
     """Register a GGUF already on this machine: link it into the managed models dir (copy only when linking is
-    impossible) and bounce the router. The original stays put; delete-from-Hermes removes only our link."""
+    impossible) and bounce the router. The original stays put; delete-from-Thoth removes only our link."""
     src = Path(body.path)
     if not src.is_file() or src.suffix.lower() != ".gguf":
         raise HTTPException(status_code=422, detail="Pick a .gguf model file")

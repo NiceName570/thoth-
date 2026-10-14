@@ -107,7 +107,7 @@ def _emergency_cleanup_all_sessions():
 
 @contextlib.contextmanager
 def _session_owner_scope(task_id: str):
-    """Run under the Hermes home + secret scope owning ``task_id``'s session (no-op if unrecorded).
+    """Run under the Thoth home + secret scope owning ``task_id``'s session (no-op if unrecorded).
 
     The janitor thread is process-global, so each teardown must re-enter its OWN
     profile's scope rather than inherit the spawning profile's; never falls
@@ -467,7 +467,7 @@ def _stop_browser_cleanup_thread():
 
 
 def _update_session_activity(task_id: str):
-    """Touch the activity timestamp and record the owning Hermes home on first sight (the
+    """Touch the activity timestamp and record the owning Thoth home on first sight (the
     janitor tears down under the owner's scope). Does NOT reset ``_cleanup_failures``.
 
     See #86402.
@@ -532,7 +532,7 @@ def _legacy_kill_process_tree(proc: "subprocess.Popen") -> None:
         pgid = None
     # Signal the group only when the child leads it (start_new_session / process_group=0):
     # a child spawned into our group resolves pgid to OUR process group and killpg would
-    # take the whole Hermes tree down with it, and a recycled PID can resolve to a foreign
+    # take the whole Thoth tree down with it, and a recycled PID can resolve to a foreign
     # group. The direct child still gets proc.kill() either way. Same ownership check as
     # hermes_cli/_subprocess_compat._legacy_kill_process_tree.
     descendants = []

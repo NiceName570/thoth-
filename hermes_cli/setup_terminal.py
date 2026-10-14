@@ -112,7 +112,7 @@ def _ensure_sdk(extra: str) -> None:
             _setup.print_warning(f"Install failed: {exc}")
             _setup.print_info("Retry with: hermes setup terminal")
         else:
-            _setup.print_success(f"{extra} SDK installed. Restart Hermes to use it.")
+            _setup.print_success(f"{extra} SDK installed. Restart Thoth to use it.")
 
 
 def _report_binary(found: str | None, missing: str, install_hint: str, found_prefix: str = "Found: ") -> None:
@@ -213,7 +213,7 @@ def _setup_backend_daytona(config: dict) -> None:
 def _setup_backend_vercel(config: dict) -> None:
     _setup.print_success("Terminal backend: Vercel Sandbox")
     _setup._info("Cloud microVM sandboxes with snapshot-backed filesystem persistence.",
-                 "Requires the optional Vercel SDK (installed through Hermes PM).")
+                 "Requires the optional Vercel SDK (installed through Thoth PM).")
     _ensure_sdk("vercel")
     _prompt_vercel_sandbox_settings(config)
 
@@ -283,7 +283,7 @@ def setup_terminal_backend(config: dict):
     """Configure the terminal execution backend."""
     import platform as _platform
     _setup.print_header("Terminal Backend")
-    _setup._info("Choose where Hermes runs shell commands and code.",
+    _setup._info("Choose where Thoth runs shell commands and code.",
                  "This affects tool execution, file access, and isolation.",
                  f"   Guide: {_setup._DOCS_BASE}/user-guide/configuration#terminal-backend-configuration", None)
     current_backend = _setup.cfg_get(config, "terminal", "backend", default="local")

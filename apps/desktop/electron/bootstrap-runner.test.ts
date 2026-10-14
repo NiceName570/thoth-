@@ -11,6 +11,7 @@ import {
   cachedScriptPath,
   cleanInstallerLogLine,
   hasExistingGitCheckout,
+  installerEnv,
   installRefForStamp,
   isPinnedCommit,
   resolveInstallScript,
@@ -287,7 +288,7 @@ test('resolveInstallScript fails closed instead of executing an installed stale 
 test('installer log lines reach the emitter without escape sequences; \\r redraws keep the last frame', () => {
   assert.equal(cleanInstallerLogLine('\u001b[0;32m✓\u001b[0m Detected: macos (macos)'), '✓ Detected: macos (macos)')
   assert.equal(cleanInstallerLogLine('\u001b[2K\u001b[1GCloning repository…\u001b[K'), 'Cloning repository…')
-  assert.equal(cleanInstallerLogLine('\u001b]0;hermes\u0007Installing Hermes'), 'Installing Hermes')
+  assert.equal(cleanInstallerLogLine('\u001b]0;hermes\u0007Installing Thoth'), 'Installing Thoth')
   assert.equal(cleanInstallerLogLine('\r 12%\r 67%\r100%\u001b[K'), '100%')
   assert.equal(cleanInstallerLogLine('Resolving dependencies…\r'), 'Resolving dependencies…')
   // Only-escape frames drop entirely, so the caller emits nothing for them.
@@ -319,3 +320,22 @@ test.skipIf(process.platform === 'win32')(
     assert.equal(result.error, 'install.sh --manifest failed: exit 3\n✗ manifest broke')
   }
 )
+
+test.runIf(process.platform === 'win32')('installer env drops an inherited PowerShell 7 module path', () => {
+  const saved = process.env.PSModulePath
+  process.env.PSModulePath = 'C:\\Program Files\\PowerShell\\7\\Modules'
+
+  try {
+    const env = installerEnv(os.tmpdir())
+    assert.equal(
+      Object.keys(env).some(name => name.toLowerCase() === 'psmodulepath'),
+      false
+    )
+  } finally {
+    if (saved === undefined) {
+      delete process.env.PSModulePath
+    } else {
+      process.env.PSModulePath = saved
+    }
+  }
+})

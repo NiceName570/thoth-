@@ -6,7 +6,7 @@ description: "AI-native persistent memory via Honcho — dialectic reasoning, mu
 
 # Honcho Memory
 
-[Honcho](https://github.com/plastic-labs/honcho) is an AI-native memory backend that adds dialectic reasoning and deep user modeling on top of Hermes's built-in memory system. Instead of simple key-value storage, Honcho maintains a running model of who the user is — their preferences, communication style, goals, and patterns — by reasoning about conversations after they happen.
+[Honcho](https://github.com/plastic-labs/honcho) is an AI-native memory backend that adds dialectic reasoning and deep user modeling on top of Thoth's built-in memory system. Instead of simple key-value storage, Honcho maintains a running model of who the user is — their preferences, communication style, goals, and patterns — by reasoning about conversations after they happen.
 
 :::info Honcho is a catalog Memory Provider Plugin
 Honcho is maintained by Plastic Labs and installed from the [plugin catalog](./plugins.md) (`hermes plugins install honcho`); source lives in [plastic-labs/honcho](https://github.com/plastic-labs/honcho/tree/main/hermes-plugin-honcho). It plugs into the [Memory Providers](./memory-providers.md) system, so all features below are available through the unified memory provider interface. Homes upgraded from a release that bundled Honcho get the plugin installed automatically — config and memory carry over untouched.
@@ -28,7 +28,7 @@ Honcho is maintained by Plastic Labs and installed from the [plugin catalog](./p
 
 **Session-scoped context**: Base context now includes the session summary alongside the user representation and peer card. This gives the agent awareness of what has already been discussed in the current session, reducing repetition and enabling continuity.
 
-**Multi-agent profiles**: When multiple Hermes instances talk to the same user (e.g., a coding assistant and a personal assistant), Honcho maintains separate "peer" profiles. Each peer sees only its own observations and conclusions, preventing cross-contamination of context.
+**Multi-agent profiles**: When multiple Thoth instances talk to the same user (e.g., a coding assistant and a personal assistant), Honcho maintains separate "peer" profiles. Each peer sees only its own observations and conclusions, preventing cross-contamination of context.
 
 ## Setup
 
@@ -109,7 +109,7 @@ Honcho is configured in `~/.honcho/config.json` (global) or `$HERMES_HOME/honcho
 
 ### Self-Hosted Honcho with Authentication
 
-When pointing Hermes at a self-hosted Honcho server, `hermes honcho setup` (and `hermes memory setup`) ask for a **local JWT / bearer token** after the base URL. Paste a JWT signed with the server's `AUTH_JWT_SECRET` (the Honcho compose env var) to enable authenticated access; leave it blank for servers running with `AUTH_USE_AUTH=false`. The local token is stored under the host block (`hosts.<host>.apiKey` in `honcho.json`), separate from any cloud `apiKey`, so you can flip the `Cloud or local?` prompt back to `cloud` later without losing either credential.
+When pointing Thoth at a self-hosted Honcho server, `hermes honcho setup` (and `hermes memory setup`) ask for a **local JWT / bearer token** after the base URL. Paste a JWT signed with the server's `AUTH_JWT_SECRET` (the Honcho compose env var) to enable authenticated access; leave it blank for servers running with `AUTH_USE_AUTH=false`. The local token is stored under the host block (`hosts.<host>.apiKey` in `honcho.json`), separate from any cloud `apiKey`, so you can flip the `Cloud or local?` prompt back to `cloud` later without losing either credential.
 
 ### Full Config Reference
 
@@ -147,7 +147,7 @@ Directory-based strategies and manual `sessions` mappings use the logical sessio
 
 Messaging gateways keep their stable per-chat session key regardless of strategy or title. For other sessions, `per-session` identity takes priority, followed by a manual directory mapping, an explicit title, and the configured strategy.
 
-Automatically generated Hermes titles (`derived` or `llm`), including lineage titles for Desktop branches, are display metadata and do not override `sessionStrategy`. An explicit user title remains an intentional session-name override for non-gateway, non-`per-session` sessions without a manual mapping.
+Automatically generated Thoth titles (`derived` or `llm`), including lineage titles for Desktop branches, are display metadata and do not override `sessionStrategy`. An explicit user title remains an intentional session-name override for non-gateway, non-`per-session` sessions without a manual mapping.
 
 Sessions created before title provenance was recorded retain legacy behavior: because an old automatic title cannot be distinguished from an old user title, a title with no source is treated as an explicit override.
 
@@ -173,7 +173,7 @@ In `tools` mode, the model is fully in control — it calls `honcho_reasoning` w
 
 ## Gateway Identity Mapping
 
-These settings only matter when you run the [Hermes gateway](../../developer-guide/gateway-internals.md) — the one entrypoint where users arrive with platform-native runtime IDs (Telegram UID, Discord snowflake, Slack user). CLI, TUI, and desktop sessions have no runtime ID and always resolve to `peerName`, so off-gateway these keys do nothing.
+These settings only matter when you run the [Thoth gateway](../../developer-guide/gateway-internals.md) — the one entrypoint where users arrive with platform-native runtime IDs (Telegram UID, Discord snowflake, Slack user). CLI, TUI, and desktop sessions have no runtime ID and always resolve to `peerName`, so off-gateway these keys do nothing.
 
 The setup wizard detects whether a gateway platform is connected and skips this step entirely if not. When it runs, it asks one question — *who talks to this gateway?* — and derives the keys:
 
@@ -230,7 +230,7 @@ Common patterns:
 | AI shouldn't re-model the user from its own replies | `"ai": {"observeMe": true, "observeOthers": false}` |
 | Strong persona the AI peer shouldn't update from self-observation | `"ai": {"observeMe": false, "observeOthers": true}` |
 
-Server-side toggles set via the [Honcho dashboard](https://app.honcho.dev) win over local defaults — Hermes syncs them back at session init.
+Server-side toggles set via the [Honcho dashboard](https://app.honcho.dev) win over local defaults — Thoth syncs them back at session init.
 
 ## Tools
 

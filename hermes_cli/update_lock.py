@@ -1,4 +1,4 @@
-"""Cross-process mutual exclusion for in-flight Hermes updates.
+"""Cross-process mutual exclusion for in-flight Thoth updates.
 
 Two artifacts, one authority each:
 
@@ -72,7 +72,7 @@ _MAX_ANCESTRY_DEPTH = 128
 
 # Exit code meaning "another updater/instance owns this install right now" — the same
 # contract as the Windows shim / venv-holder guards in _cmd_update_impl, matched by the
-# Tauri updater (UPDATE_EXIT_CONCURRENT in update.rs) to show "Hermes is still running".
+# Tauri updater (UPDATE_EXIT_CONCURRENT in update.rs) to show "Thoth is still running".
 UPDATE_EXIT_CONCURRENT = 2
 
 # msvcrt locks a byte range; lock one byte far past the holder record so other processes can
@@ -488,7 +488,7 @@ def _is_ancestor_pid(pid: int) -> bool:
 
 
 def _is_runtime_host(cmdline: list[str]) -> bool:
-    """A long-lived Hermes host (``gateway run`` / ``serve`` / ``dashboard``), by the canonical
+    """A long-lived Thoth host (``gateway run`` / ``serve`` / ``dashboard``), by the canonical
     command-line matchers (profile flags, ``hermes_cli/main.py`` paths, inline bootstraps)."""
     from gateway.status import looks_like_gateway_command_line
     from hermes_cli.update_cmd_windows import _hermes_holder_subcommand
@@ -497,7 +497,7 @@ def _is_runtime_host(cmdline: list[str]) -> bool:
 
 
 def _runtime_host_below(holder_pid: int) -> bool:
-    """True when a Hermes gateway/serve/dashboard sits between us and *holder_pid* (or anywhere
+    """True when a Thoth gateway/serve/dashboard sits between us and *holder_pid* (or anywhere
     above us when the holder is not reached).
 
     Such a host is relaunched BY an update and outlives its stages; a ``hermes update`` its agent
@@ -961,7 +961,7 @@ def describe_holder(holder: UpdateHolder | None) -> str:
     if holder is not None and holder.held:
         who = "; its owner exited but a process it started still holds the checkout"
     return (
-        f"✗ Another Hermes update is already running (started {elapsed} ago{who}).\n"
+        f"✗ Another Thoth update is already running (started {elapsed} ago{who}).\n"
         "\n"
         "  Running two at once would corrupt the install. Wait for it to finish\n"
         "  (watch `hermes logs`), or close the Desktop/dashboard window that\n"

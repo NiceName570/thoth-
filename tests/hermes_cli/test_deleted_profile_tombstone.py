@@ -267,7 +267,7 @@ class TestDeletedProfileTombstone:
 
 class TestNamedProfileHome:
     def test_logs_under_named_profile_resolve_to_profile_home(self, tmp_path):
-        # tmp_path acts as a real Hermes home (Docker/custom layout): it
+        # tmp_path acts as a real Thoth home (Docker/custom layout): it
         # carries a home marker file, so profiles/ under it is canonical.
         (tmp_path / "config.yaml").write_text("{}\n", encoding="utf-8")
         worker = tmp_path / "profiles" / "worker"
@@ -287,7 +287,7 @@ class TestNamedProfileHome:
     def test_unrelated_profiles_dir_is_not_named(self, tmp_path):
         # Review point 1 regression: a custom home like
         # /srv/profiles/buildcache must NOT be treated as a named profile —
-        # its parent is not a Hermes home, so logging must keep mkdir-ing.
+        # its parent is not a Thoth home, so logging must keep mkdir-ing.
         custom_home = tmp_path / "srv" / "profiles" / "buildcache"
         assert named_profile_home(custom_home) is None
         assert named_profile_home(custom_home / "logs") is None

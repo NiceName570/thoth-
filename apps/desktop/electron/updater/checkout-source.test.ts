@@ -117,9 +117,9 @@ function channelRecord(channel: 'stable' | 'canary', sequence: number): FixtureR
     nextSequence: sequence + 1,
     identity: {
       token: 'b'.repeat(16),
-      displayName: channel === 'stable' ? 'Hermes Stable' : 'Hermes Canary',
-      appNamePascal: 'Hermes',
-      artifactNamePascal: 'Hermes',
+      displayName: channel === 'stable' ? 'Thoth Stable' : 'Thoth Canary',
+      appNamePascal: 'Thoth',
+      artifactNamePascal: 'Thoth',
       appId: 'chat.nous.hermes',
       msixAppIdWithOrg: 'NousResearch.Hermes',
       cliName: 'hermes',
@@ -143,9 +143,9 @@ function buildManifest(
 ): FixtureManifest {
   const identity: FixtureIdentity = {
     token: 'b'.repeat(16),
-    displayName: channel === 'stable' ? 'Hermes Stable' : 'Hermes Canary',
-    appNamePascal: 'Hermes',
-    artifactNamePascal: 'Hermes',
+    displayName: channel === 'stable' ? 'Thoth Stable' : 'Thoth Canary',
+    appNamePascal: 'Thoth',
+    artifactNamePascal: 'Thoth',
     appId: 'chat.nous.hermes',
     msixAppIdWithOrg: 'NousResearch.Hermes',
     cliName: 'hermes',

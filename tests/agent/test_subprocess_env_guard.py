@@ -50,7 +50,7 @@ ALLOWED_RAW_SPAWN_ENV_FILES = {
     # only raw copy is the except-fallback for when the tools package itself
     # cannot be imported, so the user's typed command still runs.
     "hermes_cli/bang_shell.py",
-    # These children are Hermes itself and need its full environment: the gateway respawn
+    # These children are Thoth itself and need its full environment: the gateway respawn
     # watcher (generated script source), the launchd stderr-timestamp wrapper around the
     # gateway command, and the skills sync that seeds a new profile.
     "hermes_cli/gateway.py",
@@ -59,7 +59,7 @@ ALLOWED_RAW_SPAWN_ENV_FILES = {
     # The compute host runs agent turns for the dashboard: Home Assistant tools, Modal/Daytona
     # backends and platform sends read keys that exist only in the process env (#65895).
     "tui_gateway/host_supervisor.py",
-    # apt/dnf/pacman run as root, through sudo (which resets the environment) or because Hermes
+    # apt/dnf/pacman run as root, through sudo (which resets the environment) or because Thoth
     # already is root. A root child can read every process's environment anyway, and the scrub
     # helpers would point TMPDIR into HERMES_HOME's scratch dir, leaving root-owned files there.
     "tools/bot_desktop/install.py",

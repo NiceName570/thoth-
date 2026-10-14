@@ -2,7 +2,7 @@
  * C2 core: a reply is painted ONCE inside its bubble, whatever tool round
  * the turn ends on.
  *
- * Report: "Hermes Desktop sometimes duplicates the same agent output twice
+ * Report: "Thoth sometimes duplicates the same agent output twice
  * consecutively within a single message bubble, with no line break or UI
  * elements between them."
  *

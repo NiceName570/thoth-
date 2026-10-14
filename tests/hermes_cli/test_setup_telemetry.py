@@ -116,7 +116,7 @@ def test_chat_offer_asks_an_undecided_profile_once(monkeypatch):
 
 
 def test_offer_drops_keys_typed_before_it_appeared(monkeypatch):
-    """An Enter typed while Hermes booted answered "No thanks" before the offer was on screen."""
+    """An Enter typed while Thoth booted answered "No thanks" before the offer was on screen."""
     from hermes_cli.observability import shared_metrics_consent as consent
 
     events = []

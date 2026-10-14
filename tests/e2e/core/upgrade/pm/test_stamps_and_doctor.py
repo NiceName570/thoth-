@@ -4,7 +4,7 @@ One real install, taken through a dependency-changing ``hermes update`` so the s
 is not the installer's. Then:
 
 * every ``hermes`` the install ships agrees on what the install is. The selected generation's own
-  console script (``<gen>/venv/bin/hermes``) is on PATH for every child a Hermes process spawns
+  console script (``<gen>/venv/bin/hermes``) is on PATH for every child a Thoth process spawns
   (``activate_dependencies`` prepends that ``bin``), so the agent's terminal, workers and scripts
   resolve ``hermes`` to it. It must report the checkout as the install and be able to check for
   updates; it reports the workspace copy instead (gated on #122425 and #122627);
@@ -109,7 +109,7 @@ def test_doctor_on_a_healthy_pm_install_reports_no_command_installation_problem(
     assert section, "doctor printed no Command Installation section:\n" + I.describe(cp)
     bad = [line for line in section if line.lstrip().startswith(("⚠", "✗"))]
     assert not bad, f"hermes doctor reports a launcher problem on a healthy PM install: {bad}\n" + I.describe(cp)
-    assert f"Hermes entry point exists ({sb.checkout / 'hermes'})" in cp.stdout, "\n".join(section)
+    assert f"Thoth entry point exists ({sb.checkout / 'hermes'})" in cp.stdout, "\n".join(section)
 
 
 def test_pm_status_receipt_reports_the_successful_update(updated):

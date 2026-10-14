@@ -185,10 +185,10 @@ describe('resolveOutsideAsar', () => {
   it('redirects a packaged specifier into app.asar.unpacked', () => {
     expect(
       resolveOutsideAsar(
-        'file:///Applications/Hermes.app/Contents/Resources/app.asar/dist/node_modules/get-windows/index.js'
+        'file:///Applications/Thoth.app/Contents/Resources/app.asar/dist/node_modules/get-windows/index.js'
       )
     ).toBe(
-      'file:///Applications/Hermes.app/Contents/Resources/app.asar.unpacked/dist/node_modules/get-windows/index.js'
+      'file:///Applications/Thoth.app/Contents/Resources/app.asar.unpacked/dist/node_modules/get-windows/index.js'
     )
   })
 
@@ -197,10 +197,10 @@ describe('resolveOutsideAsar', () => {
   it('redirects a Windows packaged path built with backslashes', () => {
     expect(
       resolveOutsideAsar(
-        'C:\\Users\\me\\AppData\\Local\\Hermes\\resources\\app.asar\\dist\\node_modules\\get-windows\\index.js'
+        'C:\\Users\\me\\AppData\\Local\\Thoth\\resources\\app.asar\\dist\\node_modules\\get-windows\\index.js'
       )
     ).toBe(
-      'C:\\Users\\me\\AppData\\Local\\Hermes\\resources\\app.asar.unpacked\\dist\\node_modules\\get-windows\\index.js'
+      'C:\\Users\\me\\AppData\\Local\\Thoth\\resources\\app.asar.unpacked\\dist\\node_modules\\get-windows\\index.js'
     )
   })
 

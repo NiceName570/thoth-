@@ -4,6 +4,10 @@ export const ruModelMenu = {
   editModels: 'Изменить модели…',
   followDefault: 'Использовать модель по умолчанию из настроек',
   refreshModels: 'Обновить модели',
+  ejectOllama: 'Выгрузить модели Ollama',
+  ejectedOllama: (count: number) =>
+    count === 0 ? 'Нет загруженных моделей Ollama' : `Выгружено моделей Ollama: ${count}`,
+  ejectOllamaFailed: 'Не удалось выгрузить модели Ollama',
   favorites: 'Избранное',
   addFavorite: 'Добавить в избранное',
   removeFavorite: 'Убрать из избранного',

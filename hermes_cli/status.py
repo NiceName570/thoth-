@@ -132,7 +132,7 @@ def _banner(lines, *styles) -> None:
 
 def _render_header(ctx):
     _banner(("┌─────────────────────────────────────────────────────────┐",
-             "│                 ☤ Hermes Agent Status                  │",
+             "│                 ☤ Thoth Status                  │",
              "└─────────────────────────────────────────────────────────┘"), Colors.CYAN)
     paused = _estop_status_line()
     if paused:
@@ -174,7 +174,7 @@ def _render_terminal(ctx):
         _kv("Image:", os.getenv('TERMINAL_VERCEL_RUNTIME') or terminal_cfg.get('vercel_runtime')
             or os.getenv('TERMINAL_VERCEL_IMAGE') or terminal_cfg.get('vercel_image') or DEFAULT_VERCEL_IMAGE)
         _kv_flag("SDK:", importlib.util.find_spec("vercel") is not None, "installed",
-                 "missing (run hermes setup terminal and select Vercel Sandbox, then restart Hermes)")
+                 "missing (run hermes setup terminal and select Vercel Sandbox, then restart Thoth)")
         _kv("Auth:", f"{check_mark(auth_status.ok)} {auth_status.label}")
         for line in auth_status.detail_lines:
             _kv("Auth detail:", line)

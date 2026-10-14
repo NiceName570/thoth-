@@ -68,8 +68,11 @@ export function KeyField({
   const draft = edits[editKey] ?? ''
   const dirty = draft.trim().length > 0
   const busy = saving === varKey
-  const masked = credentialPreview(info.redacted_value) ?? '••••••••'
-  const startEdit = () => setEdits(c => ({ ...c, [editKey]: '' }))
+  // Non-secret values (base URLs) arrive in plain text: show them as-is and
+  // start editing from the saved value instead of a blank field.
+  const plain = info.is_password ? null : (info.value ?? null)
+  const masked = plain ?? credentialPreview(info.redacted_value) ?? '••••••••'
+  const startEdit = () => setEdits(c => ({ ...c, [editKey]: plain ?? '' }))
   const cancel = () => setEdits(c => withoutKey(c, editKey))
   const update = (e: ChangeEvent<HTMLInputElement>) => setEdits(c => ({ ...c, [editKey]: e.target.value }))
 

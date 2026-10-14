@@ -1,12 +1,12 @@
 """Instance-scoping of the uninspectable-holder fallback.
 
 Field-verified 2026-09-07 on a production host running TWO independent
-Hermes instances: a main gateway (user ``ubuntu``,
+Thoth instances: a main gateway (user ``ubuntu``,
 HERMES_HOME=/home/ubuntu/.hermes) and a demo gateway (user ``demo``,
 HERMES_HOME=/home/demo/.hermes).  The demo gateway runs as another user, so
 its ``/proc/<pid>/fd`` table is unreadable from the main instance and the
 holder scan falls back to ``/proc/<pid>/cmdline`` + ``_looks_like_hermes``.
-The demo process's argv matches the Hermes patterns exactly, so the fallback
+The demo process's argv matches the Thoth patterns exactly, so the fallback
 flagged it as an uninspectable holder of the MAIN instance's state.db even
 though ``lsof`` proved zero open handles on it.  Consequence: the stale-FTS
 rebuild in ``hermes_state_schema._recover_stale_fts`` was deferred 42 times
@@ -18,7 +18,7 @@ hermes); a genuine second instance with a DIFFERENT HERMES_HOME is still
 misjudged on current main (issue #92401).
 
 Behavior contract: an uninspectable holder identified only by argv must be
-counted unless its own argv proves it is scoped to a *different* Hermes
+counted unless its own argv proves it is scoped to a *different* Thoth
 home / state.db and never references ours.  Ambiguous argv (no absolute
 paths at all) must remain fail-closed, exactly as before — the conservative
 intent of the fallback is preserved.
@@ -38,7 +38,7 @@ _REAL_READLINK = os.readlink
 
 
 # Representative demo-gateway argv on the two-instance host: every absolute
-# token lives under /home/demo/.hermes, the binary name matches the Hermes
+# token lives under /home/demo/.hermes, the binary name matches the Thoth
 # patterns, and nothing references the main instance's home or state.db.
 DEMO_HOME_ARGV = [
     "/home/demo/.hermes/hermes-agent/hermes",
@@ -53,7 +53,7 @@ DEMO_VENV_ARGV = [
     "gateway",
 ]
 
-# A Hermes-shaped argv with no absolute paths: cannot disprove that this
+# A Thoth-shaped argv with no absolute paths: cannot disprove that this
 # process touches our state.db, so it must stay fail-closed.
 AMBIGUOUS_ARGV = ["hermes", "gateway", "run"]
 
@@ -111,7 +111,7 @@ def _install_fake_argv(monkeypatch, argv_by_pid):
 class TestUninspectableHolderInstanceScope:
     def test_other_instance_argv_is_not_a_holder_of_our_db(self, tmp_path, monkeypatch):
         """RED: fd dir unreadable + argv proves the process belongs to a
-        DIFFERENT Hermes home → not a holder of our state.db."""
+        DIFFERENT Thoth home → not a holder of our state.db."""
         # A real ``.hermes`` home, as on the field host this test is drawn from: the install
         # location can only identify a home that is itself part of an install layout.
         db_path = tmp_path / ".hermes" / "state.db"
@@ -209,9 +209,9 @@ class TestUninspectableHolderInstanceScope:
         """``<X>/profiles/<n>/state.db`` does not make all of ``<X>`` ours.
 
         A raw ``basename == "profiles"`` test promoted any such parent to the install root, so an
-        unrelated Hermes install living under it was counted as a holder — the literal two-instance
+        unrelated Thoth install living under it was counted as a holder — the literal two-instance
         shape #92401 was filed about. The canonical ``named_profile_home`` predicate requires the
-        parent to be a real Hermes home.
+        parent to be a real Thoth home.
         """
         work = tmp_path / "work"
         db_path = work / "profiles" / "b" / "state.db"

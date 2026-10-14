@@ -1,7 +1,7 @@
 /**
  * Failure class: FIRST RUN on a healthy install.
  *
- * A user who installed Hermes with scripts/install.sh and built the Desktop
+ * A user who installed Thoth with scripts/install.sh and built the Desktop
  * app with `hermes desktop` opens the app. It must find that install and go
  * straight to chat — on the first launch and on every later one — and never
  * show the first-run setup chooser or start the bootstrap installer

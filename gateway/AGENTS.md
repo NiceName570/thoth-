@@ -198,7 +198,7 @@ gateway under the backend, and do NOT "fix" update locks by widening the tree-ki
   with `hermes_constants.get_routing_process_hermes_home()` (`agent/secret_scope.py::
   serves_routed_profile` and `_is_process_home`, `tools/environments/local.py::_is_routed_home`,
   `hermes_cli/env_loader.py::_process_hermes_home`), never with `os.environ["HERMES_HOME"]` read
-  live: an embedding host that mirrors the served profile into the env var per turn (Hermes
+  live: an embedding host that mirrors the served profile into the env var per turn (Thoth
   WebUI) pins its own home with `pin_process_hermes_home()`, and without a pin the resolver is
   `get_process_hermes_home()` unchanged. Do not add another routing decision that compares
   against `get_process_hermes_home()` directly; that resolver is for process-level assets.

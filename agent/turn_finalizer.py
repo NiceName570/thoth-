@@ -698,7 +698,7 @@ def finalize_turn(
         # explanation appended since): it carries no new text for the client to paint.
         "response_reused": bool(final_response) and final_response == getattr(agent, "_reused_response_text", None),
         "model": agent.model,
-        # requested_model / served_model: proxy-reported deployment or Hermes' own fallback route.
+        # requested_model / served_model: proxy-reported deployment or Thoth's own fallback route.
         **result_model_fields(agent),
         "provider": agent.provider,
         "base_url": agent.base_url,

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""User-state upgrade-preservation verifier (Hermes install/update E2E hook).
+"""User-state upgrade-preservation verifier (Thoth install/update E2E hook).
 
 Answers the question the install/update E2E legs only answered indirectly:
 after an upgrade, is the user's *own* state still there?

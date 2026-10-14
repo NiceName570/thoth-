@@ -26,14 +26,14 @@ Frontend design guidance, upstream-maintained (impeccable).
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Thoth loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # Impeccable (upstream-maintained)
 
 > **Catalog stub.** This entry is maintained upstream at
 > [pbakaus/impeccable](https://github.com/pbakaus/impeccable): the project
-> ships and verifies a Hermes-native skill bundle under `.hermes/skills/`.
+> ships and verifies a Thoth-native skill bundle under `.hermes/skills/`.
 > `hermes skills install impeccable` pulls the current bundle live from that
 > repo (quarantined and scanned like any hub install) — this directory holds
 > only the catalog metadata, so the vendored copy can never go stale.

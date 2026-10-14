@@ -26,7 +26,7 @@ Generate one- or two-ink editorial print poster images.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Thoth loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # Mono-Color Editorial Print Skill
@@ -41,7 +41,7 @@ The user asks for a monochrome editorial poster, duotone print, risograph/zine p
 
 ## Prerequisites
 
-- The Hermes `image_generate` tool (search/describe it via the deferred-tool catalog if not loaded). If image generation is unavailable, deliver prompt-only and say so.
+- The Thoth `image_generate` tool (search/describe it via the deferred-tool catalog if not loaded). If image generation is unavailable, deliver prompt-only and say so.
 - The `design-system/` catalogs bundled with this skill (see Quick Reference).
 
 ## Quick Reference

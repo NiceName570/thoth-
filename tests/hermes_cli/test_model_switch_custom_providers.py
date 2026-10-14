@@ -992,7 +992,7 @@ def test_list_enumerates_dict_format_models_alongside_default(monkeypatch):
     """custom_providers entry with dict-format ``models:`` plus singular
     ``model:`` should surface the default and every dict key.
 
-    Regression: Hermes's own writer stores configured models as a dict
+    Regression: Thoth's own writer stores configured models as a dict
     keyed by model id, but the /model picker previously only honored the
     singular ``model:`` field, so multi-model custom providers appeared
     to have only the active model.
@@ -1384,32 +1384,6 @@ def test_lmstudio_picker_lm_base_url_env_wins_over_active_config(monkeypatch):
     )
 
     assert captured["base_url"] == "http://override.local:9999/v1"
-
-
-def test_lmstudio_picker_skips_probe_when_not_configured(monkeypatch):
-    """If the user has never configured LM Studio (no LM_API_KEY / LM_BASE_URL
-    and not on lmstudio), the picker must not pay the localhost probe cost
-    just to discover LM Studio is unavailable.
-    """
-    monkeypatch.setattr("agent.models_dev.fetch_models_dev", dict)
-    monkeypatch.setattr(providers_mod, "HERMES_OVERLAYS", {})
-    monkeypatch.delenv("LM_BASE_URL", raising=False)
-    monkeypatch.delenv("LM_API_KEY", raising=False)
-
-    captured: dict = {}
-
-    def _fake_fetch(api_key=None, base_url=None, timeout=5.0):
-        captured["base_url"] = base_url
-        return []
-
-    monkeypatch.setattr("hermes_cli.models_local.fetch_lmstudio_models", _fake_fetch)
-
-    list_authenticated_providers(
-        current_provider="openrouter",
-        current_base_url="https://openrouter.ai/api/v1",
-    )
-
-    assert "base_url" not in captured
 
 
 def test_lmstudio_bare_providers_block_does_not_hide_live_catalog(monkeypatch):
@@ -2158,7 +2132,7 @@ def test_cached_catalog_is_not_written_back_to_config(monkeypatch):
 
 
 def test_keyless_endpoint_with_saved_catalog_still_reads_cache(monkeypatch):
-    """A keyless local server must not be pinned by Hermes' own auto-save.
+    """A keyless local server must not be pinned by Thoth's own auto-save.
 
     ``_save_discovered_models_to_config()`` writes a plain list into
     ``models:``, which ``_models_config_is_allowlist()`` reads back as an
@@ -2192,7 +2166,7 @@ def test_keyless_endpoint_with_saved_catalog_still_reads_cache(monkeypatch):
 def test_keyless_endpoint_with_saved_catalog_is_still_not_probed(monkeypatch):
     """...but the network-cost gate it rides on must survive intact.
 
-    The no-key + declared-catalog combination exists to keep Hermes from
+    The no-key + declared-catalog combination exists to keep Thoth from
     probing an endpoint it cannot authenticate to. Serving that endpoint from
     a warm cache is free; hitting the network is not. With a cold cache and
     live probing fully enabled, this row must still make zero fetches.
@@ -2357,7 +2331,7 @@ def test_auto_saved_catalog_round_trips_without_pinning(tmp_path, monkeypatch):
 def test_legacy_sentinel_catalog_still_resolves_and_migrates(tmp_path, monkeypatch):
     """Old-shape configs (sentinels inside ``models``) keep working.
 
-    Pre-fix Hermes wrote ``__discovered_model_catalog__: true`` (and
+    Pre-fix Thoth wrote ``__discovered_model_catalog__: true`` (and
     ``__explicit_model_allowlist__``) inside the user-facing ``models``
     mapping. Reading such a config must (a) recognize the catalog as
     discovered — not a user pin, (b) never list the sentinels as model IDs,

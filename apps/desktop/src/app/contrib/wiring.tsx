@@ -213,7 +213,7 @@ function useRouteRequestNavigation(navigate: ReturnType<typeof useNavigate>): vo
   }, [navigate, routeRequest])
 }
 
-// Recovery actions raised by toast buttons (Restart Hermes, Open Billing, pool
+// Recovery actions raised by toast buttons (Restart Thoth, Open Billing, pool
 // caps, cron review) fire from stores with no router context. Each counter is
 // consumed here: the ref skips the initial mount value, and only a fresh
 // request navigates or recycles the backend.

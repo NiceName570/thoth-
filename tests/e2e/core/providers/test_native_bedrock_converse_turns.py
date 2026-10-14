@@ -54,7 +54,7 @@ COMPACTION_FILES = 8
 
 
 def _home(root: Path, fake: FakeBedrock, extra_config: dict[str, Any] | None = None) -> NativeHome:
-    """Bedrock home: fake static creds in the profile .env (the chain Hermes loads), endpoint via env."""
+    """Bedrock home: fake static creds in the profile .env (the chain Thoth loads), endpoint via env."""
     nh = make_home(root, {"provider": "bedrock", "default": MODEL, "context_length": 64000},
                    env_file={"AWS_ACCESS_KEY_ID": ACCESS_KEY, "AWS_SECRET_ACCESS_KEY": SECRET_KEY,
                              "AWS_REGION": REGION},

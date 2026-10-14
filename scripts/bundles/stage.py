@@ -40,7 +40,7 @@ def main(argv=None) -> int:
         from scripts.bundles.payload import snapshot
         from scripts.build.icon_environment import prepare_icon_environment
         snapshot(ROOT, args.ref, source)
-        # The staging interpreter need not be a Hermes runtime; render icons on one.
+        # The staging interpreter need not be a Thoth runtime; render icons on one.
         icon_python = prepare_icon_environment(source, products / "icon-environment", args.cache)
         env = {**os.environ, "HERMES_PYTHON": str(icon_python)}
         commands = [

@@ -1994,7 +1994,7 @@ def _(rid, params: dict, session: dict) -> dict:
     )
     project = _project_info_for_cwd(_display_session_cwd(session))
     lines = [
-        "Hermes TUI Status", "", *status_lines(fields, "session_id", "path"),
+        "Thoth TUI Status", "", *status_lines(fields, "session_id", "path"),
         *([f"Project: {project['name']}"] if project else []),
         *status_lines(fields, "title", "model", "created", "last_activity", "tokens", "agent_running")]
     return _ok(rid, {"output": "\n".join(lines)})

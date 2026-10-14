@@ -818,7 +818,7 @@ def init_db(db_path: Optional[Path] = None, *, board: Optional[str] = None) -> P
 
 
 # Nullable/defaulted columns of the v1 ``tasks`` CREATE TABLE that external
-# harnesses seeding a board with a reduced schema have omitted. Hermes's own
+# harnesses seeding a board with a reduced schema have omitted. Thoth's own
 # DBs always carry them, so this is a no-op there; without it a board that
 # also has ``task_runs`` fails every ``connect()`` inside
 # ``_backfill_legacy_inflight_runs`` ("no such column: claim_lock") — before

@@ -52,7 +52,7 @@ class SolsticeProfile(ProviderProfile):
         return SolsticeClient(**{k: v for k, v in client_kwargs.items() if k in allowed})
 
     def get_max_tokens(self, model: str | None) -> int | None:
-        return None  # output caps are the backend's; a Hermes default would truncate long answers
+        return None  # output caps are the backend's; a Thoth default would truncate long answers
 
 
 register_provider(SolsticeProfile(

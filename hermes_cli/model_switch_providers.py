@@ -72,7 +72,7 @@ def _discovered_catalog_stale(entry: dict, model_ids: list[str]) -> bool:
     """Whether a live probe may overwrite ``entry["models"]``.
 
     A ``models`` mapping or list of dicts is user-curated per-model metadata — never replaced.
-    A mapping Hermes itself discovered (entry flag or legacy in-mapping sentinel) is ours to
+    A mapping Thoth itself discovered (entry flag or legacy in-mapping sentinel) is ours to
     refresh, but only when stale; a legacy-shape entry is always rewritten so the save migrates
     it to the clean entry-level flag."""
     existing = entry.get("models")
@@ -584,7 +584,7 @@ def _discover_flag(entry: dict):
 
 
 def _display_prefix(name: str) -> str:
-    """Text before the per-model separator Hermes's own writer uses ("—" / " - ")."""
+    """Text before the per-model separator Thoth's own writer uses ("—" / " - ")."""
     return next((name.split(sep)[0].strip() for sep in ("—", " - ") if sep in name), name)
 
 
@@ -696,7 +696,7 @@ def _collect_authed_provider_slugs(
 @dataclass
 class _PickerBuild:
     """State threaded through the ``list_authenticated_providers`` sections: 1 built-ins mapped to
-    models.dev, 2 Hermes-only overlays, 2b canonical providers missed by 1/2, 3 ``providers:``
+    models.dev, 2 Thoth-only overlays, 2b canonical providers missed by 1/2, 3 ``providers:``
     entries + 3b the bare active custom endpoint, 4 ``custom_providers:`` entries. Row-builder
     imports of ``hermes_cli.auth/models`` stay lazy so tests can patch those modules."""
     current_provider: str
@@ -828,7 +828,7 @@ def _lap_lmstudio_row(b: _PickerBuild, user_providers: dict) -> None:
     if isinstance(configured, dict) and _entry_base_url(configured, ("base_url", "api", "url")):
         return
     is_current = b.current_provider_norm == "lmstudio"
-    if not (is_current or isinstance(configured, dict)):
+    if not (is_current or isinstance(configured, dict) or b.curated.get("lmstudio")):
         return
     from hermes_cli.model_switch import _declared_model_ids
     configured_models = _declared_model_ids(configured.get("models")) if isinstance(configured, dict) else []
@@ -903,13 +903,13 @@ def _overlay_has_creds(b: _PickerBuild, pid: str, hermes_slug: str, overlay) -> 
 
 
 def _lap_overlay_rows(b: _PickerBuild, data: dict, user_providers: dict) -> None:
-    """Section 2: Hermes-only providers (nous, openai-codex, copilot, opencode-go, ...)."""
+    """Section 2: Thoth-only providers (nous, openai-codex, copilot, opencode-go, ...)."""
     from agent.models_dev import PROVIDER_TO_MODELS_DEV
     from hermes_cli.model_switch import _declared_model_ids
     from hermes_cli.providers import HERMES_OVERLAYS
 
     # HERMES_OVERLAYS keys may be models.dev IDs ("github-copilot") while config.yaml uses
-    # Hermes IDs ("copilot").
+    # Thoth IDs ("copilot").
     mdev_to_hermes = {v: k for k, v in PROVIDER_TO_MODELS_DEV.items()}
     for pid, overlay in HERMES_OVERLAYS.items():
         hermes_slug = mdev_to_hermes.get(pid, pid)
@@ -1178,6 +1178,62 @@ def _lap_custom_provider_rows(b: _PickerBuild, custom_providers: list) -> None:
         section4_slugs.add(slug.lower())
 
 
+_LOCAL_AUTODETECT_TTL_SECONDS = 60.0
+_local_autodetect: dict[str, tuple[float, list[str]]] = {}
+_OLLAMA_DEFAULT_URL = "http://127.0.0.1:11434/v1"
+
+
+def _autodetected_local_models(server: str, probe) -> list[str]:
+    """Models of a local server (LM Studio, Ollama) on its default port, so it shows up in the
+    picker without any setup. One short probe per TTL window: a closed port on Windows takes about
+    a second to refuse, which every picker open must not pay."""
+    now = time.monotonic()
+    at, models = _local_autodetect.get(server, (float("-inf"), []))
+    if now - at >= _LOCAL_AUTODETECT_TTL_SECONDS:
+        models = list(probe() or [])
+        _local_autodetect[server] = (now, models)
+    return list(models)
+
+
+def _autodetected_lmstudio_models() -> list[str]:
+    from hermes_cli.models_local import fetch_lmstudio_models
+    from hermes_cli.auth import AuthError
+
+    def _probe():
+        try:
+            return fetch_lmstudio_models(api_key="", base_url="http://127.0.0.1:1234/v1", timeout=0.5)
+        except AuthError:
+            return []
+    return _autodetected_local_models("lmstudio", _probe)
+
+
+def _with_autodetected_ollama(custom_providers: list | None, user_providers: dict, current_base_url: str) -> list:
+    """Add a running Ollama as an ordinary custom provider the first time it answers on its default
+    port. The entry is saved to config so selecting one of its models resolves like any endpoint."""
+    entries = list(custom_providers) if isinstance(custom_providers, list) else []
+    urls = [current_base_url] + [
+        str(_entry_base_url(e, ("base_url", "api", "url")) or "")
+        for e in [*entries, *user_providers.values()] if isinstance(e, dict)]
+    if any(":11434" in url for url in urls):
+        return entries
+    from hermes_cli.models_local import fetch_ollama_local_models
+    models = _autodetected_local_models(
+        "ollama", lambda: fetch_ollama_local_models(_OLLAMA_DEFAULT_URL, timeout=0.5))
+    if not models:
+        return entries
+    entry = {"name": "Ollama", "base_url": _OLLAMA_DEFAULT_URL,
+             "models": {model_id: {} for model_id in models}, "models_discovered": True}
+    try:
+        from hermes_cli.config import load_config, save_config
+        cfg = load_config()
+        saved = cfg.get("custom_providers") if isinstance(cfg.get("custom_providers"), list) else []
+        cfg["custom_providers"] = [*saved, entry]
+        save_config(cfg)
+    except Exception:
+        logger.debug("Could not save the auto-detected Ollama endpoint", exc_info=True)
+    return [*entries, entry]
+
+
 def _build_curated_lists(current_provider: str, current_base_url: str, current_model: str,
                         non_blocking: bool = False) -> dict[str, list[str]]:
     """Curated model lists keyed by hermes provider id, plus the dynamic ones (nous manifest,
@@ -1204,7 +1260,10 @@ def _build_curated_lists(current_provider: str, current_base_url: str, current_m
     # Left live even on the non-blocking path: it is a loopback endpoint with a 1.5s timeout, so it
     # cannot be the degraded remote provider this path must never wait on.
     is_current_lmstudio = current_provider.strip().lower() == "lmstudio"
-    if "lmstudio" not in curated and (os.environ.get("LM_API_KEY") or os.environ.get("LM_BASE_URL") or is_current_lmstudio):
+    if "lmstudio" not in curated and not (
+            os.environ.get("LM_API_KEY") or os.environ.get("LM_BASE_URL") or is_current_lmstudio):
+        curated["lmstudio"] = _autodetected_lmstudio_models()
+    if "lmstudio" not in curated:
         from hermes_cli.models_local import fetch_lmstudio_models
         from hermes_cli.auth import AuthError
         lm_base = (
@@ -1298,6 +1357,8 @@ def list_authenticated_providers(
     _lap_canonical_rows(b)
     if user_providers and isinstance(user_providers, dict):
         _lap_user_provider_rows(b, user_providers)
+    custom_providers = _with_autodetected_ollama(
+        custom_providers, user_providers if isinstance(user_providers, dict) else {}, current_base_url)
     _lap_bare_custom_row(b, custom_providers)
     if custom_providers and isinstance(custom_providers, list):
         _lap_custom_provider_rows(b, custom_providers)

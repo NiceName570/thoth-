@@ -28,14 +28,14 @@ def _info_lines(*lines: str) -> None:
 
 def _ensure_browser_use_cli(*, verbose_hints: bool = False) -> None:
     """Confirm the Browser Use CLI engine is runnable. It is browser-harness, a core dependency of
-    Hermes's own venv, so there is nothing to download; a miss means the venv needs a re-sync.
+    Thoth's own venv, so there is nothing to download; a miss means the venv needs a re-sync.
     Primary driver engine for EVERY browser backend except Camofox (Firefox-based, no CDP surface)."""
     from tools.browser_use_cli import _find_cli
 
     if _find_cli() is not None:
-        _print_success("    Browser Use CLI ready (browser-harness, bundled with Hermes)")
+        _print_success("    Browser Use CLI ready (browser-harness, bundled with Thoth)")
     else:
-        _print_warning("    browser-harness is missing from Hermes's Python environment")
+        _print_warning("    browser-harness is missing from Thoth's Python environment")
         _print_info("    Re-sync it with: hermes update")
     if verbose_hints:
         _info_lines("Local Chrome needs remote debugging: chrome://inspect/#remote-debugging",
@@ -54,7 +54,7 @@ def _post_setup_lightpanda() -> None:
         _print_warning("    lightpanda binary not found on PATH, ~/.lightpanda or ~/.local/bin")
         _print_info(f"    {LIGHTPANDA_INSTALL_HINT}")
         if os.name == "nt":
-            _print_info("    Lightpanda has no native Windows build; run Hermes under WSL2.")
+            _print_info("    Lightpanda has no native Windows build; run Thoth under WSL2.")
 
 
 def _post_setup_agent_browser(post_setup_key: str) -> None:
@@ -107,7 +107,7 @@ def _post_setup_agent_browser(post_setup_key: str) -> None:
 def _post_setup_camofox() -> None:
     from tools.browser_camofox import check_camofox_available
 
-    _info_lines("Camofox is an externally managed server; Hermes does not install or start it.")
+    _info_lines("Camofox is an externally managed server; Thoth does not install or start it.")
     if check_camofox_available():
         _print_success("    Configured Camofox server is reachable")
         return
@@ -154,7 +154,7 @@ def _post_setup_python(spec: dict) -> None:
         _print_warning(f"    {label} install failed: {exc}")
         _info_lines("Retry with: hermes tools")
         return
-    _print_success(f"    {label} dependencies ready. Restart Hermes to use them.")
+    _print_success(f"    {label} dependencies ready. Restart Thoth to use them.")
     _info_lines(*spec["on_install"], *spec["always"])
 
 
@@ -176,7 +176,7 @@ def _post_setup_langfuse() -> None:
         _print_warning(f"    Could not enable plugin automatically: {exc}")
         _info_lines("Run manually: hermes plugins enable observability/langfuse")
         return
-    _info_lines("Restart Hermes for tracing to take effect.", "Verify: hermes plugins list")
+    _info_lines("Restart Thoth for tracing to take effect.", "Verify: hermes plugins list")
 
 
 def _post_setup_xai_grok() -> None:

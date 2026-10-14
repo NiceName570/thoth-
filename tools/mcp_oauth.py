@@ -3,7 +3,7 @@
 
 The SDK's ``OAuthClientProvider`` does discovery, client identification, PKCE, exchange and
 refresh; this module supplies ``HermesTokenStorage`` (on-disk persistence), the localhost callback
-listener and ``build_oauth_auth()`` (legacy entry point). client_id is Hermes' Client ID Metadata
+listener and ``build_oauth_auth()`` (legacy entry point). client_id is Thoth's Client ID Metadata
 Document URL (CIMD) when the server supports it, else RFC 7591 DCR. ``mcp_servers.<name>.oauth`` keys
 (all optional): client_id, client_secret, scope, redirect_port, redirect_uri (proxy callback),
 redirect_host, client_name, client_metadata_url, cimd, user_agent, timeout."""
@@ -479,7 +479,7 @@ class HermesTokenStorage:
                 data["expires_in"] = int(max(implied_expiry - time.time(), 0))
 
     def _fixup_loaded_tokens(self, data: dict) -> None:
-        # ``hermes_issuer`` is Hermes bookkeeping, not an SDK OAuthToken field: pop before validation.
+        # ``hermes_issuer`` is Thoth bookkeeping, not an SDK OAuthToken field: pop before validation.
         self.loaded_issuer = data.pop("hermes_issuer", None)
         self._rebase_expires_in(data)
 
@@ -685,10 +685,10 @@ def _make_callback_handler() -> tuple[type, dict]:
                 status, body = 404, "<h2>Not Found</h2>"
             elif _result_taken(result):
                 # First terminal result (HTTP or paste) wins; a duplicate or refreshed callback never replaces it.
-                body = "<h2>Authorization already received</h2><p>You can close this tab and return to Hermes.</p>"
+                body = "<h2>Authorization already received</h2><p>You can close this tab and return to Thoth.</p>"
             else:
                 result.update(auth_code=parsed["code"], state=parsed["state"], error=parsed["error"], iss=parsed["iss"])
-                body = ("<h2>Authorization Successful</h2><p>You can close this tab and return to Hermes.</p>" if parsed["code"]
+                body = ("<h2>Authorization Successful</h2><p>You can close this tab and return to Thoth.</p>" if parsed["code"]
                         else f"<h2>Authorization Failed</h2><p>Error: {html.escape(parsed['error'] or 'unknown')}</p>")
             self.send_response(status)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -843,7 +843,7 @@ def _callback_outcome(result: dict, cimd_url: str | None):
     if result["auth_code"] is None:
         hint = (
             " If the browser showed an invalid-client error instead of an approval prompt, the authorization "
-            f"server rejected Hermes' Client ID Metadata Document ({cimd_url}); set ``cimd: false`` under that "
+            f"server rejected Thoth's Client ID Metadata Document ({cimd_url}); set ``cimd: false`` under that "
             "server's ``oauth:`` block in config.yaml to authorize via dynamic client registration instead."
         ) if cimd_url else ""
         raise OAuthNonInteractiveError(
@@ -921,7 +921,7 @@ def remove_oauth_tokens(server_name: str, *, hermes_home: str | Path | None = No
 
 
 # CIMD (OAuth Client ID Metadata Documents): the client_id IS an HTTPS URL the server fetches for our
-# name/logo/redirect URIs, replacing per-install DCR. The SDK does the protocol; Hermes only decides
+# name/logo/redirect URIs, replacing per-install DCR. The SDK does the protocol; Thoth only decides
 # eligibility. Published from ``website/static/oauth/client-metadata.json``; the github.io origin is
 # deliberate — servers MUST NOT follow redirects when fetching it, and hermes-agent.nousresearch.com/docs/* 301s here.
 _CIMD_CLIENT_METADATA_URL = "https://nousresearch.github.io/hermes-agent/docs/oauth/client-metadata.json"
@@ -972,7 +972,7 @@ def _pick_cimd_port() -> int | None:
 
 def _server_declined_cimd(storage: "HermesTokenStorage | None") -> bool:
     """True when cached metadata shows this server doesn't advertise CIMD. The SDK decides CIMD vs DCR
-    in its 401 branch — after Hermes must fix the redirect URI — so cached metadata closes the gap;
+    in its 401 branch — after Thoth must fix the redirect URI — so cached metadata closes the gap;
     only a genuinely unknown server pays the optimistic pin."""
     try:
         metadata = storage.load_oauth_metadata() if storage is not None else None
@@ -1128,7 +1128,7 @@ def _build_client_metadata(cfg: dict) -> "OAuthClientMetadata":
     # Public client by default; confidential only with a known secret or a provider (Figma) needing confidential-style token posts.
     auth_method = cfg.get("token_endpoint_auth_method") or ("client_secret_post" if cfg.get("client_secret") else "none")
     metadata_kwargs: dict[str, Any] = {
-        "client_name": cfg.get("client_name", "Hermes Agent"),
+        "client_name": cfg.get("client_name", "Thoth"),
         "redirect_uris": [AnyUrl(_resolve_redirect_uri(cfg, port))],
         "grant_types": ["authorization_code", "refresh_token"],
         "response_types": ["code"],
@@ -1197,7 +1197,7 @@ def humanize_oauth_registration_error(
     server_name: str, exc: BaseException | str, *, server_url: str | None = None) -> str | None:
     """Turn a DCR 403/Forbidden or 404 into a useful next step; None for anything else so the caller keeps the
     original text. Figma gates DCR on exact ``client_name`` (auto-set to ``Claude Code``), so this fires
-    when the user overrode it or an older Hermes is running."""
+    when the user overrode it or an older Thoth is running."""
     msg = str(exc)
     lowered = msg.lower()
     from tools.mcp_oauth_provider import _DISCOVERY_CONTEXT_LEAD
@@ -1221,7 +1221,7 @@ def humanize_oauth_registration_error(
     if _is_figma_remote_mcp(server_name, server_url):
         return (
             f"'{server_name}' is Figma's remote MCP — DCR is allowlisted by exact client_name "
-            f"(\"{_FIGMA_DCR_CLIENT_NAME}\" and \"Codex\" work; most other names 403). Hermes defaults to "
+            f"(\"{_FIGMA_DCR_CLIENT_NAME}\" and \"Codex\" work; most other names 403). Thoth defaults to "
             f"client_name: {_FIGMA_DCR_CLIENT_NAME!r} automatically. If you set oauth.client_name yourself, "
             f"change it to one of those, or clear it and re-run:\n  hermes mcp login {server_name}")
     return (
@@ -1252,6 +1252,6 @@ def build_oauth_auth(server_name: str, server_url: str, oauth_config: dict | Non
         from tools.mcp_oauth_provider import HermesProviderMixin
 
         HermesOAuthClientProvider = type("HermesOAuthClientProvider", (HermesProviderMixin, _sdk_class("OAuthClientProvider")), {
-            "__doc__": "SDK provider plus Hermes' token-endpoint fixes (see ``HermesProviderMixin``).",
+            "__doc__": "SDK provider plus Thoth's token-endpoint fixes (see ``HermesProviderMixin``).",
             "__module__": __name__, "_hermes_logger": logger})
     return HermesOAuthClientProvider(server_url=server_url, **kwargs)

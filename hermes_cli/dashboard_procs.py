@@ -73,7 +73,7 @@ def _scan_dashboard_processes(*, exclude_pids: set[int] | None = None) -> list[t
     ``hermes update`` (every API call 401s). *exclude_pids* (Desktop's HERMES_DESKTOP_CHILD_PID
     backends) are never returned.
 
-    *exclude_pids* is an optional set of PIDs that must never be returned. This is used by the Hermes
+    *exclude_pids* is an optional set of PIDs that must never be returned. This is used by the Thoth
     Desktop Electron app to protect its own backend child process: when the desktop spawns ``hermes serve``
     as a backend and triggers an auto-update, the update must not kill the backend that the desktop itself
     manages. The desktop sets the environment variable ``HERMES_DESKTOP_CHILD_PID`` on the spawned backend
@@ -164,7 +164,7 @@ def _pid_passwd_home(pid: int) -> str | None:
 
 
 def _hermes_home_for_pid(pid: int) -> str | None:
-    """The Hermes home *pid* runs on, tri-state: ``None`` ONLY when its environment is unreadable
+    """The Thoth home *pid* runs on, tri-state: ``None`` ONLY when its environment is unreadable
     (another user, hardened ``/proc``) — callers spare those, never guess.
 
     A readable environment always resolves, replaying ``_apply_profile_override`` on the target's
@@ -265,10 +265,10 @@ def _normalized_home_for_compare(home: str) -> str:
 
 
 def _pids_owned_by_hermes_home(pids: list[int], home: str) -> list[int]:
-    """Return only *pids* whose resolved Hermes home (``_hermes_home_for_pid``) is ``home``.
+    """Return only *pids* whose resolved Thoth home (``_hermes_home_for_pid``) is ``home``.
 
     Dashboard argv is discovery-only: it is not an ownership proof because
-    several Hermes installs and profiles can run the same command on one
+    several Thoth installs and profiles can run the same command on one
     machine.  An unreadable process environment is deliberately not treated
     as a match, so a stop request fails closed rather than taking down an
     unrelated backend.
@@ -834,7 +834,7 @@ _HEX32 = set("0123456789abcdef")
 
 
 def _hermes_home_dir() -> Path:
-    """The process's Hermes home: remote-backend locks are a process-level asset, so a request scoped
+    """The process's Thoth home: remote-backend locks are a process-level asset, so a request scoped
     to another profile must still see the same lock dir."""
     from hermes_constants import get_process_hermes_home
     return get_process_hermes_home()

@@ -10,7 +10,7 @@ Skills are on-demand knowledge documents the agent can load when needed. They fo
 
 All skills live in **`~/.hermes/skills/`** — the primary directory and source of truth. On fresh install, bundled skills are copied from the repo. Hub-installed and agent-created skills also go here. The agent can modify or delete any skill.
 
-You can also point Hermes at **external skill directories** — additional folders scanned alongside the local one. See [External Skill Directories](#external-skill-directories) below.
+You can also point Thoth at **external skill directories** — additional folders scanned alongside the local one. See [External Skill Directories](#external-skill-directories) below.
 
 See also:
 
@@ -19,8 +19,8 @@ See also:
 
 ## Install from the website
 
-Each installable card on the public [Skills Hub](/skills) has an **Install in Hermes**
-button. It opens Hermes Desktop with a URL-encoded, source-qualified skill target:
+Each installable card on the public [Skills Hub](/skills) has an **Install in Thoth**
+button. It opens Thoth with a URL-encoded, source-qualified skill target:
 `official/...` for optional skills, `clawhub/...` for ClawHub, and an explicit
 repository path for bundled skills rather than an ambiguous bare name. The card's
 CLI command uses the same target:
@@ -67,7 +67,7 @@ hermes skills opt-in --sync      # undo: remove the marker and re-seed now
 All of these paths write a `.no-bundled-skills` marker into the profile directory. While the marker is present, the installer, `hermes update`, and any skill sync all skip bundled-skill seeding for that profile. Delete the marker (or run `hermes skills opt-in`) to re-enable.
 
 :::note Safe by default
-`hermes skills opt-out` only stops *future* seeding — it never deletes anything already on disk. The optional `--remove` flag deletes bundled skills **only** when they are unmodified (byte-identical to the version Hermes installed). Skills you have edited, skills installed from the hub, and skills you wrote yourself are always kept.
+`hermes skills opt-out` only stops *future* seeding — it never deletes anything already on disk. The optional `--remove` flag deletes bundled skills **only** when they are unmodified (byte-identical to the version Thoth installed). Skills you have edited, skills installed from the hub, and skills you wrote yourself are always kept.
 :::
 
 ## Using Skills
@@ -105,7 +105,7 @@ that happen to start with `/` (like file paths) are never swallowed:
 For combinations you use repeatedly, prefer a [skill bundle](#skill-bundles) —
 same effect under one short command.
 
-(Plan mode works the same way but is a built-in command now: `/plan [request]` tells Hermes to inspect context if needed, write a markdown implementation plan instead of executing the task, and save the result under `.hermes/plans/` relative to the active workspace/backend working directory.)
+(Plan mode works the same way but is a built-in command now: `/plan [request]` tells Thoth to inspect context if needed, write a markdown implementation plan instead of executing the task, and save the result under `.hermes/plans/` relative to the active workspace/backend working directory.)
 
 You can also interact with skills through natural conversation:
 
@@ -121,7 +121,7 @@ reference material — into a reusable skill, without hand-writing the
 `SKILL.md`. It is open-ended: point it at *anything you can describe* and the
 agent gathers the material with the tools it already has, then authors a skill
 that follows the [house authoring standards](#skillmd-format) (≤60-char
-description, the standard section order, Hermes-tool framing, no invented
+description, the standard section order, Thoth-tool framing, no invented
 commands).
 
 ```bash
@@ -300,7 +300,7 @@ required_environment_variables:
     required_for: full functionality
 ```
 
-When a missing value is encountered, Hermes asks for it securely only when the skill is actually loaded in the local CLI. You can skip setup and keep using the skill. Messaging surfaces never ask for secrets in chat — they tell you to use `hermes setup` or `~/.hermes/.env` locally instead.
+When a missing value is encountered, Thoth asks for it securely only when the skill is actually loaded in the local CLI. You can skip setup and keep using the skill. Messaging surfaces never ask for secrets in chat — they tell you to use `hermes setup` or `~/.hermes/.env` locally instead.
 
 Once set, declared env vars are **automatically passed through** to `execute_code` and `terminal` sandboxes — the skill's scripts can use `$TENOR_API_KEY` directly. For non-skill env vars, use the `terminal.env_passthrough` config option. See [Environment Variable Passthrough](../security.md#environment-variable-passthrough) for details.
 
@@ -349,7 +349,7 @@ See [Skill Settings](../configuration.md#skill-settings) and [Creating Skills �
 
 Third-party URL and GitHub installs include `SKILL.md` plus the exact local
 files it references under `references/`, `templates/`, `scripts/`, `assets/`,
-and `examples/`. Unreferenced repository files are not copied. Hermes scans the
+and `examples/`. Unreferenced repository files are not copied. Thoth scans the
 complete quarantined bundle and records the source URL, exact content hash,
 scanner version, findings, timestamp, and fresh-or-cached status in
 `skills/.hub/lock.json`.
@@ -357,7 +357,7 @@ scanner version, findings, timestamp, and fresh-or-cached status in
 ### Advisory SkillEvaluator scan
 
 In addition to the built-in security scanner (which enforces the install
-policy above), Hermes can run [NVIDIA SkillEvaluator](https://github.com/NVIDIA/SkillEvaluator)
+policy above), Thoth can run [NVIDIA SkillEvaluator](https://github.com/NVIDIA/SkillEvaluator)
 Tier 1 checks on every hub install as a second opinion. Tier 1 is
 deterministic and keyless — PII detection (leaked emails, personal paths,
 connection strings), unicode-smuggling detection, script lint, license
@@ -395,7 +395,7 @@ its response (`tier1` field) alongside the built-in scanner's verdict.
 
 ## External Skill Directories
 
-If you maintain skills outside of Hermes — for example, a shared `~/.agents/skills/` directory used by multiple AI tools — you can tell Hermes to scan those directories too.
+If you maintain skills outside of Thoth — for example, a shared `~/.agents/skills/` directory used by multiple AI tools — you can tell Thoth to scan those directories too.
 
 Add `external_dirs` under the `skills` section in `~/.hermes/config.yaml`:
 
@@ -412,10 +412,10 @@ Paths support `~` expansion and `${VAR}` environment variable substitution.
 ### How it works
 
 - **Create locally, update in place**: New agent-created skills are written to `~/.hermes/skills/` (or `skills.create_dir` when configured — see below). Existing skills are modified where they are found, including skills under `external_dirs`, when the agent uses `skill_manage` actions such as `patch` (targeted or full rewrite), `write_file`, `remove_file`, or `delete`.
-- **External dirs are not a write-protection boundary**: If an external skill directory is writable by the Hermes process, agent-managed skill updates can change files in that directory. Use filesystem permissions or a separate profile/toolset setup if shared external skills must stay read-only.
+- **External dirs are not a write-protection boundary**: If an external skill directory is writable by the Thoth process, agent-managed skill updates can change files in that directory. Use filesystem permissions or a separate profile/toolset setup if shared external skills must stay read-only.
 - **Precedence**: If the same skill name exists in more than one directory, the higher-precedence directory wins everywhere — skill index, `skills_list`, `hermes skills list`, `skill_view`, slash commands, `-s` preload and cron: `project → local (~/.hermes/skills/) → skills.create_dir → external_dirs`. The hidden copy is logged as shadowed. See [Duplicate skill names](#duplicate-skill-names).
 - **Full integration**: External skills appear in the system prompt index, `skills_list`, `skill_view`, and as `/skill-name` slash commands — no different from local skills.
-- **Non-existent paths are silently skipped**: If a configured directory doesn't exist, Hermes ignores it without errors. Useful for optional shared directories that may not be present on every machine.
+- **Non-existent paths are silently skipped**: If a configured directory doesn't exist, Thoth ignores it without errors. Useful for optional shared directories that may not be present on every machine.
 
 ### Example
 
@@ -451,15 +451,15 @@ What this changes:
 - **The directory is fully integrated.** Skills under `create_dir` are scanned alongside the local dir: they appear in the skill index, `skills_list`, `skill_view`, slash commands, and can be patched or deleted like any local skill.
 - **Everything else stays local.** Existing skills are still modified in place wherever they live; bundled skill sync, the hub, and the curator keep operating on the profile-local dir.
 
-Paths support `~` expansion and `${VAR}` substitution; relative paths resolve against your Hermes home. Setting `create_dir` to the local skills dir is the same as leaving it unset.
+Paths support `~` expansion and `${VAR}` substitution; relative paths resolve against your Thoth home. Setting `create_dir` to the local skills dir is the same as leaving it unset.
 
 
 ## Project-Local Skills
 
-Repos can carry their own skills, active only for sessions started inside that project — the same pattern other agent harnesses use for repo-local configuration. When you launch Hermes inside a git checkout, it looks for skills in:
+Repos can carry their own skills, active only for sessions started inside that project — the same pattern other agent harnesses use for repo-local configuration. When you launch Thoth inside a git checkout, it looks for skills in:
 
 ```text
-<project-root>/.hermes/skills/    # Hermes-native location
+<project-root>/.hermes/skills/    # Thoth-native location
 <project-root>/.agents/skills/    # cross-tool convention (shared with other agent CLIs)
 ```
 
@@ -467,7 +467,7 @@ The project root is the nearest ancestor directory containing `.git` (worktrees 
 
 ### Trusting a project
 
-Skills are procedure documents the agent follows, so Hermes does **not** auto-load them from arbitrary cloned repos. The first time you run Hermes in a repo with project skills, the banner shows a notice:
+Skills are procedure documents the agent follows, so Thoth does **not** auto-load them from arbitrary cloned repos. The first time you run Thoth in a repo with project skills, the banner shows a notice:
 
 ```text
 ◆ 3 project skill(s) found in /home/you/myproject but not loaded — run `hermes skills trust` to enable them.
@@ -696,7 +696,7 @@ in the pending JSON file). Memory writes have the same gate under
 
 Browse, search, install, and manage skills from online registries, `skills.sh`, direct well-known skill endpoints, and official optional skills.
 
-Unfiltered searches (CLI, TUI, and the dashboard) are answered from a cached centralized index that covers the external registries. That index is rebuilt periodically, so when it has no match for your query Hermes also asks `skills.sh`, ClawHub, LobeHub and well-known endpoints directly — a skill published minutes ago still shows up. That extra pass gets at most 8 seconds of the search budget, so a slow registry cannot turn a miss into a long wait. Custom GitHub taps are not part of that fallback (search them with `--source github`, or via the index once it catches up), and provider filters such as `--source nvidia` do not trigger it (those registries carry no provider data).
+Unfiltered searches (CLI, TUI, and the dashboard) are answered from a cached centralized index that covers the external registries. That index is rebuilt periodically, so when it has no match for your query Thoth also asks `skills.sh`, ClawHub, LobeHub and well-known endpoints directly — a skill published minutes ago still shows up. That extra pass gets at most 8 seconds of the search budget, so a slow registry cannot turn a miss into a long wait. Custom GitHub taps are not part of that fallback (search them with `--source github`, or via the index once it catches up), and provider filters such as `--source nvidia` do not trigger it (those registries carry no provider data).
 
 ### Common commands
 
@@ -729,8 +729,8 @@ hermes skills tap add myorg/skills-repo           # Add a custom GitHub source
 
 | Source | Example | Notes |
 |--------|---------|-------|
-| `official` | `official/security/1password` | Optional skills shipped with Hermes. |
-| `skills-sh` | `skills-sh/vercel-labs/agent-skills/vercel-react-best-practices` | Searchable via `hermes skills search <query> --source skills-sh`. Hermes resolves alias-style skills when the skills.sh slug differs from the repo folder. |
+| `official` | `official/security/1password` | Optional skills shipped with Thoth. |
+| `skills-sh` | `skills-sh/vercel-labs/agent-skills/vercel-react-best-practices` | Searchable via `hermes skills search <query> --source skills-sh`. Thoth resolves alias-style skills when the skills.sh slug differs from the repo folder. |
 | `well-known` | `well-known:https://mintlify.com/docs/.well-known/skills/mintlify` | Skills served directly from `/.well-known/skills/index.json` on a website. Search using the site or docs URL. |
 | `url` | `https://sharethis.chat/SKILL.md` | Direct HTTP(S) URL to `SKILL.md` plus explicitly referenced support files. Name resolution: frontmatter → URL slug → interactive prompt → `--name` flag. |
 | `github` | `openai/skills/k8s` | Direct GitHub repo/path installs and custom taps. |
@@ -738,11 +738,11 @@ hermes skills tap add myorg/skills-repo           # Add a custom GitHub source
 
 ### Integrated hubs and registries
 
-Hermes currently integrates with these skills ecosystems and discovery sources:
+Thoth currently integrates with these skills ecosystems and discovery sources:
 
 #### 1. Official optional skills (`official`)
 
-These are maintained in the Hermes repository itself and install with built-in trust.
+These are maintained in the Thoth repository itself and install with built-in trust.
 
 - Catalog: [Official Optional Skills Catalog](../../reference/optional-skills-catalog)
 - Source in repo: `optional-skills/`
@@ -755,7 +755,7 @@ hermes skills install official/security/1password
 
 #### 2. skills.sh (`skills-sh`)
 
-This is Vercel's public skills directory. Hermes can search it directly, inspect skill detail pages, resolve alias-style slugs, and install from the underlying source repo.
+This is Vercel's public skills directory. Thoth can search it directly, inspect skill detail pages, resolve alias-style slugs, and install from the underlying source repo.
 
 - Directory: [skills.sh](https://skills.sh/)
 - CLI/tooling repo: [vercel-labs/skills](https://github.com/vercel-labs/skills)
@@ -784,7 +784,7 @@ hermes skills install well-known:https://mintlify.com/docs/.well-known/skills/mi
 
 #### 4. Direct GitHub skills (`github`)
 
-Hermes can install directly from GitHub repositories and GitHub-based taps. This is useful when you already know the repo/path or want to add your own custom source repo.
+Thoth can install directly from GitHub repositories and GitHub-based taps. This is useful when you already know the repo/path or want to add your own custom source repo.
 
 Default taps (browsable without any setup):
 - [openai/skills](https://github.com/openai/skills)
@@ -808,7 +808,7 @@ hermes skills tap add myorg/skills-repo
 time and become the category labels shown in the
 [Skills Hub](https://hermes-agent.nousresearch.com/docs) page — instead of a
 tag-derived guess. This is generic: any tap that ships the file gets real
-categorization, no Hermes-side changes required.
+categorization, no Thoth-side changes required.
 
 ```json
 {
@@ -825,24 +825,24 @@ categorization, no Hermes-side changes required.
 A third-party skills marketplace integrated as a community source.
 
 - Site: [clawhub.ai](https://clawhub.ai/)
-- Hermes source id: `clawhub`
+- Thoth source id: `clawhub`
 
 #### 6. LobeHub (`lobehub`)
 
-Hermes can search and convert agent entries from LobeHub's public catalog into installable Hermes skills.
+Thoth can search and convert agent entries from LobeHub's public catalog into installable Thoth skills.
 
 - Site: [LobeHub](https://lobehub.com/)
 - Public agents index: [chat-agents.lobehub.com](https://chat-agents.lobehub.com/)
 - Backing repo: [lobehub/lobe-chat-agents](https://github.com/lobehub/lobe-chat-agents)
-- Hermes source id: `lobehub`
+- Thoth source id: `lobehub`
 
 #### 7. browse.sh (`browse-sh`)
 
-Hermes integrates with [browse.sh](https://browse.sh), Browserbase's catalog of 200+ site-specific browser-automation SKILL.md files (Airbnb, Amazon, arXiv, 12306.cn, Etsy, Xero, and many more). Each skill describes how to drive one website end-to-end and is suitable for use with Hermes' browser tools and any browser-automation skills you already have installed.
+Thoth integrates with [browse.sh](https://browse.sh), Browserbase's catalog of 200+ site-specific browser-automation SKILL.md files (Airbnb, Amazon, arXiv, 12306.cn, Etsy, Xero, and many more). Each skill describes how to drive one website end-to-end and is suitable for use with Thoth's browser tools and any browser-automation skills you already have installed.
 
 - Site: [browse.sh](https://browse.sh/)
 - Catalog API: `https://browse.sh/api/skills`
-- Hermes source id: `browse-sh`
+- Thoth source id: `browse-sh`
 - Trust level: `community`
 
 ```bash
@@ -855,11 +855,11 @@ Identifiers use the form `browse-sh/<hostname>/<task-id>` and match the slug exp
 
 #### 8. Direct URL (`url`)
 
-Install `SKILL.md` directly from any HTTP(S) URL — useful when an author hosts a skill on their own site (no hub listing, no GitHub path to type). Hermes also fetches explicitly referenced files under `references/`, `templates/`, `scripts/`, `assets/`, and `examples/`, then scans and installs the complete bundle.
+Install `SKILL.md` directly from any HTTP(S) URL — useful when an author hosts a skill on their own site (no hub listing, no GitHub path to type). Thoth also fetches explicitly referenced files under `references/`, `templates/`, `scripts/`, `assets/`, and `examples/`, then scans and installs the complete bundle.
 
-- Hermes source id: `url`
+- Thoth source id: `url`
 - Identifier: the URL itself (no prefix needed)
-- Scope: `SKILL.md` plus exact referenced support files in the allowlisted directories. Hermes does not enumerate or copy unrelated files from the host.
+- Scope: `SKILL.md` plus exact referenced support files in the allowlisted directories. Thoth does not enumerate or copy unrelated files from the host.
 
 ```bash
 hermes skills install https://sharethis.chat/SKILL.md
@@ -909,7 +909,7 @@ Important behavior:
 
 | Level | Source | Policy |
 |-------|--------|--------|
-| `builtin` | Ships with Hermes | Always trusted |
+| `builtin` | Ships with Thoth | Always trusted |
 | `official` | `optional-skills/` in the repo | Built-in trust, no third-party warning |
 | `trusted` | Trusted registries/repos such as `openai/skills`, `anthropics/skills`, `huggingface/skills`, `NVIDIA/skills` | More permissive policy than community sources |
 | `community` | Everything else (`skills.sh`, well-known endpoints, custom GitHub repos, most marketplaces) | Non-dangerous findings can be overridden with `--force`; `dangerous` verdicts stay blocked |
@@ -939,7 +939,7 @@ Skills hub operations use the GitHub API, which has a rate limit of 60 requests/
 
 ### Publishing a custom skill tap
 
-If you want to share a curated set of skills — for your team, your org, or publicly — you can publish them as a **tap**: a GitHub repository other Hermes users add with `hermes skills tap add <owner/repo>`. No server, no registry sign-up, no release pipeline. Just a directory of `SKILL.md` files.
+If you want to share a curated set of skills — for your team, your org, or publicly — you can publish them as a **tap**: a GitHub repository other Thoth users add with `hermes skills tap add <owner/repo>`. No server, no registry sign-up, no release pipeline. Just a directory of `SKILL.md` files.
 
 #### Repo layout
 
@@ -967,7 +967,7 @@ Rules:
 - Subdirectories like `references/`, `templates/`, `scripts/`, `assets/` are downloaded alongside `SKILL.md` at install time.
 - Skills whose directory name starts with `.` or `_` are ignored.
 
-Hermes discovers skills by listing every subdirectory of the tap path and probing each for `SKILL.md`.
+Thoth discovers skills by listing every subdirectory of the tap path and probing each for `SKILL.md`.
 
 #### Minimal tap example
 
@@ -996,7 +996,7 @@ metadata:
 Step 1: ...
 ```
 
-After pushing that to GitHub, any Hermes user can subscribe and install:
+After pushing that to GitHub, any Thoth user can subscribe and install:
 
 ```bash
 hermes skills tap add my-org/hermes-skills
@@ -1030,7 +1030,7 @@ Useful when you want to share one skill without asking the user to subscribe to 
 
 #### Trust levels for taps
 
-New taps are assigned `community` trust by default. Skills installed from them run through the standard security scan and show the third-party warning panel on first install. If your org or a widely-trusted source should get higher trust, add its repo to `TRUSTED_REPOS` in `tools/skills_guard.py` (requires a Hermes core PR).
+New taps are assigned `community` trust by default. Skills installed from them run through the standard security scan and show the third-party warning panel on first install. If your org or a widely-trusted source should get higher trust, add its repo to `TRUSTED_REPOS` in `tools/skills_guard.py` (requires a Thoth core PR).
 
 #### Tap management
 
@@ -1052,9 +1052,9 @@ Taps are stored in `~/.hermes/skills/.hub/taps.json` (created on demand).
 
 ## Bundled skill updates (`hermes skills reset`)
 
-Hermes ships with a set of bundled skills in `skills/` inside the repo. On install and on every `hermes update`, a sync pass copies those into `~/.hermes/skills/` and records a manifest at `~/.hermes/skills/.bundled_manifest` mapping each skill name to the content hash at the time it was synced (the **origin hash**).
+Thoth ships with a set of bundled skills in `skills/` inside the repo. On install and on every `hermes update`, a sync pass copies those into `~/.hermes/skills/` and records a manifest at `~/.hermes/skills/.bundled_manifest` mapping each skill name to the content hash at the time it was synced (the **origin hash**).
 
-On each sync, Hermes recomputes the hash of your local copy and compares it to the origin hash:
+On each sync, Thoth recomputes the hash of your local copy and compares it to the origin hash:
 
 - **Unchanged** → safe to pull upstream changes, copy the new bundled version in, record the new origin hash.
 - **Changed** → treated as **user-modified** and skipped forever, so your edits never get stomped.

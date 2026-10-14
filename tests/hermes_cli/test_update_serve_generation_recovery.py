@@ -314,7 +314,7 @@ class _Systemctl:
             if "--user" not in argv:
                 return _Completed(0, stdout="")
             body = "\n".join(
-                f"{unit} loaded active running Hermes" for unit in self.listed
+                f"{unit} loaded active running Thoth" for unit in self.listed
             )
             return _Completed(0, stdout=body)
         if "is-active" in argv:

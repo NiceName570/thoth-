@@ -9,7 +9,7 @@ Two real surfaces, each timestamped against the fake's own clock (same host):
 
 * the Desktop/TUI event stream (``python -m tui_gateway.entry`` over stdio): ``reasoning.delta`` /
   ``message.delta`` events carrying the agent's text (#120550);
-* ACP composition — Hermes itself served as an ACP agent (``hermes acp``) on top of the copilot-acp
+* ACP composition — Thoth itself served as an ACP agent (``hermes acp``) on top of the copilot-acp
   provider: the outer client must get ``session/update`` chunks before the inner turn ends (#101507).
 
 Both are red on main (the ACP client buffers the whole response, then replays it as a stream), so

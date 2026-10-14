@@ -134,7 +134,7 @@ def main() -> int:
         root = Path(request["root"])
         python = resolve_store_python(root)
         if python is None:
-            print("Cannot resume stopped backends: no selected Hermes interpreter", file=sys.stderr)
+            print("Cannot resume stopped backends: no selected Thoth interpreter", file=sys.stderr)
             return 1
         return subprocess.run(
             [str(python), "-I", "-B", "-X", "utf8", str(root / "hermes_cli/update_serve_resume.py"),

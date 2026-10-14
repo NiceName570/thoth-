@@ -5,7 +5,7 @@ identity, each accepting only its own randomly minted key. ``check_routing`` is 
 invariant every scenario shares: a request on a host the scenario did not select, or a
 selected host receiving any bearer other than its own, is a credential leak.
 
-Hermes itself runs for real in child processes (``hermes chat -q`` / ``hermes -z`` /
+Thoth itself runs for real in child processes (``hermes chat -q`` / ``hermes -z`` /
 ``python -m tui_gateway.entry``) with HOME and HERMES_HOME inside the test's tmp dir,
 every credential/endpoint env var stripped, and only these fake hosts configured.
 """
@@ -45,7 +45,7 @@ def assert_routing(problems: list[str], ctx: str) -> None:
     assert not problems, "\n".join(problems) + "\n" + ctx
 
 
-# Env that could route or authenticate a child Hermes outside the fake fleet.
+# Env that could route or authenticate a child Thoth outside the fake fleet.
 _STRIP_SUFFIXES = ("_API_KEY", "_TOKEN", "_BASE_URL", "_SECRET", "_ACCESS_KEY", "_KEY_ID")
 _STRIP_PREFIXES = ("HERMES_", "OPENAI", "ANTHROPIC", "OPENROUTER", "AWS_", "AZURE_", "GOOGLE_",
                    "GEMINI", "PYTEST_", "NOUS_", "XAI_", "LLM_", "CUSTOM_")
@@ -239,7 +239,7 @@ class EgressTrap:
 
 
 def inference_hosts() -> frozenset[str]:
-    """Hostnames of every inference API Hermes itself knows (its provider registry + OpenRouter).
+    """Hostnames of every inference API Thoth itself knows (its provider registry + OpenRouter).
 
     Read from the product, never copied: a CONNECT to one of these from a scenario that
     configured only loopback hosts is a prompt leaving for a real provider.
@@ -274,7 +274,7 @@ def pool_auth(provider: str, keys: Iterable[str]) -> dict[str, Any]:
     ]}}
 
 
-# Child Hermes processes ---------------------------------------------------------
+# Child Thoth processes ---------------------------------------------------------
 
 
 @dataclass

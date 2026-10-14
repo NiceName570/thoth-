@@ -54,7 +54,7 @@ KREA_MODEL_IDS = frozenset(_MODELS)
 
 DEFAULT_MODEL = "krea-2-medium"
 
-# Hermes' 3 abstract ratios → Krea's enum (1:1, 4:3, 3:2, 16:9, 2.35:1, 4:5, 2:3, 9:16).
+# Thoth's 3 abstract ratios → Krea's enum (1:1, 4:3, 3:2, 16:9, 2.35:1, 4:5, 2:3, 9:16).
 _ASPECT_MAP = {"landscape": "16:9", "square": "1:1", "portrait": "9:16"}
 DEFAULT_RESOLUTION = "1K"  # only resolution Krea currently supports
 # Style refs are objects ({"url", "strength"}); bare URLs get Krea's recommended start (range -2..2).
@@ -80,7 +80,7 @@ _TERMINAL_STATES = {"completed", "failed", "cancelled"}
 # Krea Enhance — the optional ``upscale`` pass after generation (max 8K).
 _ENHANCE_PATH = "/generate/enhance/krea/enhance"
 _ENHANCE_SCALE_FACTOR = 2
-_USER_AGENT = "Hermes-Agent/1.0 (krea-image-gen)"
+_USER_AGENT = "Thoth-Agent/1.0 (krea-image-gen)"
 
 # Fatal poll outcome (``_poll_krea_job`` ``kind``) → (error_type, message builder).
 _POLL_FAILURES: dict[str, tuple[str, Callable[[str, Any], str]]] = {

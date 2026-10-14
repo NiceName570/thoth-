@@ -8,7 +8,7 @@ auth.json and adopt it instead of presenting the refresh token that was just
 spent. Expected: exactly one refresh grant, no ``invalid_grant``, both turns
 answered with the new bearer, and the refresh token on disk still live.
 
-Everything is real Hermes (pool, persistence, locking, the Anthropic OAuth
+Everything is real Thoth (pool, persistence, locking, the Anthropic OAuth
 refresh over TLS through the intercepting proxy); only the vendor endpoints are
 loopback fakes. The single-process variant of the stale-writer bug (#120815, fixed)
 is pinned by test_oauth_anthropic_refresh.py.

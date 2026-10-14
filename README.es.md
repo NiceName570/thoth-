@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="assets/banner.png" alt="Hermes Agent" width="100%">
+  <img src="assets/banner.png" alt="Thoth" width="100%">
 </p>
 
-# Hermes Agent ☤
+# Thoth ☤
 <p align="center">
-  <a href="https://hermes-agent.nousresearch.com/">Hermes Agent</a> | <a href="https://hermes-agent.nousresearch.com/">Hermes Desktop</a>
+  <a href="https://hermes-agent.nousresearch.com/">Thoth</a> | <a href="https://hermes-agent.nousresearch.com/">Thoth</a>
 </p>
 <p align="center">
   <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Docs-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="Documentación"></a>
@@ -42,7 +42,7 @@ curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 
 ### Windows (nativo, PowerShell)
 
-> **Nota:** En Windows nativo, Hermes funciona sin WSL — la CLI, el gateway, la TUI y las herramientas funcionan de forma nativa. Si prefieres usar WSL2, el comando de Linux/macOS de arriba también funciona allí. ¿Encontraste un error? Por favor [crea un issue](https://github.com/NousResearch/hermes-agent/issues).
+> **Nota:** En Windows nativo, Thoth funciona sin WSL — la CLI, el gateway, la TUI y las herramientas funcionan de forma nativa. Si prefieres usar WSL2, el comando de Linux/macOS de arriba también funciona allí. ¿Encontraste un error? Por favor [crea un issue](https://github.com/NousResearch/hermes-agent/issues).
 
 Ejecuta esto en PowerShell:
 
@@ -52,7 +52,7 @@ iex (irm https://hermes-agent.nousresearch.com/install.ps1)
 
 El instalador de código fuente usa PM para Python 3.14, Node.js, npm,
 ripgrep, FFmpeg y las dependencias de Python. Si falta Git, descarga el archivo
-verificado de Git for Windows en el almacén de Hermes, sin reemplazar el Git
+verificado de Git for Windows en el almacén de Thoth, sin reemplazar el Git
 del sistema. MSIX/App Installer es una distribución separada.
 
 > **Android / Termux:** Hay un paquete APT en pruebas para dispositivos aarch64. Incluye Python, Node.js y la TUI. Sigue la [guía de Termux](https://hermes-agent.nousresearch.com/docs/getting-started/termux), no el script de instalación para escritorio y servidor.
@@ -88,7 +88,7 @@ hermes doctor       # Diagnostica cualquier problema
 
 ## Evita la colección de claves API — Nous Portal
 
-Hermes funciona con cualquier proveedor que quieras — eso no cambiará. Pero si prefieres no recopilar cinco claves API separadas para el modelo, búsqueda web, generación de imágenes, TTS y un navegador en la nube, **[Nous Portal](https://portal.nousresearch.com)** las cubre todas bajo una sola suscripción:
+Thoth funciona con cualquier proveedor que quieras — eso no cambiará. Pero si prefieres no recopilar cinco claves API separadas para el modelo, búsqueda web, generación de imágenes, TTS y un navegador en la nube, **[Nous Portal](https://portal.nousresearch.com)** las cubre todas bajo una sola suscripción:
 
 - **Más de 300 modelos** — elige cualquiera con `/model <nombre>`
 - **Tool Gateway** — búsqueda web, generación de imágenes (FAL), texto a voz (OpenAI), navegador en la nube (Browser Use), todo enrutado a través de tu suscripción. Sin cuentas adicionales.
@@ -107,7 +107,7 @@ Puedes seguir usando tus propias claves por herramienta cuando quieras — el ga
 
 ## Referencia rápida: CLI vs Mensajería
 
-Hermes tiene dos puntos de entrada: inicia la interfaz de terminal con `hermes`, o ejecuta el gateway y habla con él desde Telegram, Discord, Slack, WhatsApp, Signal o Email. Una vez en una conversación, muchos comandos de barra son compartidos entre ambas interfaces.
+Thoth tiene dos puntos de entrada: inicia la interfaz de terminal con `hermes`, o ejecuta el gateway y habla con él desde Telegram, Discord, Slack, WhatsApp, Signal o Email. Una vez en una conversación, muchos comandos de barra son compartidos entre ambas interfaces.
 
 | Acción                              | CLI                                           | Plataformas de mensajería                                                         |
 | ----------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------- |
@@ -151,7 +151,7 @@ Toda la documentación está en **[hermes-agent.nousresearch.com/docs](https://h
 
 ## Migración desde OpenClaw
 
-Si vienes de OpenClaw, Hermes puede importar automáticamente tu configuración, memorias, habilidades y claves API.
+Si vienes de OpenClaw, Thoth puede importar automáticamente tu configuración, memorias, habilidades y claves API.
 
 **Durante la configuración inicial:** El asistente de configuración (`hermes setup`) detecta automáticamente `~/.openclaw` y ofrece migrar antes de que comience la configuración.
 
@@ -193,8 +193,8 @@ de verificación están en [Development Setup](CONTRIBUTING.md#development-setup
 - 💬 [Discord](https://discord.gg/NousResearch)
 - 📚 [Skills Hub](https://agentskills.io)
 - 🐛 [Issues](https://github.com/NousResearch/hermes-agent/issues)
-- 🔌 [computer-use-linux](https://github.com/avifenesh/computer-use-linux) — Servidor MCP de control de escritorio Linux para Hermes y otros hosts MCP, con árboles de accesibilidad AT-SPI, entrada Wayland/X11, capturas de pantalla y targeting de ventanas del compositor.
-- 🔌 [HermesClaw](https://github.com/AaronWong1999/hermesclaw) — Puente WeChat comunitario: Ejecuta Hermes Agent y OpenClaw en la misma cuenta de WeChat.
+- 🔌 [computer-use-linux](https://github.com/avifenesh/computer-use-linux) — Servidor MCP de control de escritorio Linux para Thoth y otros hosts MCP, con árboles de accesibilidad AT-SPI, entrada Wayland/X11, capturas de pantalla y targeting de ventanas del compositor.
+- 🔌 [HermesClaw](https://github.com/AaronWong1999/hermesclaw) — Puente WeChat comunitario: Ejecuta Thoth y OpenClaw en la misma cuenta de WeChat.
 
 ---
 

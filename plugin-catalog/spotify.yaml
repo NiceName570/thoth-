@@ -1,9 +1,9 @@
 name: spotify
 repo: https://github.com/NousResearch/hermes-spotify
 sha: 2f39a03ca83c5e36566018d888e81b46a9ee6371
-description: 'Spotify for Hermes: seven tools (playback, devices, queue, search, playlists, albums,
+description: 'Spotify for Thoth: seven tools (playback, devices, queue, search, playlists, albums,
   library) over the Spotify Web API, plus `hermes spotify login|status|logout` (loopback PKCE with your
-  own Spotify developer app; Premium needed for playback control). Formerly built into Hermes core;
+  own Spotify developer app; Premium needed for playback control). Formerly built into Thoth core;
   existing users are migrated automatically.'
 maintainer: NousResearch
 tier: official

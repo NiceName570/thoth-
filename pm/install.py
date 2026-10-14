@@ -136,7 +136,7 @@ def installed_package(name: str, *, allow_outdated: bool = False) -> InstalledPa
 
 def uv_launcher(name: str) -> Path | None:
     """PM's installed ``uv``/``uvx`` for a user-declared MCP stdio ``command:``, so a bare
-    ``uvx`` server runs the packaged uv, never the user's. Read-only; Hermes's own Python
+    ``uvx`` server runs the packaged uv, never the user's. Read-only; Thoth's own Python
     work still goes through PM operations, not this executable."""
     if name not in ("uv", "uvx"):
         raise ValueError(f"{name!r} is not a uv launcher")
@@ -251,7 +251,7 @@ _SET_ASIDE_PREFIX = ".reclaim-"
 def _discard_entry(store: Store, entry_name: str) -> None:
     """Drop a tree a finished publish or restore left behind as garbage.
 
-    A running Hermes process can keep the replaced interpreter's DLLs mapped
+    A running Thoth process can keep the replaced interpreter's DLLs mapped
     far past the retry window, and failing here reports a completed install
     as broken (#124807). Windows still allows renaming a tree with mapped
     images, so it moves to a `.reclaim-*` name: its slot is free for the next
@@ -710,7 +710,7 @@ def _venv_install_lock(*, patient: bool):
         if not held:
             error = InstallError(
                 "venv",
-                f"another Hermes process is installing dependencies (waited {INSTALL_LOCK_TIMEOUT_SECONDS:.0f}s)",
+                f"another Thoth process is installing dependencies (waited {INSTALL_LOCK_TIMEOUT_SECONDS:.0f}s)",
                 "retry in a moment, or run `hermes pm install` to install explicitly",
             )
             receipt.record_refusal("install-busy", str(error))
@@ -978,7 +978,7 @@ def activate(*, allow_incomplete: bool = False) -> list[str]:
 
 def store_first_path(path: str) -> str:
     """``path`` with the installed store's tool dirs moved to the front, for
-    Hermes's own children whose PATH gets other dirs prepended after activate."""
+    Thoth's own children whose PATH gets other dirs prepended after activate."""
     import os
 
     dirs = _store_path_dirs()

@@ -1,4 +1,4 @@
-"""Unified removal contract for every credential source Hermes reads from.
+"""Unified removal contract for every credential source Thoth reads from.
 
 Readers live in ``agent.credential_pool``; what is unified here is **removal**:
 ``hermes auth remove <provider> <N>`` must make the entry stay gone across
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 EXTERNAL_LOGINS_NOT_ADOPTED_NOTICE = (
     "External CLI logins (Codex CLI, Claude Code) are not adopted: auth.adopt_external_logins is false. "
-    "Hermes uses only its own logins; run `hermes auth add <provider>` to add one."
+    "Thoth uses only its own logins; run `hermes auth add <provider>` to add one."
 )
 _notice_logged = False
 
@@ -32,9 +32,9 @@ _notice_logged = False
 def adopt_external_logins_enabled() -> bool:
     """``auth.adopt_external_logins`` (default True).
 
-    Codex and Claude OAuth refresh tokens are single-use and rotate, so once Hermes borrows a CLI's
+    Codex and Claude OAuth refresh tokens are single-use and rotate, so once Thoth borrows a CLI's
     token pair the two programs hold one token family and whichever refreshes first logs the other
-    out. When the user opts out, Hermes never reads or refreshes those files and says so once per
+    out. When the user opts out, Thoth never reads or refreshes those files and says so once per
     process (INFO) the first time it would have."""
     global _notice_logged
     try:
@@ -124,8 +124,8 @@ def _remove_env_source(provider: str, removed) -> RemovalResult:
             f"Note: {env_var} is still set in your shell environment "
             f"(not in ~/.hermes/.env).",
             "  Unset it there (shell profile, systemd EnvironmentFile, "
-            "launchd plist, etc.) or it will keep being visible to Hermes.",
-            f"  The pool entry is now suppressed — Hermes will ignore "
+            "launchd plist, etc.) or it will keep being visible to Thoth.",
+            f"  The pool entry is now suppressed — Thoth will ignore "
             f"{env_var} until you run `hermes auth add {provider}`.",
         ])
     else:
@@ -145,7 +145,7 @@ def _remove_hermes_pkce(provider: str, removed) -> RemovalResult:
     if oauth_file.exists():
         try:
             oauth_file.unlink()
-            result.cleaned.append("Cleared Hermes Anthropic OAuth credentials")
+            result.cleaned.append("Cleared Thoth Anthropic OAuth credentials")
         except OSError as exc:
             result.hints.append(f"Could not delete {oauth_file}: {exc}")
     return result

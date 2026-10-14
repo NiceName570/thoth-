@@ -105,7 +105,7 @@ scripts/run_tests.sh -v --tb=long             # pass-through pytest flags
 - **Windows:** run the same wrapper through Git Bash. See `references/windows-quirks.md`.
 - After editing `pyproject.toml`, run `hermes pm lock`, re-source `./activate`, and
   commit `pyproject.toml` with `uv.lock`.
-  Do not mutate Hermes environments with raw pip or uv commands.
+  Do not mutate Thoth environments with raw pip or uv commands.
 
 Host-specific tests run on the real host. Use one `@pytest.mark.platforms(...)`
 marker per test, such as `@pytest.mark.platforms("windows", arch="arm64")`.

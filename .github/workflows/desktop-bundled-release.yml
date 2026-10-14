@@ -150,7 +150,7 @@ on:
         type: string
         default: ''
       branding:
-        description: 'Channel app name, icon and package ID: preview (own app) or stable (the regular Hermes app). Fixed when the channel is first created.'
+        description: 'Channel app name, icon and package ID: preview (own app) or stable (the regular Thoth app). Fixed when the channel is first created.'
         required: false
         type: choice
         options: [preview, stable]

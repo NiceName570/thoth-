@@ -127,7 +127,7 @@ def installed_engine(backend: str = "auto", *, allow_outdated: bool = True) -> E
     return engine
 
 
-# Before PM owned binaries, Hermes installed each engine to runtimes/llamacpp/b<tag>/<backend>/
+# Before PM owned binaries, Thoth installed each engine to runtimes/llamacpp/b<tag>/<backend>/
 # and wrote a manifest.json with the archive digests and the llama-server --version it saw.
 _SHA256 = re.compile(r"[0-9a-f]{64}")
 _ADOPTION_LOCK = threading.Lock()
@@ -180,7 +180,7 @@ def _store_lock(root: Path) -> Iterator[bool]:
 def adopt_legacy_engine(backend: str) -> bool:
     """Move the newest pre-PM install of ``backend`` into PM's store and record it as installed.
 
-    A machine that already ran a Hermes-installed engine keeps it across the update to PM. The
+    A machine that already ran a Thoth-installed engine keeps it across the update to PM. The
     manifest's archive digests become the PM identity, so a tag that matches the pin counts as
     current and an older tag counts as outdated, which offers the update. ``os.rename`` only:
     instant on one volume, and a store on another volume leaves the engine where it is. Never

@@ -5,7 +5,7 @@ ran it (``completed`` / ``failed`` + a closed failure class). A flow nobody fini
 itself, so ``started`` also drops a small marker under the owning profile's store dir (the
 process-exit pattern): the finisher claims it by rename, and a marker whose process is gone (or that
 has been pending longer than any real flow takes) is reported ``abandoned`` by the next setup start
-or Hermes start in that profile. Whoever claims the marker records, so each flow ends exactly once.
+or Thoth start in that profile. Whoever claims the marker records, so each flow ends exactly once.
 
 Only the catalog provider name leaves (custom endpoints read ``custom``); never a key, token, base
 URL or error text. Rows are saved synchronously: a setup killed right after ``started`` must still

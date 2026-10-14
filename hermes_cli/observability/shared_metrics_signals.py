@@ -1,7 +1,7 @@
 """v5 signals: which disabled built-in tools models reach for, and when an install first adopts a feature.
 
 ``hermes.tool_unavailable.count`` is counted where the agent validates the calls a model emitted: a
-name Hermes ships (``toolsets.BUILTIN_TOOL_NAMES``) that this session did not enable. Any other name
+name Thoth ships (``toolsets.BUILTIN_TOOL_NAMES``) that this session did not enable. Any other name
 stays the v4 ``unknown_tool`` quality issue only, so a plugin, MCP or hallucinated name never leaves.
 
 ``hermes.feature_adoption.count`` rides on counters the subscriber already records: the first counter
@@ -32,7 +32,7 @@ _DAYS_SINCE_INSTALL_THRESHOLDS = (
 def tool_unavailable_fields(agent: Any, name: Any, issue: str, route: dict[str, str]) -> dict[str, str] | None:
     """Fields for a call to a shipped built-in the session has disabled; None for anything else.
 
-    Background reviews, delegated children and cron jobs run with toolsets Hermes (or the parent
+    Background reviews, delegated children and cron jobs run with toolsets Thoth (or the parent
     model) narrowed on purpose, so their misses say nothing about what users should get by default.
     A built-in deferred behind ``tool_search`` is enabled (reachable through ``tool_call``), not missing.
     """
@@ -63,12 +63,12 @@ def _tool(*names: str, prefix: str = "") -> Callable[[dict[str, str]], bool]:
 
 
 def user_created_skill(d: dict[str, str]) -> bool:
-    """A skill created at the user's request (``agent_created`` is Hermes' own background review)."""
+    """A skill created at the user's request (``agent_created`` is Thoth's own background review)."""
     return d.get("action") == "created" and d.get("provenance") != "agent_created"
 
 
 _TASK_SURFACE = {"desktop": "desktop", "tui": "tui"}
-# metric -> [(feature, predicate over the recorded dimensions)]. Unattended Hermes-owned work only
+# metric -> [(feature, predicate over the recorded dimensions)]. Unattended Thoth-owned work only
 # counts where the user set it up (a cron job, a curator run the user started).
 _FEATURE_RULES: dict[str, tuple[tuple[str, Callable[[dict[str, str]], bool]], ...]] = {
     contract.MEMORY_OP_METRIC: (("memory", lambda d: _success(d) and d.get("origin") == "foreground"),),

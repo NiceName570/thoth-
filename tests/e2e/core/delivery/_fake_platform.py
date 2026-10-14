@@ -41,7 +41,7 @@ POLL = 0.02
 DEADLINE = 120.0
 REPO_ROOT = Path(__file__).resolve().parents[4]
 
-# Per-platform send/edit semantics (what the real service enforces, not what Hermes believes).
+# Per-platform send/edit semantics (what the real service enforces, not what Thoth believes).
 PROFILES: dict[str, dict[str, Any]] = {
     "telegram": {"max_len": 4096, "edits": True, "threads": False},
     "discord": {"max_len": 2000, "edits": True, "threads": True},

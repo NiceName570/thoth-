@@ -37,7 +37,7 @@ def test_dmg_driver_requires_complete_pm_source_install(tmp_path, missing, expec
         launcher.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
         launcher.chmod(0o755)
     if missing != "app":
-        (root / "apps/desktop/release/mac-arm64/Hermes.app").mkdir(parents=True)
+        (root / "apps/desktop/release/mac-arm64/Thoth.app").mkdir(parents=True)
     if missing not in {"completion", "historical", "wrong-root-log"}:
         (root / ".hermes-bootstrap-complete").write_text("completed", encoding="utf-8")
     # The legacy file must not mask a missing PM publication.
@@ -57,7 +57,7 @@ def test_dmg_driver_requires_complete_pm_source_install(tmp_path, missing, expec
         command = mocks / name
         command.write_text(script, encoding="utf-8")
         command.chmod(0o755)
-    app_bin = tmp_path / "Hermes-Setup"
+    app_bin = tmp_path / "Thoth-Setup"
     app_bin.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
     app_bin.chmod(0o755)
     home = tmp_path / "home"

@@ -217,7 +217,7 @@ def test_site_failure_codes_never_collapse_to_unknown(code):
 
 def test_model_caused_codes_stay_on_the_provider_layer_and_runtime_codes_on_gateway():
     """Cut-off / empty / broken replies come from the model (provider layer, so the client's
-    per-code copy applies); a busy session or loop bug is Hermes-side (gateway layer, so the
+    per-code copy applies); a busy session or loop bug is Thoth-side (gateway layer, so the
     client never offers Switch provider for it)."""
     layers = {c: build_error_surface_from_result({"failed": True, "error": "x", "failure_reason": c})["layer"]
               for c in ("truncated", "empty_response", "invalid_response", "session_busy", "loop_error")}

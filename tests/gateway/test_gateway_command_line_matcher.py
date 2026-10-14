@@ -37,8 +37,8 @@ ACCEPT = [
     "hermes -p gateway gateway run",
     "python -m hermes_cli.main --profile gateway gateway run",
     # quoted Windows paths with spaces (shlex-aware tokenization)
-    r'"C:\Program Files\Hermes\hermes-gateway.exe"',
-    r'"C:\Program Files\Hermes\gateway\run.py" run',
+    r'"C:\Program Files\Thoth\hermes-gateway.exe"',
+    r'"C:\Program Files\Thoth\gateway\run.py" run',
     r'"C:\Program Files\Py\pythonw.exe" -m hermes_cli.main gateway run',
 ]
 
@@ -150,13 +150,13 @@ def test_spawn_intent_ignores_inline_source_without_a_gateway_argv():
     assert spawn_intent('python -c "import time; time.sleep(1)" 14980') is None
 
 
-# Atomic Hermes' bundled desktop runner (regression for #22418): it shares
+# Atomic Thoth's bundled desktop runner (regression for #22418): it shares
 # HERMES_HOME with the CLI and must be recognised as a gateway so
 # ``gateway run --replace`` enters the replace/lock-handoff path instead of
 # colliding with the desktop runner's still-held scoped locks.
 ATOMIC_DESKTOP = (
-    "/Applications/Atomic Hermes.app/Contents/Resources/python-server/python "
-    "/Applications/Atomic Hermes.app/Contents/Resources/python-server/desktop-gateway.py"
+    "/Applications/Atomic Thoth.app/Contents/Resources/python-server/python "
+    "/Applications/Atomic Thoth.app/Contents/Resources/python-server/desktop-gateway.py"
 )
 
 

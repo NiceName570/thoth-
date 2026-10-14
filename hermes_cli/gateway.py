@@ -769,7 +769,7 @@ def find_gateway_pids(exclude_pids: set | None = None, all_profiles: bool = Fals
 
 
 def find_profile_gateway_processes(exclude_pids: set | None = None, *, strict: bool = False) -> list[ProfileGatewayProcess]:
-    """Return running gateway PIDs mapped to Hermes profiles via PID files."""
+    """Return running gateway PIDs mapped to Thoth profiles via PID files."""
     _exclude = set(exclude_pids or set())
     processes: list[ProfileGatewayProcess] = []
     try:
@@ -816,9 +816,9 @@ def _scm_service_field(service, field: str):
 def find_windows_gateway_services(
     *, psutil_module=None, profile_processes: list[ProfileGatewayProcess] | None = None
 ) -> list[WindowsGatewayService]:
-    """Profile gateways supervised by real, Hermes-owned Windows services. Service-logon processes may
-    hide their command lines, so identity = Hermes's own PID file + a parent chain ending at a running
-    SCM service PID whose name or binary path is Hermes's (``gateway_windows.hermes_owns_windows_service``).
+    """Profile gateways supervised by real, Thoth-owned Windows services. Service-logon processes may
+    hide their command lines, so identity = Thoth's own PID file + a parent chain ending at a running
+    SCM service PID whose name or binary path is Thoth's (``gateway_windows.hermes_owns_windows_service``).
     The whole service subtree is returned so the Desktop preflight exempts exactly what the updater stops
     through the SCM; a gateway under any other service (a Scheduled Task's svchost) is a plain process."""
     if sys.platform != "win32":
@@ -840,10 +840,10 @@ def find_windows_gateway_services(
                     raise RuntimeError("SCM service has an empty name")
                 # Ownership before state: an OS service above the gateway (Task Scheduler's svchost for a
                 # task-launched gateway, BITS mid-transition) is never its supervisor, so neither its
-                # PID nor its status may steer the pause. Only Hermes-owned services reach the guards below.
-                # The name alone settles Hermes-named services; binpath (QueryServiceConfig) is asked only
+                # PID nor its status may steer the pause. Only Thoth-owned services reach the guards below.
+                # The name alone settles Thoth-named services; binpath (QueryServiceConfig) is asked only
                 # for the rest, and a service that refuses even that to this user is one this user could
-                # not `sc stop` either — never Hermes's, never a reason to abort the enumeration.
+                # not `sc stop` either — never Thoth's, never a reason to abort the enumeration.
                 owned = hermes_owns_windows_service(service_name, "", hermes_roots)
                 if not owned:
                     try:
@@ -2192,7 +2192,7 @@ def _windows_gateway_breakaway_state() -> bool | None:
 # =============================================================================
 
 _SERVICE_BASE = "hermes-gateway"
-SERVICE_DESCRIPTION = "Hermes Agent Gateway - Messaging Platform Integration"
+SERVICE_DESCRIPTION = "Thoth Gateway - Messaging Platform Integration"
 
 _SYSTEM_UNIT_DIR = Path("/etc/systemd/system")
 
@@ -2581,7 +2581,7 @@ def _find_legacy_hermes_units() -> list[tuple[str, Path, bool]]:
     fight the current unit for the bot token (SIGTERM flap loop). Explicit name allowlist + ExecStart
     marker check so profile/third-party units never match; no mutation.
 
-    Detects unit files installed by older Hermes versions that used a different service name (e.g. When both
+    Detects unit files installed by older Thoth versions that used a different service name (e.g. When both
     a legacy unit and the current ``hermes-gateway.service`` are active, they fight over the same bot token
     — the PR #5646 signal-recovery change turns this into a 30-second SIGTERM flap loop.
     """
@@ -2601,7 +2601,7 @@ def _find_legacy_hermes_units() -> list[tuple[str, Path, bool]]:
 
 
 def has_legacy_hermes_units() -> bool:
-    """Return True when any legacy Hermes gateway unit files exist."""
+    """Return True when any legacy Thoth gateway unit files exist."""
     return bool(_find_legacy_hermes_units())
 
 
@@ -2610,7 +2610,7 @@ def print_legacy_unit_warning() -> None:
     legacy = _find_legacy_hermes_units()
     if not legacy:
         return
-    print_warning("Legacy Hermes gateway unit(s) detected from an older install:")
+    print_warning("Legacy Thoth gateway unit(s) detected from an older install:")
     for name, path, is_system in legacy:
         print_info(f"    {path}  ({_service_scope_label(is_system)} scope)")
     print_info("  These run alongside the current hermes-gateway service and")
@@ -2624,11 +2624,11 @@ def remove_legacy_hermes_units(interactive: bool = True, dry_run: bool = False) 
     only lists. Returns ``(removed_count, remaining_paths)`` (remaining: e.g. system-scope when not root)."""
     legacy = _find_legacy_hermes_units()
     if not legacy:
-        print("No legacy Hermes gateway units found.")
+        print("No legacy Thoth gateway units found.")
         return 0, []
 
     print()
-    print("Legacy Hermes gateway unit(s) found:")
+    print("Legacy Thoth gateway unit(s) found:")
     for name, path, is_system in legacy:
         print(f"  {path}  ({_service_scope_label(is_system)} scope)")
     print()
@@ -3399,7 +3399,7 @@ def systemd_unit_is_current(system: bool = False) -> bool:
 
 
 def _retire_hermes_replace_dropin(system: bool = False) -> bool:
-    """Remove only the legacy ``--replace`` drop-in written by Hermes."""
+    """Remove only the legacy ``--replace`` drop-in written by Thoth."""
     unit_path = get_systemd_unit_path(system=system)
     dropin = unit_path.parent / f"{unit_path.name}.d" / "20-replace.conf"
     try:
@@ -3427,7 +3427,7 @@ def refresh_systemd_unit_if_needed(system: bool = False) -> bool:
     current = systemd_unit_is_current(system=system)
     if _retire_hermes_replace_dropin(system=system):
         _run_systemctl(["daemon-reload"], system=system, check=True, timeout=30)
-        print(f"↻ Removed the stale Hermes --replace drop-in from the gateway {_service_scope_label(system)} service")
+        print(f"↻ Removed the stale Thoth --replace drop-in from the gateway {_service_scope_label(system)} service")
         if current:
             return True
     elif current:
@@ -3448,7 +3448,7 @@ def refresh_systemd_unit_if_needed(system: bool = False) -> bool:
     _prepare_service_launcher(system=system, run_as_user=expected_user)
     unit_path.write_text(new_unit, encoding="utf-8")
     _run_systemctl(["daemon-reload"], system=system, check=True, timeout=30)
-    print(f"↻ Updated gateway {_service_scope_label(system)} service definition to match the current Hermes install")
+    print(f"↻ Updated gateway {_service_scope_label(system)} service definition to match the current Thoth install")
     return True
 
 
@@ -4136,7 +4136,7 @@ def host_multiplexer_serving(profile_name: str | None = None):
         # "serving default" is a name collision, and the CLI guards refused on it with exit 78 (#121352).
         from gateway.host_attach import launched_by_other_tenant
         if launched_by_other_tenant(gateway.home, get_hermes_home()):
-            logger.debug("Host gateway %s belongs to another Hermes home; not ours", gateway.describe())
+            logger.debug("Host gateway %s belongs to another Thoth home; not ours", gateway.describe())
             return None
         return gateway
     except Exception:
@@ -4464,11 +4464,11 @@ def _guard_official_docker_root_gateway() -> None:
     if not _is_official_docker_checkout():
         return
 
-    print_error("Refusing to run the Hermes gateway as root inside the official Docker image.")
+    print_error("Refusing to run the Thoth gateway as root inside the official Docker image.")
     print(
         "  The image entrypoint normally drops privileges to the 'hermes' user. "
         "If you override entrypoint in Docker Compose, include "
-        "/opt/hermes/docker/entrypoint.sh before the Hermes command."
+        "/opt/hermes/docker/entrypoint.sh before the Thoth command."
     )
     print(
         "  Running the gateway as root can leave root-owned files in "
@@ -4632,7 +4632,7 @@ def run_gateway(verbose: int = 0, quiet: bool = False, replace: bool = False, fo
 
     from gateway.run import start_gateway
     print("┌─────────────────────────────────────────────────────────┐")
-    print("│           ☤ Hermes Gateway Starting...                 │")
+    print("│           ☤ Thoth Gateway Starting...                 │")
     print("├─────────────────────────────────────────────────────────┤")
     print("│  Messaging platforms + cron scheduler                    │")
     print("│  Press Ctrl+C to stop                                   │")
@@ -5726,7 +5726,7 @@ def _cmd_list(args):
 
 
 def _cmd_migrate_legacy(args):
-    """Stop, disable, and remove legacy Hermes gateway unit files (e.g. hermes.service)."""
+    """Stop, disable, and remove legacy Thoth gateway unit files (e.g. hermes.service)."""
     dry_run = getattr(args, "dry_run", False)
     yes = getattr(args, "yes", False)
     if not supports_systemd_services() and not is_macos():

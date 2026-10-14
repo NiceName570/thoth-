@@ -738,7 +738,7 @@ def _append_unconfigured_rows(
 
 
 def _anthropic_oauth_credentials_present() -> bool:
-    """True when the user explicitly authenticated Anthropic via OAuth (Hermes device flow or Claude Code
+    """True when the user explicitly authenticated Anthropic via OAuth (Thoth device flow or Claude Code
     login) — those leave no trace in active_provider / model.provider / API-key env vars."""
     try:
         from agent.anthropic_credentials import read_claude_code_credentials, read_hermes_oauth_credentials

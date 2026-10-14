@@ -1253,8 +1253,15 @@ class TestLocalOllamaModelDiscovery:
     def test_ollama_host_environment_forms_are_normalized(self, monkeypatch):
         from hermes_cli.models import _get_ollama_base_url, _root_for_ollama_native_api
 
+        # A wildcard bind address is dialed over loopback (Windows refuses a connect to 0.0.0.0 / ::).
         monkeypatch.setenv("OLLAMA_HOST", "0.0.0.0")
-        assert _root_for_ollama_native_api(_get_ollama_base_url()) == "http://0.0.0.0:11434"
+        assert _root_for_ollama_native_api(_get_ollama_base_url()) == "http://127.0.0.1:11434"
+        monkeypatch.setenv("OLLAMA_HOST", "0.0.0.0:22434")
+        assert _root_for_ollama_native_api(_get_ollama_base_url()) == "http://127.0.0.1:22434"
+        monkeypatch.setenv("OLLAMA_HOST", "http://0.0.0.0:22434")
+        assert _get_ollama_base_url() == "http://127.0.0.1:22434"
+        monkeypatch.setenv("OLLAMA_HOST", "::")
+        assert _root_for_ollama_native_api(_get_ollama_base_url()) == "http://[::1]:11434"
         monkeypatch.setenv("OLLAMA_HOST", ":22434")
         assert _root_for_ollama_native_api(_get_ollama_base_url()) == "http://127.0.0.1:22434"
         monkeypatch.setenv("OLLAMA_HOST", "::1")

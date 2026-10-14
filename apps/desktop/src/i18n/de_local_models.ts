@@ -10,7 +10,7 @@ export const deLocalModels: TranslationOverride<Translations['settings']['localM
   serverRunning: 'Läuft',
   runtimeInstalled: 'llama.cpp-Laufzeit installiert',
   runtimeInstalledDetail: (tag, backend) =>
-    `Build ${tag}, ${backend}-Backend. Hermes startet und verwaltet den Server für Sie.`,
+    `Build ${tag}, ${backend}-Backend. Thoth startet und verwaltet den Server für Sie.`,
   installTitle: 'Lokale Laufzeit installieren',
   installDetail:
     'Lädt die llama.cpp-Inferenz-Engine herunter (einige hundert MB). Heruntergeladene Modelle laufen komplett auf diesem Rechner – kein Konto, nichts verlässt Ihren Computer.',
@@ -42,18 +42,17 @@ export const deLocalModels: TranslationOverride<Translations['settings']['localM
   downloadProgress: (done, total) => `${done} von ${total} werden heruntergeladen`,
   downloadDoneToast: model => `${model} ist bereit.`,
   installDoneToast: 'Lokale Laufzeit installiert und bereit.',
-  quickstartTitle: 'Ein Modell auf diesem Rechner ausführen',
-  quickstartDetail: (model, size) =>
-    `Ein Klick richtet alles ein: die lokale Engine, ${model} (${size} Download) und Ihre Voreinstellung für neue Chats. Nichts verlässt diesen Computer.`,
-  quickstartDetailReady: model =>
-    `Ein Klick macht ${model} zu Ihrer Voreinstellung für neue Chats. Alles läuft auf diesem Rechner.`,
-  quickstartAction: 'Für mich einrichten',
-  quickstartConfigure: 'Konfigurieren…',
+  ollamaTitle: 'Ollama',
+  ollamaDetected: url =>
+    `Modelle aus deiner Ollama-Bibliothek unter ${url}. Weitere mit \`ollama pull <model>\` laden.`,
+  ollamaNotFoundTitle: 'Ollama nicht gefunden',
+  ollamaNotFoundDetail: url =>
+    `Unter ${url} antwortet nichts. Starte Ollama (\`ollama serve\`), dann füllt sich diese Liste.`,
+  ollamaEmpty: 'Deine Ollama-Bibliothek ist leer. Lade ein Modell mit `ollama pull <model>`.',
+  ollamaUsing: model => `${model} ist jetzt dein Standard — neue Chats nutzen es.`,
+  ollamaUseFailed: model => `Wechsel zu ${model} fehlgeschlagen`,
   quickstartDoneToast: model => `${model} ist eingerichtet — neue Chats laufen auf diesem Rechner.`,
   quickstartFailed: 'Einrichtung des lokalen Modells fehlgeschlagen',
-  quickstartStageEngine: 'Engine',
-  quickstartStageModel: 'Modell',
-  quickstartStageFinish: 'Fertig',
   useAction: 'Verwenden',
   activePill: 'Voreinstellung',
   updateTitle: 'Engine-Update verfügbar',
@@ -63,7 +62,7 @@ export const deLocalModels: TranslationOverride<Translations['settings']['localM
   updating: 'Engine wird aktualisiert…',
   upToDateTitle: 'Engine aktuell',
   upToDateDetail: (tag, backend) =>
-    `llama.cpp ${tag} (${backend}) wird ausgeführt — der neueste Build, den Hermes mitliefert.`,
+    `llama.cpp ${tag} (${backend}) wird ausgeführt — der neueste Build, den Thoth mitliefert.`,
   activeDetail: 'Neue Chats verwenden dieses Modell – es wird geladen, wenn Sie Ihre erste Nachricht senden',
   activeNotLoaded: 'Wird bei Ihrer ersten Nachricht geladen',
   loadedPill: 'Im Speicher',

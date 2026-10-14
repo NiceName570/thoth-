@@ -2,7 +2,7 @@
 
 ``host_multiplexer_serving`` reads the HOST-wide rendezvous record, so two readers were fooled:
 
-* #121352 — two Hermes tenants (separate ``HERMES_HOME`` roots) on one host each expose a profile
+* #121352 — two Thoth tenants (separate ``HERMES_HOME`` roots) on one host each expose a profile
   named ``default``; tenant B's guard saw tenant A's multiplexer "serving default" and refused
   with exit 78, parking B's launchd unit. A host gateway under ANOTHER tenant root never serves us.
 * #120871 — a standalone fleet member (``-p argus gateway run``, no default gateway) publishes the

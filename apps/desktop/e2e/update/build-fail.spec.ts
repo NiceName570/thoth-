@@ -7,7 +7,7 @@
  * compile; the user clicks "Update now".
  *
  * The build runs after the code committed, so under contract C3 the update
- * succeeds with an owed follow-up: Hermes IS on the new code and only this
+ * succeeds with an owed follow-up: Thoth IS on the new code and only this
  * app was not rebuilt. The relaunched (old-build) app must say exactly that
  * and what to do — the action-required dialog, logged as `[updates] detached
  * update finished with manual action` — never "finished OK" (a silent stale

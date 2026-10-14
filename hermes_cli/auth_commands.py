@@ -32,7 +32,7 @@ _OAUTH_CAPABLE_PROVIDERS = {"anthropic", "nous", "openai-codex", "xai-oauth", "q
 # ...and default to it when ``--type`` is omitted. OpenRouter stays API-key-first: the documented
 # ``hermes auth add openrouter --api-key sk-or-...`` must keep working with no ``--type``.
 _OAUTH_DEFAULT_PROVIDERS = _OAUTH_CAPABLE_PROVIDERS - {"openrouter"}
-# Providers whose sibling CLI login Hermes may borrow (``auth.adopt_external_logins``).
+# Providers whose sibling CLI login Thoth may borrow (``auth.adopt_external_logins``).
 EXTERNAL_LOGIN_PROVIDERS = {"anthropic", "openai-codex"}
 
 
@@ -576,7 +576,7 @@ def auth_remove_command(args) -> None:
         raise SystemExit(f'No credential matching "{target}" for provider {provider}.')
     print(f"Removed {provider} credential #{index} ({removed.label})")
 
-    # Every credential source Hermes reads from (env vars, external OAuth files, auth.json blocks,
+    # Every credential source Thoth reads from (env vars, external OAuth files, auth.json blocks,
     # custom config) has a RemovalStep in agent.credential_sources; it does the source-specific
     # cleanup while suppression + user-facing output are centralised here.
     from agent.credential_sources import find_removal_step
@@ -755,9 +755,9 @@ def _print_azure_entra_status() -> None:
         print(f"  Scope: {scope}")
         if not has_azure_identity_installed():
             print("  Status: ⚠ azure-identity not installed")
-            print("  From the Hermes environment, run: "
+            print("  From the Thoth environment, run: "
                   f"{install_hint('azure-identity')}")
-            print("  Then restart Hermes.")
+            print("  Then restart Thoth.")
         else:
             info = describe_active_credential(config=EntraIdentityConfig(scope=scope), timeout_seconds=10.0)
             env_sources = info.get("env_sources") or []

@@ -19,18 +19,18 @@ const digestModule = pathToFileURL(path.join(import.meta.dirname, 'payload-diges
 // provides; a PATH python would fail later with an unrelated ImportError.
 function preparedPython() {
   const configured = process.env.HERMES_PYTHON
-  if (!configured) throw new Error('mac-sign tests need HERMES_PYTHON set to the prepared Hermes runtime interpreter')
+  if (!configured) throw new Error('mac-sign tests need HERMES_PYTHON set to the prepared Thoth runtime interpreter')
   return configured
 }
 
 function fixture() {
   const python = preparedPython()
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'mac-digest-order-'))
-  const app = path.join(root, 'Hermes.app')
+  const app = path.join(root, 'Thoth.app')
   const payload = path.join(app, 'Contents', 'Resources', 'agent-payload')
   const tools = path.join(payload, 'tools')
   const nested = path.join(tools, 'chromium', 'Browser.app')
-  const binaries = [path.join(app, 'Contents', 'MacOS', 'Hermes'),
+  const binaries = [path.join(app, 'Contents', 'MacOS', 'Thoth'),
     path.join(tools, 'python', 'bin', 'python3'),
     path.join(nested, 'Contents', 'MacOS', process.platform === 'win32' ? 'chrome.exe' : 'Chromium')]
   for (const binary of binaries) {

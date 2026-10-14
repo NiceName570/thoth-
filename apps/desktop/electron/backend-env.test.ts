@@ -74,8 +74,8 @@ test('backend runs the store toolchain even after the login-shell PATH is merged
   ])
 })
 
-test('HERMES_RUNTIME_DIR names the store; look-alike prefixes are not Hermes-owned', () => {
-  const store = '/Applications/Hermes.app/Contents/Resources/agent-payload/tools'
+test('HERMES_RUNTIME_DIR names the store; look-alike prefixes are not Thoth-owned', () => {
+  const store = '/Applications/Thoth.app/Contents/Resources/agent-payload/tools'
 
   const backend = buildDesktopBackendEnv({
     currentEnv: {
@@ -136,7 +136,7 @@ test('normalizeHermesHomeRoot expands a literal leading ~ against the home direc
   assert.equal(normalizeHermesHomeRoot('~', { pathModule: path.posix, homedir: '/Users/test' }), '/Users/test')
 })
 
-test('normalizeHermesHomeRoot maps profile homes back to the global Hermes root', () => {
+test('normalizeHermesHomeRoot maps profile homes back to the global Thoth root', () => {
   assert.equal(
     normalizeHermesHomeRoot('/Users/test/.hermes/profiles/oracle', { pathModule: path.posix }),
     '/Users/test/.hermes'

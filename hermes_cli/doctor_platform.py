@@ -27,8 +27,8 @@ def _python_repair_hint() -> str:
         return recommended_update_command_for_method(method)
     if method in ("docker", "apt"):
         command = recommended_update_command_for_method(method)
-        return f"Run `{command}`" + (", then recreate the Hermes container" if method == "docker" else "")
-    return "Run `hermes pm repair`, then restart Hermes"
+        return f"Run `{command}`" + (", then recreate the Thoth container" if method == "docker" else "")
+    return "Run `hermes pm repair`, then restart Thoth"
 
 
 def _system_package_install_cmd(pkg: str) -> str:
@@ -42,12 +42,12 @@ def _sqlite_upgrade_hint(install_method: str | None = None) -> str:
     method = install_method or detect_install_method(PROJECT_ROOT)
     cmd = recommended_update_command_for_method(method)
     action = cmd if is_nix_install_method(method) else {  # nix: prose guidance, not a shell command
-        "docker": f"run `{cmd}`, then recreate all Hermes containers", "apt": f"run `{cmd}`"}.get(method, "run `hermes update`")
+        "docker": f"run `{cmd}`, then recreate all Thoth containers", "apt": f"run `{cmd}`"}.get(method, "run `hermes update`")
     return f"({action}; fixed versions: 3.51.3+ / 3.50.7 / 3.44.6 — see https://sqlite.org/wal.html#walresetbug)"
 
 
 def _hermes_database_paths(hermes_home: Path) -> list[tuple[str, Path]]:
-    """(display name, path) pairs for Hermes-managed SQLite databases: backup.py's per-profile store list + per-board kanban.db."""
+    """(display name, path) pairs for Thoth-managed SQLite databases: backup.py's per-profile store list + per-board kanban.db."""
     from hermes_cli.backup import _QUICK_STATE_FILES
     entries = [(name, hermes_home / name) for name in _QUICK_STATE_FILES if name.endswith(".db")]
     for board_db in sorted((hermes_home / "kanban" / "boards").glob("*/kanban.db")):
@@ -132,7 +132,7 @@ def _report_database_journal_modes(hermes_home: Path | None = None, version_info
     try:
         databases = _hermes_database_paths(hermes_home if hermes_home is not None else HERMES_HOME)
     except Exception as exc:
-        check_warn(f"Could not list Hermes databases: {exc}")
+        check_warn(f"Could not list Thoth databases: {exc}")
         return
     exposed = []
     for name, path in databases:
@@ -151,7 +151,7 @@ def _report_database_journal_modes(hermes_home: Path | None = None, version_info
             check_warn(f"{name} is in WAL mode ({size}) despite database.journal_mode=delete",
                        "(the setting never applied: an existing WAL database is never live-downgraded"
                        + ("; also exposed to the WAL-reset bug" if vulnerable else "")
-                       + ". Stop every Hermes process for this profile, then run "
+                       + ". Stop every Thoth process for this profile, then run "
                        f"`hermes sessions set-journal-mode delete{'' if name == 'state.db' else f' --db {path}'}`)")
             _report_database_holders(name, path)
         elif error is not None:
@@ -166,7 +166,7 @@ def _report_database_journal_modes(hermes_home: Path | None = None, version_info
             if vulnerable:
                 exposed.append(name)
             check_warn(f"{name} is in WAL mode on a cross-VM filesystem (virtiofs/9p, {size})",
-                       "(WAL can silently corrupt across the VM boundary; stop every Hermes process and run "
+                       "(WAL can silently corrupt across the VM boundary; stop every Thoth process and run "
                        f"`hermes sessions set-journal-mode delete{'' if name == 'state.db' else f' --db {path}'}`, then "
                        "set `database.journal_mode: delete` — or move the database onto a native/named volume)")
         elif mode == "wal" and vulnerable:
@@ -312,17 +312,17 @@ def check_macos_tcc_grants() -> None:
     check_ok("macOS TCC signing identity is stable", _TCC_STABLE_DETAIL["certificate" in dr.lower()])
     check_info("If macOS still re-prompts for permissions (toggle shows ON): the stored grant is stale — run "
                "`tccutil reset ScreenCapture com.nousresearch.hermes` (repeat per affected service), toggle it ON in "
-               "System Settings, then fully quit & relaunch Hermes once.")
+               "System Settings, then fully quit & relaunch Thoth once.")
 
 
 def _desktop_app_bundle() -> Path | None:
-    """Locate the locally-built desktop bundle (``apps/desktop/release/mac-<arch>/Hermes.app``), newest first.
+    """Locate the locally-built desktop bundle (``apps/desktop/release/mac-<arch>/Thoth.app``), newest first.
 
-    The only layout whose ad-hoc re-signed bundle can invalidate TCC grants. ``/Applications/Hermes.app`` is
-    deliberately not probed: it is the separately-signed, certificate-anchored Hermes-Setup launcher.
+    The only layout whose ad-hoc re-signed bundle can invalidate TCC grants. ``/Applications/Thoth.app`` is
+    deliberately not probed: it is the separately-signed, certificate-anchored Thoth-Setup launcher.
     """
     release_dir = Path(__file__).resolve().parents[1] / "apps" / "desktop" / "release"
-    candidates = [p for p in release_dir.glob("mac*/Hermes.app") if p.is_dir()]
+    candidates = [p for p in release_dir.glob("mac*/Thoth.app") if p.is_dir()]
     return max(candidates, key=lambda p: p.stat().st_mtime) if candidates else None
 
 
@@ -372,12 +372,12 @@ def check_macos_full_disk_access() -> None:
     try:
         os.listdir(Path.home() / "Library" / "Application Support" / "com.apple.TCC")
     except PermissionError:
-        check_info("One switch silences all macOS folder prompts: grant your terminal app Full Disk Access and Hermes "
+        check_info("One switch silences all macOS folder prompts: grant your terminal app Full Disk Access and Thoth "
                    "will never trip per-folder dialogs (Desktop/Downloads/Documents/...) again. Open: System Settings → "
                    "Privacy & Security → Full Disk Access — or run:\n"
                    "      open \"x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles\"\n"
-                   "    then enable your terminal (and Hermes.app if you use Desktop), and restart them once. "
-                   "With Hermes' stable signing identities the grant survives every update.")
+                   "    then enable your terminal (and Thoth.app if you use Desktop), and restart them once. "
+                   "With Thoth's stable signing identities the grant survives every update.")
     except OSError:
         pass  # missing dir / other error: indeterminate, stay silent
     else:
@@ -441,7 +441,7 @@ def _check_python_environment(should_fix: bool, f: Finding) -> None:
         import sqlite3
         from hermes_state_wal import is_sqlite_wal_reset_vulnerable, sqlite_source_id
         src = sqlite_source_id()
-        # Warn-only: Hermes already refuses WAL on fresh DBs and runtime repair is best-effort.
+        # Warn-only: Thoth already refuses WAL on fresh DBs and runtime repair is best-effort.
         check_bool(not is_sqlite_wal_reset_vulnerable(), f"SQLite {sqlite3.sqlite_version}",
                    (f"SQLite {sqlite3.sqlite_version} (WAL-reset bug)", _sqlite_upgrade_hint()))
         if src:
@@ -554,7 +554,7 @@ def _check_web_dashboard_import(should_fix: bool, f: Finding) -> None:
         _fail_and_issue(
             "Dashboard web surface",
             "(import probe timed out)",
-            "Repair the dashboard dependencies: `hermes pm repair`, then restart Hermes",
+            "Repair the dashboard dependencies: `hermes pm repair`, then restart Thoth",
             f.issues,
         )
         return
@@ -571,7 +571,7 @@ def _check_web_dashboard_import(should_fix: bool, f: Finding) -> None:
     _fail_and_issue(
         "Dashboard web surface",
         detail,
-        "Repair the dashboard dependencies: `hermes pm repair`, then restart Hermes",
+        "Repair the dashboard dependencies: `hermes pm repair`, then restart Thoth",
         f.issues,
     )
 
@@ -596,9 +596,9 @@ def _check_command_installation(should_fix: bool, f: Finding) -> None:
     if is_nix_install_method(method) or method in ("docker", "apt"):
         command = shutil.which("hermes")
         if command:
-            check_ok(f"Hermes command managed by {method} ({command})")
+            check_ok(f"Thoth command managed by {method} ({command})")
         else:
-            check_warn(f"Hermes command not on PATH ({method}-managed)")
+            check_warn(f"Thoth command not on PATH ({method}-managed)")
             f.manual_issues.append(_python_repair_hint())
         return
     from hermes_cli._launchers import resolve_store_python
@@ -612,9 +612,9 @@ def _check_command_installation(should_fix: bool, f: Finding) -> None:
     pm_launcher = selected != base_venv(PROJECT_ROOT) or resolve_store_python(PROJECT_ROOT) is not None
     venv_bin = PROJECT_ROOT / "hermes" if pm_launcher else selected / "bin" / "hermes"
     if not venv_bin.is_file():
-        check_warn("Hermes entry point not found", f"({venv_bin})")
-        return f.manual_issues.append("Repair or reinstall the Hermes launcher through the installation owner")
-    check_ok(f"Hermes entry point exists ({venv_bin})")
+        check_warn("Thoth entry point not found", f"({venv_bin})")
+        return f.manual_issues.append("Repair or reinstall the Thoth launcher through the installation owner")
+    check_ok(f"Thoth entry point exists ({venv_bin})")
     # Expected command link directory (mirrors install.sh logic).
     prefix = os.environ.get("PREFIX", "")
     termux = prefix and (os.environ.get("TERMUX_VERSION") or "com.termux/files/usr" in prefix)
@@ -643,7 +643,7 @@ def _check_command_installation(should_fix: bool, f: Finding) -> None:
         from hermes_cli._launchers import stage_launcher
 
         if stage_launcher("hermes", PROJECT_ROOT, link_dir) is None:
-            check_fail("Could not publish Hermes launcher")
+            check_fail("Could not publish Thoth launcher")
             return f.manual_issues.append("Repair the PM store interpreter through the installation owner, then rerun 'hermes doctor --fix'")
         check_ok(f"{verb} PM launcher: {display}/hermes")
     else:

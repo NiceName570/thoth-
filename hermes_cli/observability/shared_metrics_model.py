@@ -25,7 +25,7 @@ QUICK_ABANDON_NS = 60 * 1_000_000_000
 _WINDOW_THRESHOLDS = (
     (32_000, "lt_32k"), (128_000, "32k_to_128k"), (256_000, "128k_to_256k"), (1_000_000, "256k_to_1m"),
 )
-# The rejections Hermes answers with a forced (overflow-triggered) compression.
+# The rejections Thoth answers with a forced (overflow-triggered) compression.
 _LIMIT_ERROR_CLASSES = frozenset({"context_overflow", "payload_too_large"})
 # Unattended runs have no user to interrupt or abandon them.
 _UNATTENDED_ENTRYPOINTS = frozenset({"background", "batch", "delegated", "scheduled_task"})
@@ -135,7 +135,7 @@ def tool_call_issue(
     """The first problem with one emitted call, most severe first; ``none`` when clean.
 
     Empty arguments are only an issue when the tool declares required parameters: for a
-    parameterless tool Hermes's normalization to ``{}`` is exactly what the model meant.
+    parameterless tool Thoth's normalization to ``{}`` is exactly what the model meant.
     """
     if name not in valid_names:
         return "unknown_tool"
@@ -155,9 +155,9 @@ def tool_call_issue(
 
 
 def record_tool_call_quality(agent: Any, tool_calls: Iterable[Any], repaired_ids: frozenset[int] | set[int]) -> None:
-    """Count every tool call one primary response emitted, before Hermes normalizes it.
+    """Count every tool call one primary response emitted, before Thoth normalizes it.
 
-    ``repaired_ids`` holds ``id(tc)`` of calls whose name Hermes auto-repaired; streamed calls
+    ``repaired_ids`` holds ``id(tc)`` of calls whose name Thoth auto-repaired; streamed calls
     whose argument JSON was repaired carry ``function.args_repaired``. No-op unless enabled.
     """
     try:

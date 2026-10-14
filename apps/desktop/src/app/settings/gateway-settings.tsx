@@ -21,7 +21,6 @@ import { ExternalLink } from '@/lib/external-link'
 import {
   AlertCircle,
   Check,
-  Cloud,
   FileText,
   Globe,
   HelpCircle,
@@ -1083,7 +1082,7 @@ function GatewayConnectionSettings({ embedded, standalone }: { embedded: boolean
         <div className="text-[length:var(--conversation-caption-font-size)] font-medium text-(--ui-text-secondary)">
           {g.modeTitle}
         </div>
-        <div className="grid auto-rows-fr grid-cols-1 gap-2 sm:grid-cols-2 min-[72rem]:grid-cols-4">
+        <div className="grid auto-rows-fr grid-cols-1 gap-2 sm:grid-cols-3">
           <ModeCard
             active={state.mode === 'local'}
             description={g.localDesc}
@@ -1091,14 +1090,6 @@ function GatewayConnectionSettings({ embedded, standalone }: { embedded: boolean
             icon={Monitor}
             onSelect={() => setState(current => ({ ...current, mode: 'local' }))}
             title={g.localTitle}
-          />
-          <ModeCard
-            active={state.mode === 'cloud'}
-            description={g.cloudDesc}
-            disabled={state.envOverride}
-            icon={Cloud}
-            onSelect={() => setState(current => ({ ...current, mode: 'cloud' }))}
-            title={g.cloudTitle}
           />
           <ModeCard
             active={state.mode === 'remote'}

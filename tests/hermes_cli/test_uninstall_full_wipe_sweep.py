@@ -45,7 +45,7 @@ def test_remove_dashboard_launchd_jobs_boots_out_and_deletes_matching_plists(
 
     assert sorted(removed) == sorted([dashboard, serve, daemon])
     assert not dashboard.exists() and not serve.exists() and not daemon.exists()
-    assert unrelated.exists()  # non-Hermes job is never touched
+    assert unrelated.exists()  # non-Thoth job is never touched
     domains = {tuple(cmd[2].rsplit("/", 1)) for cmd in booted}
     assert ("com.user.hermes-dashboard", "gui/501") in domains or \
         {d for d, _ in domains} >= {"gui/501", "user/501"} or booted  # bootout attempted per domain
@@ -79,7 +79,7 @@ def test_full_uninstall_sweeps_macos_caches_and_dashboard_launchd(monkeypatch, t
 
     removed_caches, removed_jobs = [], []
     cache_dirs = [tmp_path / "caches" / name for name in
-                  ("Hermes", "com.nousresearch.hermes", "hermes-setup",
+                  ("Thoth", "com.nousresearch.hermes", "hermes-setup",
                    "com.nousresearch.hermes.setup")]
     for d in cache_dirs:
         d.mkdir(parents=True)

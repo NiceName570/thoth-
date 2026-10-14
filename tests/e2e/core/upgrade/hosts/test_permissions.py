@@ -3,7 +3,7 @@
 Failure class: users and permissions. A second uid sharing an install (a root gateway whose
 workers run as other uids, #120151's topology), an admin-provisioned machine or an image leaves
 the code and PM state (checkout, tool store, ``installs/``) readable but not writable by the user
-who runs Hermes, while their own data under HERMES_HOME stays writable. On such a tree:
+who runs Thoth, while their own data under HERMES_HOME stays writable. On such a tree:
 
 * a turn must work: deciding that an install is current is a read, and nothing on the launch
   path may need write access to the install, or the launch fails once saying the install is not

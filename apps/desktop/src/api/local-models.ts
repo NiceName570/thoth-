@@ -17,6 +17,21 @@ export function getLocalModelsStatus(scope?: LocalModelsScope): Promise<LocalMod
   })
 }
 
+// The user's own Ollama install: its library, served at base_url (OpenAI-compatible /v1).
+export interface OllamaStatus {
+  active_model: null | string
+  base_url: string
+  models: string[]
+  reachable: boolean
+}
+
+export function getOllamaStatus(scope?: LocalModelsScope): Promise<OllamaStatus> {
+  return hermesApi<OllamaStatus>({
+    ...(scope ?? profileScoped()),
+    path: '/api/local-models/ollama'
+  })
+}
+
 export function getLocalHardware(scope?: LocalModelsScope): Promise<LocalHardware> {
   return hermesApi<LocalHardware>({
     ...(scope ?? profileScoped()),
@@ -40,24 +55,6 @@ export function installLocalRuntime(
     body: { backend: backend ?? null },
     method: 'POST',
     path: '/api/local-models/runtime/install'
-  })
-}
-
-export interface QuickstartResponse {
-  display_name: string
-  download_bytes: number
-  job_id: string
-  model_id: string
-  needs_download: boolean
-  needs_runtime: boolean
-}
-
-export function quickstartLocalModels(modelId?: string, scope?: LocalModelsScope): Promise<QuickstartResponse> {
-  return hermesApi<QuickstartResponse>({
-    ...(scope ?? profileScoped()),
-    body: { model_id: modelId ?? null },
-    method: 'POST',
-    path: '/api/local-models/quickstart'
   })
 }
 
@@ -135,6 +132,15 @@ export function ejectLocalModel(modelId: string, scope?: LocalModelsScope): Prom
     body: { model_id: modelId },
     method: 'POST',
     path: '/api/local-models/eject'
+  })
+}
+
+/** Free every model the configured Ollama server(s) hold in memory; they reload on the next message. */
+export function ejectOllamaModels(scope?: LocalModelsScope): Promise<{ ejected: string[]; ok: boolean }> {
+  return hermesApi<{ ejected: string[]; ok: boolean }>({
+    ...(scope ?? profileScoped()),
+    method: 'POST',
+    path: '/api/local-models/ollama/eject'
   })
 }
 

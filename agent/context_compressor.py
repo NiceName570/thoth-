@@ -4562,7 +4562,7 @@ Write only the summary body. Do not include any preamble or prefix."""
                 # and cut the request.
                 text = _redact_compaction_text(_authored_request_text(msg.get("content"))) or text
             text = re.sub(r"\s+", " ", text)
-            # Elide AFTER repr: repr would escape the marker's "Hermes's" and hide a copy from the
+            # Elide AFTER repr: repr would escape the marker's "Thoth's" and hide a copy from the
             # guard. Authored text within the cap stays whole; a longer request split out of an
             # oversized turn is restated verbatim by _reappend_inflight_user_task, not by this snapshot.
             text = repr(text) if len(text) <= _ACTIVE_TASK_MAX_CHARS else elide(repr(text), _ACTIVE_TASK_MAX_CHARS)

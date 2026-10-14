@@ -4,7 +4,7 @@ sha: 61855a940a66fb8319742756c3ff72c720a89160
 subdir: integrations/hermes-agent
 version: "0.4.0"
 description: Screens user turns and blocks downstream tools on a BLOCK verdict; the original prompt still reaches the model.
-maintainer: roli-lpci (Hermes Labs; independent of Nous Research)
+maintainer: roli-lpci (Thoth Labs; independent of Nous Research)
 tier: community
 category: general
 requires_hermes: ">=0.21.3"

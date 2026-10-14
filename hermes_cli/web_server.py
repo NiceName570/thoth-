@@ -1,4 +1,4 @@
-"""Hermes Agent — Web UI server: FastAPI app assembly, auth/host middleware, ``start_server``.
+"""Thoth — Web UI server: FastAPI app assembly, auth/host middleware, ``start_server``.
 
 Route handlers live in ``web_routers/``; their helpers live in the sibling
 ``web_server_<concern>`` modules and are re-imported here so ``web_server.<name>``
@@ -55,7 +55,7 @@ except ImportError:
     except Exception:
         raise SystemExit(
             "Web UI requires fastapi and uvicorn.\n"
-            "Run hermes pm repair, then restart Hermes."
+            "Run hermes pm repair, then restart Thoth."
         )
 
 WEB_DIST = Path(os.environ["HERMES_WEB_DIST"]) if "HERMES_WEB_DIST" in os.environ else Path(__file__).parent / "web_dist"
@@ -363,7 +363,7 @@ def _get_pty_active_session_files(app: "FastAPI") -> dict[str, Path]:
     return _app_state_default(app, "pty_active_session_files", dict)
 
 
-app = FastAPI(title="Hermes Agent", version=get_version_info().base_version, lifespan=_lifespan)
+app = FastAPI(title="Thoth", version=get_version_info().base_version, lifespan=_lifespan)
 
 from hermes_cli.dashboard_auth.body_limit import AuthBodyLimitMiddleware
 
@@ -895,7 +895,7 @@ _FS_DATA_URL_MAX_BYTES = 16 * 1024 * 1024
 _UPLOAD_CHUNK_BYTES = 1024 * 1024
 
 # Stable install identity for /api/status: one uuid4 hex per physical install,
-# persisted under the ROOT Hermes home (not the profile HERMES_HOME) so every
+# persisted under the ROOT Thoth home (not the profile HERMES_HOME) so every
 # profile reports the same id and the desktop can collapse duplicate roster rows
 # for one backend. Must never change across restarts, so cached per process.
 _INSTALL_ID_CACHE: dict[str, Optional[str]] = {"root": None, "value": None}
@@ -1012,6 +1012,7 @@ from hermes_cli.web_routers import (
     sessions as _sessions_routes,
     profiles as _profiles_routes,
     memory_providers as _memory_providers_routes,
+    memory_entries as _memory_entries_routes,
     config_env as _config_env_routes,
     models as _models_routes,
     messaging as _messaging_routes,
@@ -1040,6 +1041,7 @@ app.include_router(_sessions_routes.list_router)
 app.include_router(_profiles_routes.sessions_router)
 app.include_router(_sessions_routes.search_router)
 app.include_router(_memory_providers_routes.router)
+app.include_router(_memory_entries_routes.router)
 app.include_router(_config_env_routes.config_router)
 app.include_router(_models_routes.router)
 app.include_router(_config_env_routes.router)
@@ -1480,11 +1482,11 @@ def _on_server_started(
     if headless:
         # Auth-gated JSON-RPC/WS only — announce the bind, not a URL. flush:
         # a piped stdout otherwise surfaces this minutes after the sentinel.
-        print(f"  Hermes backend listening on {host}:{actual_port}", flush=True)
+        print(f"  Thoth backend listening on {host}:{actual_port}", flush=True)
     else:
         from hermes_cli.url_utils import format_url_host
 
-        print(f"  Hermes Web UI → http://{format_url_host(host)}:{actual_port}")
+        print(f"  Thoth Web UI → http://{format_url_host(host)}:{actual_port}")
     _maybe_open_browser(host, actual_port, open_browser, initial_profile)
 
     if start_mcp_discovery_after_bind:

@@ -59,7 +59,7 @@ interface ElectronProcess extends NodeJS.Process {
 
 export { smokeEnvironment }
 
-/** The bundled app resolves its Hermes home the same way electron/data-paths.ts does:
+/** The bundled app resolves its Thoth home the same way electron/data-paths.ts does:
  * an explicit HERMES_HOME wins, but a bundle-env clear (HERMES_HOME=null) empties it before
  * this runs, and the HERMES_DESKTOP_USER_DATA_DIR branch then resolves <userData>/hermes-home.
  * Seed both so the driver works against baked-clear bundles and plain source launches. */
@@ -91,7 +91,7 @@ function requireEmptyHermesHome(home: string): void {
   }
   const entries = fs.readdirSync(home)
   if (entries.length > 0) {
-    throw new Error(`Predicted Hermes home ${home} is not empty (${entries.length} entries); refusing to seed an existing profile`)
+    throw new Error(`Predicted Thoth home ${home} is not empty (${entries.length} entries); refusing to seed an existing profile`)
   }
 }
 
@@ -237,7 +237,7 @@ async function verifyRunningDesktop(app: ElectronApplication, options: SmokeOpti
   // Chromium resolves DIR_HOME from the HOME env only on Linux; macOS
   // (NSHomeDirectory) and Windows (CSIDL_PROFILE) ignore it, so the home
   // equality is a contract only there. On those platforms the isolation proof
-  // is the userData pin plus the seeded Hermes home the backend booted from.
+  // is the userData pin plus the seeded Thoth home the backend booted from.
   // When the artifact bakes its own env (bundleEnv known from the stamp), the
   // driver's --user-data pin is not authoritative: the app may legitimately
   // resolve a different userData, and the home the driver predicted and seeded
@@ -268,7 +268,7 @@ function assertResolvedIdentity(identity: ChatIdentity, options: SmokeOptions, p
   // (possibly real, pre-existing) profile.
   if (predictedHome) {
     if (!identity.hermesHome || fs.realpathSync(identity.hermesHome) !== fs.realpathSync(predictedHome)) {
-      throw new Error(`Desktop resolved Hermes home ${identity.hermesHome ?? '(unreported)'} instead of the predicted ${predictedHome}`)
+      throw new Error(`Desktop resolved Thoth home ${identity.hermesHome ?? '(unreported)'} instead of the predicted ${predictedHome}`)
     }
   }
 }

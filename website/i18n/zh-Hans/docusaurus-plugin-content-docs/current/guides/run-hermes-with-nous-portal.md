@@ -1,16 +1,16 @@
 ---
 sidebar_position: 1
-title: "通过 Nous Portal 运行 Hermes Agent"
+title: "通过 Nous Portal 运行 Thoth"
 description: "完整操作指南：订阅、配置、切换模型、启用 gateway 工具并验证路由"
 ---
 
-# 通过 Nous Portal 运行 Hermes Agent
+# 通过 Nous Portal 运行 Thoth
 
-本指南带你从头到尾完成在 [Nous Portal](https://portal.nousresearch.com) 订阅下运行 Hermes Agent 的全过程——从注册账号到验证每个工具的路由是否正确。如果你只想了解 Portal 的概述及订阅内容，请参阅 [Nous Portal 集成页面](../integrations/nous-portal.md)。本页是操作步骤脚本。
+本指南带你从头到尾完成在 [Nous Portal](https://portal.nousresearch.com) 订阅下运行 Thoth 的全过程——从注册账号到验证每个工具的路由是否正确。如果你只想了解 Portal 的概述及订阅内容，请参阅 [Nous Portal 集成页面](../integrations/nous-portal.md)。本页是操作步骤脚本。
 
 ## 前提条件
 
-- 已安装 Hermes Agent（[快速入门](../getting-started/quickstart.md)）
+- 已安装 Thoth（[快速入门](../getting-started/quickstart.md)）
 - 在你正在配置的机器上有可用的浏览器（或 SSH 端口转发——参见 [OAuth over SSH](./oauth-over-ssh.md)）
 - 约 5 分钟时间
 
@@ -40,7 +40,7 @@ hermes setup --portal
 
 ### 如果我通过 SSH 连接到服务器怎么办？
 
-OAuth 需要浏览器，但 loopback 回调运行在 Hermes 所在的机器上。有两种方案：
+OAuth 需要浏览器，但 loopback 回调运行在 Thoth 所在的机器上。有两种方案：
 
 ```bash
 # 方案 A：SSH 端口转发（推荐）
@@ -88,10 +88,10 @@ hermes chat
 尝试一个同时调用模型和 Tool Gateway 的请求：
 
 ```
-Hey, search the web for "Hermes Agent release notes" and summarize the top 3 hits.
+Hey, search the web for "Thoth release notes" and summarize the top 3 hits.
 ```
 
-你应该看到 Hermes 调用 `web_search`（通过 gateway）并返回摘要。如果搜索正常执行且响应内容合理，说明配置完成——Portal 已端到端连通。
+你应该看到 Thoth 调用 `web_search`（通过 gateway）并返回摘要。如果搜索正常执行且响应内容合理，说明配置完成——Portal 已端到端连通。
 
 ## 5. 选择你实际需要的模型
 
@@ -120,9 +120,9 @@ hermes config set model.default anthropic/claude-sonnet-4.6
 
 ### 不要在 agent 任务中使用 Hermes-4
 
-Hermes-4-70B 和 Hermes-4-405B 在 Portal 上以大幅折扣提供，但它们是**对话/推理模型**，并非针对工具调用优化的模型。它们在多步骤 agent 循环中表现不佳。请通过[订阅代理](../user-guide/features/subscription-proxy.md)从非 agent 工具中将它们用于对话或研究工作。对于 Hermes Agent 本身，请坚持使用上述前沿 agentic 模型。
+Hermes-4-70B 和 Hermes-4-405B 在 Portal 上以大幅折扣提供，但它们是**对话/推理模型**，并非针对工具调用优化的模型。它们在多步骤 agent 循环中表现不佳。请通过[订阅代理](../user-guide/features/subscription-proxy.md)从非 agent 工具中将它们用于对话或研究工作。对于 Thoth 本身，请坚持使用上述前沿 agentic 模型。
 
-Portal 的[信息页面](https://portal.nousresearch.com/info)也有此说明——这是 Nous 官方指导，并非仅代表 Hermes 一方的意见。
+Portal 的[信息页面](https://portal.nousresearch.com/info)也有此说明——这是 Nous 官方指导，并非仅代表 Thoth 一方的意见。
 
 ## 6. （可选）自定义 Tool Gateway 路由
 
@@ -154,7 +154,7 @@ hermes setup voice
 # → 选择语音转文字后端（本地 faster-whisper 免费，无需配置）
 ```
 
-之后在任何消息平台会话中（Telegram、Discord、Signal 等），发送语音消息，Hermes 将转录内容、生成回复并以合成语音回复——全部通过你的 Portal 订阅完成。
+之后在任何消息平台会话中（Telegram、Discord、Signal 等），发送语音消息，Thoth 将转录内容、生成回复并以合成语音回复——全部通过你的 Portal 订阅完成。
 
 ## 8. （可选）Cron 定时任务与常驻工作流
 
@@ -169,7 +169,7 @@ hermes cron add "Daily AI news summary" "every day at 9am" \
 
 ## Profiles 与多用户配置
 
-如果你使用 [Hermes profiles](../user-guide/profiles.md)（例如每个项目单独一套配置），每个 profile 都是独立的凭证孤岛：从未登录过 Portal 的 profile 会直接失败，而不会采用其他 profile 的会话。请在每个 profile 上用 `hermes -p <name> portal` 登录一次——如果机器上已有共享的 Portal 会话，它会提示导入且无需再走浏览器流程；此后共享 token 存储会让该 profile 的令牌保持最新。参见 [Profile 配置](../integrations/nous-portal.md#profile-setup)。
+如果你使用 [Thoth profiles](../user-guide/profiles.md)（例如每个项目单独一套配置），每个 profile 都是独立的凭证孤岛：从未登录过 Portal 的 profile 会直接失败，而不会采用其他 profile 的会话。请在每个 profile 上用 `hermes -p <name> portal` 登录一次——如果机器上已有共享的 Portal 会话，它会提示导入且无需再走浏览器流程；此后共享 token 存储会让该 profile 的令牌保持最新。参见 [Profile 配置](../integrations/nous-portal.md#profile-setup)。
 
 对于多人共用一台机器的团队场景，每个人有自己的 Portal 账号 → 每个 home 目录保存各自的 `~/.hermes/auth.json` → 用户之间不共享 token。这是正确的边界划分。
 
@@ -215,7 +215,7 @@ hermes tools
 
 ### 会话中途出现"Re-authentication required"
 
-你的 Portal refresh token 已失效（密码更改、手动撤销、会话过期）。该 token 现已在本地被隔离，以防 Hermes 无限重试。重新登录即可：
+你的 Portal refresh token 已失效（密码更改、手动撤销、会话过期）。该 token 现已在本地被隔离，以防 Thoth 无限重试。重新登录即可：
 
 ```bash
 hermes auth add nous
@@ -240,7 +240,7 @@ Portal 目录基于 OpenRouter 的模型列表（300+ 个），并补充了通�
 
 - `model.provider` 设置为 `openrouter`/`anthropic`/等，而非 `nous`
 - OAuth refresh 失败后回退到了其他已配置的 provider
-- 存在多个 Hermes profiles，你使用的是错误的那个（检查 `hermes profile list`）
+- 存在多个 Thoth profiles，你使用的是错误的那个（检查 `hermes profile list`）
 
 ### 想要撤销并重新开始
 
@@ -267,7 +267,7 @@ hermes auth logout nous       # 清除本地 refresh token
 
 - **[Nous Portal 集成页面](../integrations/nous-portal.md)** — 订阅内容概述
 - **[Tool Gateway](../user-guide/features/tool-gateway.md)** — 每个 gateway 路由工具的完整说明
-- **[订阅代理](../user-guide/features/subscription-proxy.md)** — 在非 Hermes 工具中使用你的 Portal 订阅
+- **[订阅代理](../user-guide/features/subscription-proxy.md)** — 在非 Thoth 工具中使用你的 Portal 订阅
 - **[语音模式](../user-guide/features/voice-mode.md)** — 在 Portal 订阅上配置语音对话
 - **[OAuth over SSH](./oauth-over-ssh.md)** — 远程/无头主机登录方案
-- **[Profiles](../user-guide/profiles.md)** — 在多个 Hermes 配置之间共享一个 Portal 登录
+- **[Profiles](../user-guide/profiles.md)** — 在多个 Thoth 配置之间共享一个 Portal 登录

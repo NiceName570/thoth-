@@ -236,7 +236,7 @@ _DISCORD_NONCONVERSATIONAL_HISTORY_MESSAGE_PATTERNS = (
         re.IGNORECASE,
     ),
     re.compile(
-        r"^\s*(?:✅|❌)\s+Hermes update\s+"
+        r"^\s*(?:✅|❌)\s+Thoth update\s+"
         r"(?:finished|failed|timed out)[\s\S]*$",
         re.IGNORECASE,
     ),
@@ -418,7 +418,7 @@ def _format_privileged_intents_guidance(*, needs_members: bool) -> str:
     lines = [
         "Discord rejected the connection because privileged Gateway Intents "
         "are not enabled for this bot in the Developer Portal.",
-        "Hermes is requesting:",
+        "Thoth is requesting:",
         "  - Message Content Intent (required to read message text)",
     ]
     if needs_members:
@@ -2746,7 +2746,7 @@ class DiscordAdapter(DiscordMediaMixin, DiscordThreadTitlesMixin, DiscordVoiceIn
         self._with_discord_recovery_db(_op)
 
     async def _should_backfill_discord_message(self, message: Any) -> bool:
-        """Return True when a recent Discord message still needs Hermes work."""
+        """Return True when a recent Discord message still needs Thoth work."""
         if not self._client or not getattr(self._client, "user", None):
             return False
         if getattr(getattr(message, "author", None), "id", None) == getattr(self._client.user, "id", None):
@@ -2761,7 +2761,7 @@ class DiscordAdapter(DiscordMediaMixin, DiscordThreadTitlesMixin, DiscordVoiceIn
         return not await self._message_has_non_down_bot_response(message)
 
     def _is_down_notice_content(self, content: str) -> bool:
-        """Recognize only explicit Hermes/gateway outage notices."""
+        """Recognize only explicit Thoth/gateway outage notices."""
         text = (content or "").lower()
         subject = r"(?:hermes|the agent|agent|the gateway|gateway|bmo)"
         state = r"(?:is|was|appears to be|is currently|was currently)"
@@ -3052,7 +3052,7 @@ class DiscordAdapter(DiscordMediaMixin, DiscordThreadTitlesMixin, DiscordVoiceIn
         return "safe"
 
     def _canonicalize_app_command_payload(self, payload: dict[str, Any]) -> dict[str, Any]:
-        """Reduce command payloads to the semantic fields Hermes manages."""
+        """Reduce command payloads to the semantic fields Thoth manages."""
         contexts = payload.get("contexts")
         integration_types = payload.get("integration_types")
         return {
@@ -4138,7 +4138,7 @@ class DiscordAdapter(DiscordMediaMixin, DiscordThreadTitlesMixin, DiscordVoiceIn
         return bool(channel_ids & allowed)
 
     def _is_pairing_approved_user(self, user_id: str) -> bool:
-        """True when the Discord user has an explicit Hermes pairing grant."""
+        """True when the Discord user has an explicit Thoth pairing grant."""
         user_id = str(user_id or "").strip()
         if not user_id:
             return False
@@ -5503,7 +5503,7 @@ class DiscordAdapter(DiscordMediaMixin, DiscordThreadTitlesMixin, DiscordVoiceIn
 
         Strip Discord mention syntax (users / roles / channels) so thread titles don't show raw <@id>,
         <@&id>, or <#id> markers — the ID isn't meaningful to humans glancing at the thread list (#6336).
-        Real semantic naming is done after the first agent turn, when Hermes has an LLM-generated session
+        Real semantic naming is done after the first agent turn, when Thoth has an LLM-generated session
         title and can safely rename only this newly-created thread.
         """
         content = (content or "").strip()
@@ -5595,14 +5595,14 @@ class DiscordAdapter(DiscordMediaMixin, DiscordThreadTitlesMixin, DiscordVoiceIn
         edit = getattr(thread, "edit", None)
         if edit is None:
             return False
-        # Only the title lane's guarded rename is Hermes's own title (see adapter_thread_titles).
+        # Only the title lane's guarded rename is Thoth's own title (see adapter_thread_titles).
         attempt = (
             self._semantic_thread_renames.attempt(str(thread_id_int), only_if_current_name, cleaned)
             if only_if_current_name is not None else nullcontext()
         )
         try:
             with attempt:
-                await edit(name=cleaned, reason="Hermes semantic session title")
+                await edit(name=cleaned, reason="Thoth semantic session title")
             logger.info(
                 "[%s] Renamed Discord thread %s from %r to %r",
                 self.name, thread_id, current_name, cleaned,
@@ -5638,7 +5638,7 @@ class DiscordAdapter(DiscordMediaMixin, DiscordThreadTitlesMixin, DiscordVoiceIn
             )
             return None
         thread_name = (name or "handoff").strip()[:80] or "handoff"
-        reason = "Hermes session handoff"
+        reason = "Thoth session handoff"
         try:
             create = getattr(parent, "create_thread", None)
             if create is not None:
@@ -6402,7 +6402,7 @@ def _define_discord_view_classes() -> None:
     global ExecApprovalView, SlashConfirmView, UpdatePromptView, ModelPickerView, ClarifyChoiceView, ChoicePickerView
 
     class _HermesView(discord.ui.View):
-        """Shared plumbing for Hermes component views: allowlist auth, single-use
+        """Shared plumbing for Thoth component views: allowlist auth, single-use
         ``resolved`` flag, ``_message`` handle for timeout edits."""
 
         def __init__(self, allowed_user_ids: set, allowed_role_ids: Optional[set], *, timeout):
@@ -7421,7 +7421,7 @@ _is_connected = _env_is_connected("DISCORD_BOT_TOKEN")
 
 
 def register(ctx) -> None:
-    """Plugin entry point — called by the Hermes plugin system."""
+    """Plugin entry point — called by the Thoth plugin system."""
     from plugins.platforms.discord.onboarding import interactive_setup
 
     ctx.register_platform(

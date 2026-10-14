@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SQLite state store for Hermes Agent: session metadata, message history, model
+"""SQLite state store for Thoth: session metadata, message history, model
 config, FTS5 search. WAL mode (concurrent readers + one writer); compression
 splits sessions via parent_session_id chains; sessions are source-tagged
 ('cli', 'telegram', ...). Batch-runner / RL trajectories live elsewhere.
@@ -231,7 +231,7 @@ def _ensure_test_isolation(db_path: Path) -> None:
         if _is_production_state_db(resolved, root):
             raise RuntimeError(
                 "live-system guard: test attempted to open production "
-                f"state.db at {resolved} (under real Hermes root {root}). "
+                f"state.db at {resolved} (under real Thoth root {root}). "
                 "Tests must run against a temporary HERMES_HOME — pass an "
                 "explicit tmp db_path or let the hermetic conftest redirect "
                 "HERMES_HOME. If this test genuinely needs the live database, mark it with "
@@ -371,12 +371,12 @@ _SESSION_DB_CONSEQUENCE = "Sessions will not be saved until this is fixed."
 _NETWORK_DRIVE_HINT = " If the database lives on a network drive, move it to a local disk."
 _NETWORK_DRIVE_GLOSS = "the session database could not be opened; it may be on a network or unsupported drive"
 _NETWORK_DRIVE_ACTION = (
-    "Move it to a local disk (`hermes {profile_arg}doctor` shows where it is), then start Hermes again."
+    "Move it to a local disk (`hermes {profile_arg}doctor` shows where it is), then start Thoth again."
 )
 
 
 def format_session_db_unavailable(
-    prefix: str = "Hermes can't open its session history right now",
+    prefix: str = "Thoth can't open its session history right now",
     *,
     details: bool = False,
 ) -> str:
@@ -775,7 +775,7 @@ class SessionDB(
         qpath = quarantine_invalid_state_db(self.db_path, already_locked=already_locked)
         where = f"moved aside to {qpath}" if qpath else "left in place (it could not be moved aside)"
         msg = (
-            f"state.db was empty or damaged ({zsize} bytes) and has been {where}; Hermes started with a "
+            f"state.db was empty or damaged ({zsize} bytes) and has been {where}; Thoth started with a "
             "fresh, empty session database. To bring old sessions back, run "
             f"`hermes sessions recover --source {qpath or self.db_path} --inspect-only`, or restore a "
             "snapshot with `/snapshot list` then `/snapshot restore <id>` (terminal `hermes` chat only)."
@@ -1078,7 +1078,7 @@ class SessionDB(
                         # a holder's argv (a worktree named fix-corrupt-db) would flip the bucket.
                         log_write_lock_holders(self.db_path, patience_s)
                         raise sqlite3.OperationalError(
-                            f"database is locked (another Hermes process held the "
+                            f"database is locked (another Thoth process held the "
                             f"state.db write lock for over {patience_s:.0f}s — "
                             "likely a long maintenance operation such as VACUUM, "
                             "a large WAL checkpoint, or an older pre-update "

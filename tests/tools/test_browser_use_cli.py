@@ -1007,7 +1007,7 @@ class TestDefaultDowngradeNotice:
 
 
 class TestLightpandaBackendResolution:
-    """browser.engine: lightpanda in Browser Use mode — Hermes spawns
+    """browser.engine: lightpanda in Browser Use mode — Thoth spawns
     ``lightpanda serve`` through the same _get_session_info machinery and
     exports its endpoint, but only when nothing with higher precedence
     (BU_CDP_* env, a CDP override, a cloud provider) claimed the session."""

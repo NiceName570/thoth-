@@ -32,8 +32,9 @@ import {
 import { HighlightMatches } from '@/components/ui/highlight-matches'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tip, TipHintLabel } from '@/components/ui/tooltip'
-import type { HermesGateway } from '@/hermes'
+import { ejectOllamaModels, type HermesGateway } from '@/hermes'
 import { useI18n } from '@/i18n'
+import type { Translations } from '@/i18n/types'
 import { triggerHaptic } from '@/lib/haptics'
 import { isSubmitEnter } from '@/lib/ime'
 import { catalogProviderMatches, modelOptionsQueryKey, requestModelOptions } from '@/lib/model-options'
@@ -47,6 +48,7 @@ import { $favoriteModels, favoriteModelKey, toggleFavoriteModel } from '@/store/
 import { $localModelsEnabled } from '@/store/local-models-flag'
 import {
   type LocalModelsOwner,
+  localModelsRequestScope,
   runningModelDownloads,
   useLocalModelsOwner,
   useLocalModelsStatus,
@@ -63,6 +65,7 @@ import {
   seedKnownModels,
   setModelVisibilityOpen
 } from '@/store/model-visibility'
+import { notify, notifyError } from '@/store/notifications'
 import { $collapsedProviders, toggleCollapsedProvider } from '@/store/provider-collapse'
 import { $defaultReasoningEffort } from '@/store/session'
 import type { LocalModelLoadProgress, LocalRuntimeJob } from '@/types/hermes'
@@ -143,7 +146,7 @@ export interface ModelChoice {
  * the kanban override just holds a value in dialog state.
  *
  * `presetFor` supplies the remembered settings shown on a non-active row.
- * Returning `{}` is fine — the row then shows Hermes' defaults.
+ * Returning `{}` is fine — the row then shows Thoth's defaults.
  */
 export interface ModelMenuController {
   /** Detached task pickers can edit effort but have no speed write path. */
@@ -341,6 +344,8 @@ export function ModelCatalogMenu({
   // provider list would otherwise resolve to an empty key set that reads as
   // "user hid everything" and blanks the menu on first open.
   useEffect(() => seedKnownModels(pickerProviders), [pickerProviders])
+
+  const hasOllama = useMemo(() => pickerProviders.some(isLocalOllamaProvider), [pickerProviders])
 
   const shownKeys = useMemo(
     () => effectiveVisibleKeys(visibleModels, pickerProviders),
@@ -916,8 +921,50 @@ export function ModelCatalogMenu({
         <Codicon name="settings-gear" size="0.75rem" />
         {copy.editModels}
       </DropdownMenuItem>
+      {hasOllama ? (
+        <DropdownMenuItem
+          className={cn(dropdownMenuRow, 'text-(--ui-text-tertiary)')}
+          onSelect={() => void ejectOllama(owner, copy)}
+        >
+          <Codicon name="debug-disconnect" size="0.75rem" />
+          {copy.ejectOllama}
+        </DropdownMenuItem>
+      ) : null}
     </>
   )
+}
+
+const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '0.0.0.0', '[::1]'])
+
+/** A provider row backed by a local Ollama server (not Ollama Cloud): named for Ollama, or any
+ *  loopback endpoint on Ollama's default port. */
+function isLocalOllamaProvider(provider: ModelOptionProvider): boolean {
+  const slug = provider.slug.toLowerCase()
+
+  if (slug === 'ollama-cloud') {
+    return false
+  }
+
+  if (slug === 'ollama' || slug.startsWith('ollama-') || slug.endsWith(':ollama') || slug.endsWith('-ollama')) {
+    return true
+  }
+
+  try {
+    const url = new URL(provider.api_url ?? '')
+
+    return url.port === '11434' && LOOPBACK_HOSTS.has(url.hostname)
+  } catch {
+    return false
+  }
+}
+
+async function ejectOllama(owner: LocalModelsOwner, copy: Translations['shell']['modelMenu']): Promise<void> {
+  try {
+    const { ejected } = await ejectOllamaModels(localModelsRequestScope(owner))
+    notify({ durationMs: 3_000, kind: 'success', message: copy.ejectedOllama(ejected.length) })
+  } catch (err) {
+    notifyError(err, copy.ejectOllamaFailed)
+  }
 }
 
 /** Re-exported so callers building a footer row match the catalog's rows. */

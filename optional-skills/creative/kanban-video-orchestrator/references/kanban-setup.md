@@ -1,7 +1,7 @@
 # Kanban Setup — Project Bootstrap & Profile Configuration
 
 Once the brief is locked and the team is designed, the next step is producing
-the actual `setup.sh` that creates the project workspace, configures Hermes
+the actual `setup.sh` that creates the project workspace, configures Thoth
 profiles, and fires the initial kanban task.
 
 This file documents the patterns. The companion script
@@ -121,7 +121,7 @@ PY
 }
 ```
 
-ruamel.yaml must be installed in the user's Python (it ships with Hermes).
+ruamel.yaml must be installed in the user's Python (it ships with Thoth).
 If absent: `pip install ruamel.yaml==0.18.17`.
 
 The setup script should also **validate** the patch by re-reading the file
@@ -223,7 +223,7 @@ The director turns this into actual `kanban_create` calls.
 ## API-key prerequisites check
 
 Before firing the kanban, verify required keys are available. Check both
-the Hermes `.env` (`${HERMES_HOME:-$HOME/.hermes}/.env`) and macOS Keychain
+the Thoth `.env` (`${HERMES_HOME:-$HOME/.hermes}/.env`) and macOS Keychain
 (if on macOS):
 
 ```bash

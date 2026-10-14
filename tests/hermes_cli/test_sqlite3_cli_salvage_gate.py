@@ -1,5 +1,5 @@
 """#100368 regression: the corruption guidance must not direct a WAL-reset-
-vulnerable sqlite3 CLI at a live Hermes database.
+vulnerable sqlite3 CLI at a live Thoth database.
 
 Field forensics (issue #100368, maintainer round 2 + the isolated reproducer
 in its comments): when a shell with SQLite's WAL-reset opener bug (fixed
@@ -9,7 +9,7 @@ lock has been cancelled, it unlinks the live -wal/-shm pair and splits the
 store into two concurrent generations. Both generations report
 ``integrity_check ok`` while an old-generation acknowledged write is lost.
 
-Hermes' own corruption banners used to instruct exactly that command
+Thoth' own corruption banners used to instruct exactly that command
 (`sqlite3 ~/.hermes/state.db ".recover"`). The fix routes operators to
 `hermes sessions recover --source ...`, whose lane snapshots the damaged
 bundle before any shell touches it, and refuses a WAL-reset-vulnerable

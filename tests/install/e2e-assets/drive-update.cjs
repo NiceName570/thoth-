@@ -1,11 +1,11 @@
-// drive-update.cjs — launch the INSTALLED Hermes.exe (real Electron desktop
+// drive-update.cjs — launch the INSTALLED Thoth.exe (real Electron desktop
 // app) under Playwright's Electron driver and perform the update the way a
 // user does: Settings -> About -> "Update now". Screenshots at every step.
 //
 // Run the current CI checkout's entrypoint with its locked driver deps:
 //
-//   node <this file> <path-to-Hermes.exe> <proof-dir> <old-sha> <target-sha>
-//   node <this file> <path-to-Hermes.exe> <proof-dir> <old-sha> --native-handoff
+//   node <this file> <path-to-Thoth.exe> <proof-dir> <old-sha> <target-sha>
+//   node <this file> <path-to-Thoth.exe> <proof-dir> <old-sha> --native-handoff
 // <target-sha> is the staged Git main the source update must offer.
 // --native-handoff leaves the native UIA caller in charge of clicking Update.
 //
@@ -33,7 +33,7 @@ const nativeHandoff = process.argv[5] === '--native-handoff'
 const targetSha = nativeHandoff ? undefined : process.argv[5]
 
 if (!exePath || !proofDir || !oldSha || !(nativeHandoff || targetSha) || !process.env.HERMES_E2E_MOCK_URL) {
-  console.error('usage: node drive-update.cjs <Hermes.exe> <proof-dir> <old-sha> (<target-sha> | --native-handoff); HERMES_E2E_MOCK_URL required')
+  console.error('usage: node drive-update.cjs <Thoth.exe> <proof-dir> <old-sha> (<target-sha> | --native-handoff); HERMES_E2E_MOCK_URL required')
   process.exit(1)
 }
 
@@ -93,7 +93,7 @@ async function main() {
   const child = app.process()
 
   const waitForProcessClose = observeProcessClose(child)
-  // On Windows Playwright's child is a shell wrapper, not Hermes.exe.
+  // On Windows Playwright's child is a shell wrapper, not Thoth.exe.
   const appPid = await app.evaluate(() => process.pid)
   log(`launched Electron pid=${appPid}`)
 
@@ -128,7 +128,7 @@ async function main() {
   await updateNow.click()
   log('clicked: Update now')
 
-  // The "Updating Hermes — this window will close" overlay should appear,
+  // The "Updating Thoth — this window will close" overlay should appear,
   // then the app quits (hand-off dwell). Screenshot the overlay while the
   // window is still alive.
   // The app can close during the dwell. This wait must outlive its page.

@@ -6,7 +6,7 @@ from agent import initiate_setup_facts
 
 HEADER = "[/initiate-setup]"
 # The desktop opening the backend plays before the first model call (English only, app-owned copy).
-INTRO = "Hi, I'm Hermes.\n\nLet's set things up for you. Then we'll get something cool done."
+INTRO = "Hi, I'm Thoth.\n\nLet's set things up for you. Then we'll get something cool done."
 
 
 def build_initiate_setup_prompt(surface: str, tools, primary_profile: str, session_id: str | None = None) -> str:

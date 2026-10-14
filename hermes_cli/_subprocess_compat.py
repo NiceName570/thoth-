@@ -128,7 +128,7 @@ def restore_ambient_pythonpath(env: Mapping[str, str]) -> dict:
 
     No-boot-through-venv: the boot interpreter is the pm STORE python, whose
     imports arrive via ``PYTHONPATH=<repo>;<venv>/site-packages`` (it has no
-    editable install). The subprocess-env factories strip Hermes-owned
+    editable install). The subprocess-env factories strip Thoth-owned
     PYTHONPATH entries so agent-run children on DIFFERENT interpreter
     versions never load the backend's C extensions — but a child that
     re-execs THIS interpreter (``sys.executable -m hermes_cli.main``) runs
@@ -433,7 +433,7 @@ def noninteractive_git_env(base: "Mapping[str, str] | None" = None) -> dict[str,
     prompting), ``GCM_INTERACTIVE=Never`` (no Git Credential Manager dialog), and isolated git
     config: inherited ``GIT_CONFIG_*`` injection, global/system config, pagers, editors, fsmonitor,
     external diff and hooks are all disabled so a user's repo/global config cannot hang or mutate
-    Hermes's plumbing calls. ``core.sshCommand`` is pinned to ``ssh -o BatchMode=yes`` so the ssh
+    Thoth's plumbing calls. ``core.sshCommand`` is pinned to ``ssh -o BatchMode=yes`` so the ssh
     child of a fetch/ls-remote fails instead of prompting — ssh bypasses ``stdin=DEVNULL`` and
     opens ``/dev/tty`` directly (#104591); an agent-authenticated ssh still succeeds, and an
     explicit user ``GIT_SSH_COMMAND`` env var still takes precedence over this config-layer pin.
@@ -443,7 +443,7 @@ def noninteractive_git_env(base: "Mapping[str, str] | None" = None) -> dict[str,
     ``stdin=subprocess.DEVNULL``. Internal plumbing only — the agent-facing terminal tool has its
     own policy layer and visible PTY.
 
-    Hermes shells out to git from many non-interactive contexts — MCP catalog installs, plugin
+    Thoth shells out to git from many non-interactive contexts — MCP catalog installs, plugin
     install/update, profile distribution staging, worktree base fetches, desktop review-pane fetch/push.
     When the remote is private, misconfigured, or requires auth, git's default behavior is to prompt on the
     inherited terminal (or via an askpass helper), which silently hangs the operation until its timeout — or
@@ -682,7 +682,7 @@ def _process_start_time(pid: int) -> int | None:
 
 
 def _text_names_hermes(text: str) -> bool:
-    r"""True when *text* names Hermes at a path-segment / token boundary.
+    r"""True when *text* names Thoth at a path-segment / token boundary.
 
     A bare ``"hermes" in text`` substring test would also match unrelated processes whose paths
     merely contain the letters (``...\shermesa\...``) — the false-positive class this prevents.
@@ -692,7 +692,7 @@ def _text_names_hermes(text: str) -> bool:
 
 
 def _process_command_is_hermes(pid: int) -> bool:
-    """Best-effort check that *pid* currently runs Hermes code."""
+    """Best-effort check that *pid* currently runs Thoth code."""
     try:
         import psutil
 
@@ -707,7 +707,7 @@ def _process_command_is_hermes(pid: int) -> bool:
 def pid_is_hermes(pid: int, *, expected_start_time: int | None = None) -> bool:
     """Whether it is safe to use ``taskkill`` for *pid*.
 
-    The PID must be valid, currently exist, and identify a Hermes process. When the caller captured
+    The PID must be valid, currently exist, and identify a Thoth process. When the caller captured
     a start-time fingerprint before the destructive action, the live process must still have the
     same ``(pid, start_time)`` identity. Any ambiguity fails closed.
     """

@@ -68,7 +68,7 @@ const renderBillingError = (
 
     case 'remote_spending_disabled':
       // Account-wide switch is OFF (dual-emitted error/code). A billing admin can
-      // turn it on from the portal's Hermes Agent page; this is NOT a per-terminal stop.
+      // turn it on from the portal's Thoth page; this is NOT a per-terminal stop.
       sys(t('slashCmd.topup.error.remoteSpendingDisabled'))
 
       break

@@ -241,7 +241,7 @@ def canonical(value: object) -> bytes:
 
 def _identity(name: str, token: str) -> dict:
     pascal = f"HermesChannel{token}"
-    return {"token": token, "displayName": f"Hermes {name}", "appId": f"ai.hermes.channel.h{token}",
+    return {"token": token, "displayName": f"Thoth {name}", "appId": f"ai.hermes.channel.h{token}",
             "appNamePascal": pascal, "artifactNamePascal": pascal, "cliName": f"hermes-{name}",
             "windowsExecutableName": pascal, "msixAppIdWithOrg": f"NousResearch.{pascal}"}
 
@@ -258,7 +258,7 @@ def stable_objects(commit: str, *, version: str = "2099.1.1", build_id: str = "c
     manifest = {"schema": 1, "receiverProtocol": 1, "request": request, "packages": [
         {"platform": "darwin", "arch": "arm64", "variant": "bundled", "identity": identity["appId"],
          "version": version, "teamId": "ABCDEFGHIJ",
-         "artifact": {"key": prefix + "Hermes.dmg", "sha256": "d" * 64, "size": 100},
+         "artifact": {"key": prefix + "Thoth.dmg", "sha256": "d" * 64, "size": 100},
          "feed": {"key": prefix + "stable-mac.yml", "channel": "stable"}}]}
     body = canonical(manifest)
     record = {"schema": 1, "name": "stable", "repository": repository, "policy": "stable-release",

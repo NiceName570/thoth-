@@ -39,7 +39,7 @@ _ISSUE_STORE = "#119997 pending id is used as a path: ../ or absolute ids reach 
 _ISSUE_DELETE = "#120528 skill_manage delete skips the pin/essential guard for a category/name spelling"
 
 # scenario -> (slash command, where the victim lives). "home" victims are <HERMES_HOME>/auth.json spelled
-# ``../../auth``; "outside" victims live outside the Hermes home and are spelled by absolute path.
+# ``../../auth``; "outside" victims live outside the Thoth home and are spelled by absolute path.
 TRAVERSALS: dict[str, tuple[str, str]] = {
     "memory_reject_dotdot": ("memory reject", "home"),
     "memory_approve_dotdot": ("memory approve", "home"),

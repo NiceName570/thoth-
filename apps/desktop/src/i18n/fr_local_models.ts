@@ -10,7 +10,7 @@ export const frLocalModels: TranslationOverride<Translations['settings']['localM
   serverRunning: 'En cours',
   runtimeInstalled: 'Moteur llama.cpp installé',
   runtimeInstalledDetail: (tag, backend) =>
-    `Build ${tag}, backend ${backend}. Hermes démarre et gère le serveur pour vous.`,
+    `Build ${tag}, backend ${backend}. Thoth démarre et gère le serveur pour vous.`,
   installTitle: 'Installer le moteur local',
   installDetail:
     "Télécharge le moteur d'inférence llama.cpp (quelques centaines de Mo). Les modèles téléchargés s'exécutent entièrement sur cette machine : aucun compte requis et aucune donnée ne quitte votre ordinateur.",
@@ -42,18 +42,16 @@ export const frLocalModels: TranslationOverride<Translations['settings']['localM
   downloadProgress: (done, total) => `Téléchargement de ${done} sur ${total}`,
   downloadDoneToast: model => `${model} est prêt.`,
   installDoneToast: 'Le moteur local est installé et prêt.',
-  quickstartTitle: 'Exécuter un modèle sur cette machine',
-  quickstartDetail: (model, size) =>
-    `Un clic configure tout : le moteur local, ${model} (téléchargement de ${size}) et votre modèle par défaut pour les nouvelles conversations. Aucune donnée ne quitte cet ordinateur.`,
-  quickstartDetailReady: model =>
-    `Un clic définit ${model} comme modèle par défaut pour les nouvelles conversations. Tout s'exécute sur cette machine.`,
-  quickstartAction: 'Configurer pour moi',
-  quickstartConfigure: 'Configuration…',
+  ollamaTitle: 'Ollama',
+  ollamaDetected: url => `Modèles de votre bibliothèque Ollama sur ${url}. Ajoutez-en avec \`ollama pull <model>\`.`,
+  ollamaNotFoundTitle: 'Ollama introuvable',
+  ollamaNotFoundDetail: url =>
+    `Rien ne répond sur ${url}. Lancez Ollama (\`ollama serve\`) et cette liste se remplira.`,
+  ollamaEmpty: 'Votre bibliothèque Ollama est vide. Téléchargez un modèle avec `ollama pull <model>`.',
+  ollamaUsing: model => `${model} est maintenant votre modèle par défaut : les nouvelles conversations l'utilisent.`,
+  ollamaUseFailed: model => `Impossible de passer à ${model}`,
   quickstartDoneToast: model => `${model} est configuré : les nouvelles conversations s'exécutent sur cette machine.`,
   quickstartFailed: 'Échec de la configuration du modèle local',
-  quickstartStageEngine: 'Moteur',
-  quickstartStageModel: 'Modèle',
-  quickstartStageFinish: 'Terminer',
   useAction: 'Utiliser',
   activePill: 'Par défaut',
   updateTitle: 'Mise à jour du moteur disponible',
@@ -63,7 +61,7 @@ export const frLocalModels: TranslationOverride<Translations['settings']['localM
   updating: 'Mise à jour du moteur…',
   upToDateTitle: 'Moteur à jour',
   upToDateDetail: (tag, backend) =>
-    `llama.cpp ${tag} (${backend}) est en cours d'exécution : il s'agit de la dernière build fournie par Hermes.`,
+    `llama.cpp ${tag} (${backend}) est en cours d'exécution : il s'agit de la dernière build fournie par Thoth.`,
   activeDetail:
     "Les nouvelles conversations utilisent ce modèle. Il se charge lors de l'envoi de votre premier message.",
   activeNotLoaded: 'Se charge avec votre premier message',

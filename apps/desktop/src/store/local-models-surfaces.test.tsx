@@ -396,7 +396,7 @@ it('keeps menu focus and its scalar selection stable across byte updates and out
   expect(window.document.activeElement).toBe(input)
 })
 
-it.each(['model-download', 'quickstart', 'runtime-install'] as const)(
+it.each(['model-download', 'runtime-install'] as const)(
   '%s pause and resume travel through the owner API and publish server truth',
   async (kind: LocalRuntimeJob['kind']): Promise<void> => {
     catalog = [model]
@@ -415,10 +415,6 @@ it.each(['model-download', 'quickstart', 'runtime-install'] as const)(
     ).toBe(true)
     expect(notify).not.toHaveBeenCalled()
     expect(notifyError).not.toHaveBeenCalled()
-
-    if (kind === 'quickstart') {
-      expect(screen.queryByRole('button', { name: /set up for me/i })).toBeNull()
-    }
 
     fireEvent.click(screen.getByRole('button', { name: /resume/i }))
     await tick()

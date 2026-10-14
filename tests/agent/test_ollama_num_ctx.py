@@ -36,7 +36,7 @@ class TestQueryOllamaNumCtx:
     def test_returns_context_from_model_info(self):
         """Should extract context_length from GGUF model_info metadata."""
         show_data = {
-            "model_info": {"llama.context_length": 131072},
+            "model_info": {"llama.context_length": 32768},
             "parameters": "",
         }
         mock_ctx, _ = _mock_httpx_client(show_data)
@@ -47,7 +47,7 @@ class TestQueryOllamaNumCtx:
             with patch.object(httpx, "Client", return_value=mock_ctx):
                 result = query_ollama_num_ctx("llama3.1:8b", "http://localhost:11434/v1")
 
-        assert result == 131072
+        assert result == 32768
 
     def test_prefers_explicit_num_ctx_from_modelfile(self):
         """If the Modelfile sets num_ctx explicitly, that should take priority."""

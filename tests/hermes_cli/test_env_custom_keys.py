@@ -35,6 +35,25 @@ def test_unknown_env_key_surfaces_as_custom(monkeypatch):
     assert row["category"] == "custom"
     assert row["is_set"] is True
 
+def test_only_non_secret_endpoint_values_ride_in_plain_text(monkeypatch):
+    """A catalogued non-secret endpoint (LM_BASE_URL) is sent as-is so Desktop can show and edit
+    it; keys, secret URLs (webhooks) and custom keys never are."""
+    rows = _env_rows(monkeypatch, {
+        "LM_BASE_URL": "http://127.0.0.1:1234/v1",
+        "LM_API_KEY": "lm-secret-key",
+        "TEAMS_INCOMING_WEBHOOK_URL": "https://example.webhook/secret-path",
+        "MY_PROXY_BASE_URL": "https://user:pw@proxy.example",
+        "OLLAMA_BASE_URL": "http://admin:hunter2@lan-box:11434",
+    })
+    assert rows["LM_BASE_URL"]["value"] == "http://127.0.0.1:1234/v1"
+    for secret_key in ("LM_API_KEY", "TEAMS_INCOMING_WEBHOOK_URL", "MY_PROXY_BASE_URL", "OLLAMA_BASE_URL"):
+        assert rows[secret_key]["value"] is None
+    assert "lm-secret-key" not in str(rows)
+    assert "secret-path" not in str(rows)
+    assert "user:pw" not in str(rows)
+    assert "hunter2" not in str(rows)
+
+
 def test_custom_key_is_password_masked(monkeypatch):
     """A custom key could hold anything → treated as a secret (redacted)."""
     rows = _env_rows(monkeypatch, {"MY_CUSTOM_THING": "s3cret-value"})

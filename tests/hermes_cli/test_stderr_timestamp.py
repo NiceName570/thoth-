@@ -141,7 +141,7 @@ def test_prepare_skips_interactive_xpc_zero_even_for_gateway_argv():
 def test_child_launchd_label_env_exports_only_hermes_job_labels():
     assert stderr_timestamp._child_launchd_label_env(_LAUNCHD_ENV) == {LAUNCHD_LABEL_ENV: "ai.hermes.gateway-butler"}
     # Interactive shells and the grandchild itself read "0": nothing to export. App-coalition labels
-    # (IDE integrated terminals) are not a Hermes job identity either.
+    # (IDE integrated terminals) are not a Thoth job identity either.
     for env in ({"PATH": "/usr/bin", "XPC_SERVICE_NAME": "0"}, {"PATH": "/usr/bin"},
                 {"PATH": "/usr/bin", "XPC_SERVICE_NAME": "application.com.example.ide.123"}):
         assert stderr_timestamp._child_launchd_label_env(env) == {}

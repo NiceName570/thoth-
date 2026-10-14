@@ -6,7 +6,7 @@ description: "Schedule automated tasks with natural language, manage them with o
 
 # Scheduled Tasks (Cron)
 
-Schedule tasks to run automatically with natural language or cron expressions. Hermes exposes cron management through a single `cronjob_manage` tool with action-style operations instead of separate schedule/list/remove tools.
+Schedule tasks to run automatically with natural language or cron expressions. Thoth exposes cron management through a single `cronjob_manage` tool with action-style operations instead of separate schedule/list/remove tools.
 
 ## What cron can do now
 
@@ -20,7 +20,7 @@ Cron jobs can:
 - run in **no-agent mode** — a script on a schedule, its stdout delivered verbatim, zero LLM involvement (see the [no-agent mode](#no-agent-mode-script-only-jobs) section below)
 - fire on **external events** — a webhook route with `cron_job` set fires the job the moment something happens (a PR gets feedback, a service posts an alert) instead of waiting for the next scheduled tick. See [Event-Triggered Cron Jobs](../messaging/webhooks.md#event-triggered-cron-jobs).
 
-All of this is available to Hermes itself through the `cronjob_manage` tool, so you can create, pause, edit, and remove jobs by asking in plain language — no CLI required.
+All of this is available to Thoth itself through the `cronjob_manage` tool, so you can create, pause, edit, and remove jobs by asking in plain language — no CLI required.
 
 :::tip
 **Which model does a cron job run on?** Resolution at fire time is: per-job pin → `cron.model` in `config.yaml` → the main agent model from `hermes model`.
@@ -39,7 +39,7 @@ Whichever provider a job resolves to, its provider-specific request settings (e.
 :::
 
 :::warning
-Cron-run sessions cannot recursively create more cron jobs. Hermes disables cron management tools inside cron executions to prevent runaway scheduling loops.
+Cron-run sessions cannot recursively create more cron jobs. Thoth disables cron management tools inside cron executions to prevent runaway scheduling loops.
 :::
 
 ## Creating scheduled tasks
@@ -66,13 +66,13 @@ hermes cron create "every 1h" "Use both skills and combine the result" \
 
 ### Through natural conversation
 
-Ask Hermes normally:
+Ask Thoth normally:
 
 ```text
 Every morning at 9am, check Hacker News for AI news and send me a summary on Telegram.
 ```
 
-Hermes will use the unified `cronjob_manage` tool internally.
+Thoth will use the unified `cronjob_manage` tool internally.
 
 ## Pre-dispatch configuration validation
 
@@ -363,7 +363,7 @@ To fix it, free disk space on the filesystem holding the store, remount it read-
 
 ### Gateway scheduler behavior
 
-On each tick Hermes:
+On each tick Thoth:
 
 1. loads jobs from `~/.hermes/cron/jobs.json`
 2. checks `next_run_at` against the current time
@@ -388,16 +388,16 @@ cron:
 
 The lasting fix is a user session for the gateway user: `sudo loginctl enable-linger <gateway-user>` (and `XDG_RUNTIME_DIR` / `DBUS_SESSION_BUS_ADDRESS` in the unit for system-level installs), then restart the gateway. Kanban workers always require a scope under the managed gateway regardless of this key: a spawn the host cannot scope is recorded on the card as an infrastructure failure and retried later, never charged to the card (see the [Kanban docs](kanban.md#workers-and-systemd-cgroups)).
 
-The worker is the gateway's own interpreter running `python -m cron.scheduler`, with the gateway's checkout pinned on its `PYTHONPATH` (plus any entries the gateway itself was started with), so it imports the same Hermes tree the gateway runs — regardless of the venv's editable-install mapping, the unit's `WorkingDirectory`, or `PYTHONSAFEPATH` on the host. A worker that dies before acknowledging the handoff records its own stderr tail in the job's last error and in the execution ledger, so the failing import (or whatever killed it) is named instead of a bare exit code.
+The worker is the gateway's own interpreter running `python -m cron.scheduler`, with the gateway's checkout pinned on its `PYTHONPATH` (plus any entries the gateway itself was started with), so it imports the same Thoth tree the gateway runs — regardless of the venv's editable-install mapping, the unit's `WorkingDirectory`, or `PYTHONSAFEPATH` on the host. A worker that dies before acknowledging the handoff records its own stderr tail in the job's last error and in the execution ledger, so the failing import (or whatever killed it) is named instead of a bare exit code.
 
 ### Execution history
 
-Hermes records each claimed cron attempt in the profile-local
+Thoth records each claimed cron attempt in the profile-local
 `~/.hermes/cron/executions.db` before executor or provider dispatch. Attempts
 move through `claimed`, `running`, and one immutable terminal state:
 `completed`, `failed`, or `unknown`. After restart — and before every manual
 `hermes cron run` / `/cron run`, so a one-shot invocation with no scheduler
-running heals the ledger too — Hermes marks an abandoned attempt `unknown` only
+running heals the ledger too — Thoth marks an abandoned attempt `unknown` only
 when the original PID and process-start fingerprint prove that its owner is
 gone, or when a live owner has been **silent** for longer than the derived
 stale bound (`max(3 × HERMES_CRON_TIMEOUT, script timeout, 2 h)`): the run
@@ -412,7 +412,7 @@ ledger is included in quick backups.
 
 Scheduled attempts also record their exact scheduled instant, separately from
 the time they were claimed. If an old `jobs.json` snapshot re-arms an occurrence
-that the retained ledger records as completed, Hermes skips that replay and
+that the retained ledger records as completed, Thoth skips that replay and
 re-anchors recurring jobs. This works even when the snapshot predates the
 dispatch stamp or the original run started late. Explicit manual runs do not
 consume a scheduled occurrence's identity.
@@ -922,7 +922,7 @@ Semantics:
 - `{"wakeAgent": false}` on the last line → silent tick (same gate LLM jobs use).
 - No tokens, no model, no provider fallback — the job never touches the inference layer.
 
-`.sh` / `.bash` files run under `bash` from `PATH` when available, otherwise `/bin/bash` (important on Windows Git Bash). Anything else runs under the current Python interpreter (`sys.executable`). Scripts must resolve inside `$HERMES_HOME/scripts/` — relative names, absolute paths, and `~`-prefixed paths are accepted when the resolved target stays in that directory; paths that escape it are rejected. A Python `script` or `monitor_script` can also pin a user-managed venv (for packages the Hermes runtime doesn't carry) by passing `--interpreter ~/venvs/.../bin/python` at create/edit time — see [Using your own Python environment](../../guides/cron-script-only.md#using-your-own-python-environment). The Hermes-managed venv stays Hermes-owned; nothing is installed or restored automatically. The subprocess environment is sanitized, so provider API credentials and other Hermes-managed secrets are **not** inherited by cron scripts.
+`.sh` / `.bash` files run under `bash` from `PATH` when available, otherwise `/bin/bash` (important on Windows Git Bash). Anything else runs under the current Python interpreter (`sys.executable`). Scripts must resolve inside `$HERMES_HOME/scripts/` — relative names, absolute paths, and `~`-prefixed paths are accepted when the resolved target stays in that directory; paths that escape it are rejected. A Python `script` or `monitor_script` can also pin a user-managed venv (for packages the Thoth runtime doesn't carry) by passing `--interpreter ~/venvs/.../bin/python` at create/edit time — see [Using your own Python environment](../../guides/cron-script-only.md#using-your-own-python-environment). The Thoth-managed venv stays Thoth-owned; nothing is installed or restored automatically. The subprocess environment is sanitized, so provider API credentials and other Thoth-managed secrets are **not** inherited by cron scripts.
 
 #### Giving a script a credential
 
@@ -934,17 +934,17 @@ terminal:
     - MY_SERVICE_TOKEN
 ```
 
-The variable is forwarded into the script's environment with the **owning profile's** value: for a job that belongs to a profile served by a multi-profile gateway or the Desktop/dashboard backend, the value is resolved through that profile's secret scope, never the launch profile's process environment, and that profile's own `.env` credentials never reach another profile's scripts. Hermes-managed provider credentials (`OPENAI_API_KEY`, gateway tokens, …) cannot be declared — the sanitizer rejects them. On a single-profile install the script inherits what the gateway's `.env` put in the process environment, as before. Log presence (`set`/`MISSING`), never the value: script output is delivered verbatim.
+The variable is forwarded into the script's environment with the **owning profile's** value: for a job that belongs to a profile served by a multi-profile gateway or the Desktop/dashboard backend, the value is resolved through that profile's secret scope, never the launch profile's process environment, and that profile's own `.env` credentials never reach another profile's scripts. Thoth-managed provider credentials (`OPENAI_API_KEY`, gateway tokens, …) cannot be declared — the sanitizer rejects them. On a single-profile install the script inherits what the gateway's `.env` put in the process environment, as before. Log presence (`set`/`MISSING`), never the value: script output is delivered verbatim.
 
 ### The agent sets these up for you
 
-The `cronjob_manage` tool's schema exposes `no_agent` to Hermes directly, so you can describe a watchdog in chat and let the agent wire it up:
+The `cronjob_manage` tool's schema exposes `no_agent` to Thoth directly, so you can describe a watchdog in chat and let the agent wire it up:
 
 ```text
 Ping me on Telegram if RAM is over 85%, every 5 minutes.
 ```
 
-Hermes will write the check script to `~/.hermes/scripts/` via `write_file`, then call:
+Thoth will write the check script to `~/.hermes/scripts/` via `write_file`, then call:
 
 ```python
 cronjob(action="create", schedule="every 5m",
@@ -991,7 +991,7 @@ cronjob(
 
 **How it works:**
 
-- When Job 2 fires, Hermes reads Job 1's most recent output from `~/.hermes/cron/output/{job1_id}/*.md`
+- When Job 2 fires, Thoth reads Job 1's most recent output from `~/.hermes/cron/output/{job1_id}/*.md`
 - That output is prepended to Job 2's prompt automatically
 - Job 2 doesn't need to hardcode "read this file" — it receives the content as context
 - The chain can be any length: Job 1 → Job 2 → Job 3 → ...
@@ -1051,7 +1051,7 @@ This is separate from `last_fire_error` (scheduler handoff) and `last_delivery_e
 Those fields can correctly be empty when the agent itself failed.
 
 For a connection failure, inspect the run document under `cron/output/<job_id>/` in the active
-Hermes home. Its `## Error` section includes the chained traceback, with credential patterns
+Thoth home. Its `## Error` section includes the chained traceback, with credential patterns
 and URL credentials redacted. The file uses the existing private output-file permissions;
 traceback locals are not captured. Delivery notices and `last_error` retain the concise error,
 not the full traceback. Review diagnostics before sharing: redaction is not a guarantee that
@@ -1236,13 +1236,13 @@ cronjob(action="create", name="weekly-news-summary",
         prompt="Summarize this week's AI news: ...")
 ```
 
-When `enabled_toolsets` is set on a job it wins; otherwise the `hermes tools` cron-platform config wins; otherwise Hermes falls back to the built-in defaults. If the cron-platform toolset config cannot be read at all (for example a malformed `platform_toolsets` block in `config.yaml`), the run fails with a recorded error instead of quietly running with every tool — check `hermes cron list` / `hermes cron doctor`. This matters for cost control: carrying `browser`, `delegation` into every tiny "fetch news" job bloats the tool-schema prompt on every LLM call.
+When `enabled_toolsets` is set on a job it wins; otherwise the `hermes tools` cron-platform config wins; otherwise Thoth falls back to the built-in defaults. If the cron-platform toolset config cannot be read at all (for example a malformed `platform_toolsets` block in `config.yaml`), the run fails with a recorded error instead of quietly running with every tool — check `hermes cron list` / `hermes cron doctor`. This matters for cost control: carrying `browser`, `delegation` into every tiny "fetch news" job bloats the tool-schema prompt on every LLM call.
 
 If the job drives a site you're logged into, the login has to be in place before the run — a scheduled tick has nobody to answer a prompt. [Scheduled and unattended runs](./browser.md#scheduled-and-unattended-runs) covers that setup.
 
 ### Skipping the agent entirely: `wakeAgent`
 
-If your cron job attaches a pre-check script (via `script=`), the script can decide at runtime whether Hermes should even invoke the agent. Emit a final stdout line of the form:
+If your cron job attaches a pre-check script (via `script=`), the script can decide at runtime whether Thoth should even invoke the agent. Emit a final stdout line of the form:
 
 ```text
 {"wakeAgent": false}
@@ -1339,7 +1339,7 @@ cronjob(action="create", name="summarize-new-msgs",
 The same pattern works for any data source you can query from a script — Postgres, an HTTP API, your own state store — without baking a SQL evaluator into the cron subsystem.
 
 :::tip
-Hermes's own `~/.hermes/state.db` is an internal schema that changes between releases. Don't query it from a pre-run gate — point at your own database or feed instead.
+Thoth's own `~/.hermes/state.db` is an internal schema that changes between releases. Don't query it from a pre-run gate — point at your own database or feed instead.
 :::
 
 Credit: this recipe set was prompted by @iankar8's exploration in [#2654](https://github.com/NousResearch/hermes-agent/pull/2654), which proposed adding sql/file/command triggers as a parallel mechanism. The `script` + `wakeAgent` gate already covers all three cases at $0, so the work landed as documentation instead.
@@ -1369,7 +1369,7 @@ Ask the agent to manage jobs through the `cronjob_manage` tool, `hermes cron edi
 
 If a hand edit leaves `jobs.json` malformed, the scheduler repairs it on the next load instead of stopping: entries in the `jobs` list that are not JSON objects are dropped, and a `repeat.completed` that is not a non-negative integer is reset to a valid count (0 when it can't be read). Each repair is logged as a warning (value types only, never contents).
 
-Jobs may store `model` and `provider` as `null`. When those fields are omitted, Hermes resolves them at execution time from the global configuration. They only appear in the job record when a per-job override is set.
+Jobs may store `model` and `provider` as `null`. When those fields are omitted, Thoth resolves them at execution time from the global configuration. They only appear in the job record when a per-job override is set.
 
 A per-job `base_url` override needs an explicit `provider`. For a provider with a stored key (a named custom provider or a built-in one), the override must have the same origin as that provider's configured endpoint: the same scheme, host and port. Another scheme, port or subdomain is refused, so the stored key is only ever sent where you configured it. A bare `provider: custom` takes any `base_url` that no stored key goes with. When a stored key matches the URL's hostname (for example `DEEPSEEK_API_KEY` for `api.deepseek.com`), the same rule applies: the `base_url` must have the origin of an endpoint you configured or of a built-in provider.
 

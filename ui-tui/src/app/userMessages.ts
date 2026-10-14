@@ -41,7 +41,7 @@ export const backendRestarting = (): string => t('userMessages.backend.restartin
 
 export const backendRestartingActivity = (): string => t('userMessages.backend.restartingActivity')
 
-// Attached (dashboard / embedded) mode: only the socket dropped; Hermes and any
+// Attached (dashboard / embedded) mode: only the socket dropped; Thoth and any
 // reply in progress are still alive on the backend and come back on reconnect.
 export const connectionLost = (): string => t('userMessages.backend.connectionLost')
 

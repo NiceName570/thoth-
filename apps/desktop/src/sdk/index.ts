@@ -216,7 +216,7 @@ export interface PluginProfileRoute {
   primary?: true
   /** Desktop profile used to select the connection route. */
   profile: string
-  /** Backend Hermes profile served by that route. */
+  /** Backend Thoth profile served by that route. */
   targetProfile: string
 }
 
@@ -896,7 +896,7 @@ export const host = {
     const bridge = window.hermesDesktop?.connections
 
     if (!bridge) {
-      throw new Error('This Desktop build has no connection registry. Update Hermes Desktop.')
+      throw new Error('This Desktop build has no connection registry. Update Thoth.')
     }
 
     const registryPayload = await bridge.list()
@@ -913,7 +913,7 @@ export const host = {
     const roster = window.hermesDesktop?.getAgentRoster
 
     if (!roster) {
-      throw new Error('This Desktop build cannot enumerate multi-source agents. Update Hermes Desktop.')
+      throw new Error('This Desktop build cannot enumerate multi-source agents. Update Thoth.')
     }
 
     return roster()
@@ -1383,7 +1383,7 @@ export const host = {
       const openTab = $newSessionTabAction.get()
 
       if (!openTab) {
-        notify({ kind: 'error', message: 'Update Hermes Desktop to open another Bot chat.' })
+        notify({ kind: 'error', message: 'Update Thoth to open another Bot chat.' })
 
         return
       }
@@ -1480,7 +1480,7 @@ export const host = {
     const getProfileRoutes = desktop?.getProfileRoutes
 
     if (!getProfileRoutes) {
-      throw new Error('Hermes Desktop connection routing unavailable')
+      throw new Error('Thoth connection routing unavailable')
     }
 
     let profiles = $profiles.get()
@@ -1624,7 +1624,7 @@ export const host = {
     const gateway = $gateway.get()
 
     if (!gateway) {
-      throw new Error('Hermes gateway unavailable')
+      throw new Error('Thoth gateway unavailable')
     }
 
     return timeoutMs === undefined ? gateway.request<T>(method, params) : gateway.request<T>(method, params, timeoutMs)
@@ -1798,7 +1798,7 @@ export type { TitlebarTool } from '@/app/shell/titlebar-controls'
  * core chat. Prefer this over raw Streamdown for transcript-style messages. */
 export { MessageTextContent } from '@/components/assistant-ui/markdown-text'
 /** The oversized Collapse lettering an empty chat is titled with — core writes
- *  "HERMES AGENT" with it, a `chat.empty` contribution writes its own name. */
+ *  "THOTH" with it, a `chat.empty` contribution writes its own name. */
 export { Wordmark } from '@/components/chat/wordmark'
 /** Pane placement roles. `'floating'` is the one NON-tiling value: the pane is
  *  excluded from the layout tree and rendered as a fixed, draggable card above
@@ -2068,7 +2068,7 @@ export { compactNumber } from '@hermes/shared'
  *  `approvals.timeout` (300s) so a plugin answering an approval never rejects
  *  its own RPC while the backend still applies the decision (#60654). */
 export { APPROVAL_RESPOND_TIMEOUT_MS } from '@hermes/shared'
-/** Hermes' reasoning levels, so a plugin surfacing a thinking depth uses the
+/** Thoth's reasoning levels, so a plugin surfacing a thinking depth uses the
  *  same scale as the rest of the app (labels: `reasoningEffortLabel`). */
 export {
   DEFAULT_REASONING_EFFORT,

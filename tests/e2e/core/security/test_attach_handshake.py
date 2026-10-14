@@ -25,7 +25,7 @@ Scenarios (the listener answering the advertised port):
 * control ``test_genuine_owner_is_attached``: the lease holder itself serves the endpoint and answers with
   its own identity; the TUI must receive that owner's socket and the lease must stay with the owner.
 
-Why the owner side is a test process: no shipped Hermes runtime advertises ``shared_runtime_url`` or
+Why the owner side is a test process: no shipped Thoth runtime advertises ``shared_runtime_url`` or
 serves ``/api/session-attach`` yet (``hermes serve`` and the dashboard do not register one), so the
 closest real owner is a process holding the real lease that answers from its own lease knowledge. It
 speaks both the current dialect (``lease_id`` in the reply) and the proof dialect of the candidate fix

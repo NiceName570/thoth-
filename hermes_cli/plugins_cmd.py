@@ -604,7 +604,7 @@ def _forget_plugin_config(aliases: set) -> dict[str, Any]:
     return result
 
 
-# One lock per Hermes home. The Desktop install card enables several plugins at once, each on its own
+# One lock per Thoth home. The Desktop install card enables several plugins at once, each on its own
 # thread; without it every thread read the same config version and all but the first commit were
 # refused as stale. The version check in PM stays: it still catches an edit from another process.
 _SELECTION_LOCKS: dict[str, threading.Lock] = {}
@@ -700,7 +700,7 @@ def cmd_enable(name: str, allow_tool_override: Optional[bool] = None) -> None:
         if plugin in LEGACY_RELAY_PLUGIN_KEYS:
             _fail(console, (
                 f"[red]Plugin '{plugin}' was removed.[/red] Relay lifecycle is owned "
-                "by Hermes core; configure a standard user or system Relay plugins.toml, or use "
+                "by Thoth core; configure a standard user or system Relay plugins.toml, or use "
                 f"{RELAY_PLUGINS_CONFIG_ENV} for an explicit user-file override."))
 
     _refuse_legacy_relay(name)

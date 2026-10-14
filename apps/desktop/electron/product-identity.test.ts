@@ -92,8 +92,8 @@ test('nonstable runtime pins userData before the app name can change', async ():
   const canary: ProductIdentity = await identityForVariant('bundled')
   const runtime: { applyDesktopIdentity: typeof applyDesktopIdentity } = await import('./product-identity')
   const root: string = fs.mkdtempSync(path.join(os.tmpdir(), 'identity-userdata-'))
-  const paths: Record<string, string> = { appData: root, userData: path.join(root, 'Hermes') }
-  let name: string = 'Hermes'
+  const paths: Record<string, string> = { appData: root, userData: path.join(root, 'Thoth') }
+  let name: string = 'Thoth'
 
   const app: Parameters<typeof applyDesktopIdentity>[0] = {
     getPath: (key: string): string => paths[key],
@@ -108,7 +108,7 @@ test('nonstable runtime pins userData before the app name can change', async ():
 
   try {
     assert.equal(runtime.applyDesktopIdentity(app, stable), null)
-    assert.equal(paths.userData, path.join(root, 'Hermes'))
+    assert.equal(paths.userData, path.join(root, 'Thoth'))
     assert.equal(runtime.applyDesktopIdentity(app, canary), canary.displayName)
     assert.equal(paths.userData, path.join(paths.appData, canary.appNamePascal))
     assert.equal(name, canary.displayName)
@@ -118,9 +118,9 @@ test('nonstable runtime pins userData before the app name can change', async ():
 })
 
 test.each([
-  [undefined, 'Hermes', 'hermes', 'latest', 'canary'],
-  ['bundled', 'Hermes Agent', 'hermes', 'latest', 'canary'],
-  ['light', 'Hermes Light', 'hermes-light', 'light', 'light-canary']
+  [undefined, 'Thoth', 'hermes', 'latest', 'canary'],
+  ['bundled', 'Thoth Agent', 'hermes', 'latest', 'canary'],
+  ['light', 'Thoth Light', 'hermes-light', 'light', 'light-canary']
 ] as const)(
   '%s separates stable, canary and independent commits',
   async (

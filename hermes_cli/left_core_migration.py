@@ -305,7 +305,7 @@ def _pending(home: Path, *, say: Callable[[str], None], process_env: bool = Fals
         if catalog_source(feature.plugin) is None:
             _note_failure(home, feature.plugin)
             say(f"  ⚠ {feature.label} moved out of core into the '{feature.plugin}' plugin, which this "
-                f"Hermes cannot find in the plugin catalog yet. Run `{_install_command(feature.plugin, home)}` "
+                f"Thoth cannot find in the plugin catalog yet. Run `{_install_command(feature.plugin, home)}` "
                 f"once it is listed.")
             continue
         out.append(feature)
@@ -457,7 +457,7 @@ def recover_at_startup(*, say: Optional[Callable[[str], None]] = None) -> list[s
         if not lazy_installs_allowed():
             for feature in features:
                 report(f"⚠ {feature.label} moved out of core and its '{feature.plugin}' plugin is not "
-                       f"installed, so it is off. security.allow_lazy_installs is off, so Hermes did not "
+                       f"installed, so it is off. security.allow_lazy_installs is off, so Thoth did not "
                        f"fetch it: run `{_install_command(feature.plugin, home)}`.")
             return []
         installed = []

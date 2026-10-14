@@ -6,7 +6,7 @@ died on ``FileNotFoundError: <install>/environments/<env>/workspace/pm/uv.lock``
 
 ``--force`` was incidental: every generation's ``workspace/`` copy was materialised without
 ``pm/uv.lock`` (the copy dropped every file named ``uv.lock``), so ANY ``hermes pm`` command run
-by the selected generation's own ``hermes`` (the one on PATH for every child a Hermes process
+by the selected generation's own ``hermes`` (the one on PATH for every child a Thoth process
 spawns, and the one a unit pointing at the managed environment runs) died before it started.
 After a dependency-changing ``hermes update``:
 

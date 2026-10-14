@@ -2,7 +2,7 @@ name: hermes-speech
 repo: https://github.com/allmodels-io/hermes-speech
 sha: 6efecc359aa4c091b41ad530575943657ee259de
 description: Give your agent the voice it deserves. Guided TTS and STT setup for
-  Hermes, with voice search and previews, model switching, testing, and native
+  Thoth, with voice search and previews, model switching, testing, and native
   spoken replies across supported providers. Access 80+ speech models through a
   single API key with the AllModels router.
 maintainer: moeadham

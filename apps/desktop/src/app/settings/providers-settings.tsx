@@ -4,8 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { runInTerminal } from '@/app/right-sidebar/store'
 import {
-  FEATURED_ID,
-  FeaturedProviderRow,
   FireworksProviderRow,
   LocalModelsProviderRow,
   OpenRouterProviderRow,
@@ -180,16 +178,14 @@ function OAuthPicker({
 
   const select = (p: OAuthProvider) => startManualProviderOAuth(p.id, profile)
 
-  // The free tier holds a token but no account: it is never "connected"; the featured Nous row
+  // The free tier holds a token but no account: it is never "connected"; the Nous row
   // names it (Nous · free tier) and offers the sign-in that keeps its connectors.
   const isConnected = (p: OAuthProvider) => Boolean(p.status?.logged_in) && p.status?.free_tier !== true
-  const featured = ordered.find(p => p.id === FEATURED_ID && !isConnected(p)) ?? null
-  const rest = featured ? ordered.filter(p => p.id !== FEATURED_ID) : ordered
   // Keep connected accounts grouped and always visible; only the unconnected
   // providers hide behind the disclosure, so the page leads with what's set up.
   // Both lists preserve `sortProviders` order (curated priority, then name).
-  const connected = rest.filter(isConnected)
-  const others = rest.filter(p => !isConnected(p))
+  const connected = ordered.filter(isConnected)
+  const others = ordered.filter(p => !isConnected(p))
   const collapsible = others.length > 0
   const showOthers = !collapsible || showAll
 
@@ -210,7 +206,6 @@ function OAuthPicker({
       <p className="-mt-2 mb-1 text-[length:var(--conversation-caption-font-size)] leading-(--conversation-caption-line-height) text-(--ui-text-tertiary)">
         {p.intro}
       </p>
-      {featured && <FeaturedProviderRow onSelect={select} provider={featured} />}
       {/* Slot #2 — the no-account path, matching onboarding. Behind the
           --local launch flag like every local-models surface. */}
       {$localModelsEnabled.get() && <LocalModelsProviderRow onClick={onWantLocalModels} />}
@@ -272,9 +267,9 @@ function ConnectedProviderRow({
   const copy = t.settings.providers
   const title = providerTitle(provider)
   const Trail = provider.flow === 'external' ? Terminal : ChevronRight
-  // Hermes can clear this provider's creds via the API.
+  // Thoth can clear this provider's creds via the API.
   const canDisconnect = provider.disconnectable ?? provider.flow !== 'external'
-  // External (CLI-managed) provider Hermes can't clear via the API, but ships a
+  // External (CLI-managed) provider Thoth can't clear via the API, but ships a
   // command we can run in the embedded terminal (Electron shell only).
   const terminalDisconnect = !canDisconnect && Boolean(provider.disconnect_command) && canRunInTerminal()
   // Only fall back to a static "remove it elsewhere" hint when we offer no button.
@@ -459,7 +454,7 @@ export function ProvidersSettings({
   }, [onboardingActive, scopeProfile])
 
   // External (CLI-managed) providers can't be cleared via the API by design —
-  // Hermes never deletes creds another tool owns behind a silent API call.
+  // Thoth never deletes creds another tool owns behind a silent API call.
   // Instead we run the documented removal command in the embedded terminal so
   // the user sees exactly what executes, then return them to chat to watch it.
   async function handleTerminalDisconnect(provider: OAuthProvider) {

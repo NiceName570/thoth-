@@ -15,9 +15,10 @@ vi.mock('@/store/session', async (): Promise<object> => {
 
 import { QueryClientProvider } from '@tanstack/react-query'
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { MemoryRouter, useLocation } from 'react-router'
+import { MemoryRouter } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest'
 
+import type { OllamaStatus } from '@/hermes'
 import { I18nProvider } from '@/i18n'
 import { queryClient } from '@/lib/query-client'
 import { localModelsKey, localModelsOwner, watchLocalRuntimeJobs } from '@/store/local-runtime-jobs'
@@ -38,16 +39,17 @@ vi.mock('@/hermes', () => ({
   getLocalModelsJobs: vi.fn(),
   getLocalModelsStatus: vi.fn(),
   getLocalRuntimeJob: vi.fn(),
+  getOllamaStatus: vi.fn(),
   // The page imports the profile store (settings-scope chip), whose module
   // body subscribes $activeGatewayProfile → setApiRequestProfile at load.
   getProfiles: vi.fn(async () => ({ profiles: [] })),
   installLocalRuntime: vi.fn(),
   listHFRepoFiles: vi.fn(),
   pauseLocalDownload: vi.fn(),
-  quickstartLocalModels: vi.fn(),
   resumeLocalDownload: vi.fn(),
   searchHFModels: vi.fn(),
   setApiRequestProfile: vi.fn(),
+  setModelAssignment: vi.fn(),
   sideloadLocalModel: vi.fn()
 }))
 
@@ -124,6 +126,13 @@ const REFUSED_MODEL: LocalCatalogModel = {
   start_window_label: undefined
 }
 
+const NO_OLLAMA: OllamaStatus = {
+  active_model: null,
+  base_url: 'http://localhost:11434/v1',
+  models: [],
+  reachable: false
+}
+
 function setInstallStarting(starting: boolean): void {
   queryClient.getMutationCache().clear()
 
@@ -150,27 +159,13 @@ function renderPane() {
   )
 }
 
-// The fresh-machine states these tests exercise now lead with the
-// quickstart card; the full pane (runtime rows, model list, browser)
-// is one 'Let me choose' click away. Render and click through.
+// Without a reachable Ollama the pane shows the managed runtime directly.
 async function renderFullPane(): Promise<ReturnType<typeof renderPane>> {
   const result: ReturnType<typeof renderPane> = renderPane()
 
-  // Wait for status to load: the pane either shows the setup card (click
-  // through to the full pane) or, when an active runtime/model job routes
-  // straight to the full pane, the runtime section directly.
   await waitFor((): void => {
-    expect(
-      Boolean(screen.queryByRole('button', { name: /let me choose/i })) ||
-        screen.queryAllByText(/this machine/i).length > 0
-    ).toBe(true)
+    expect(screen.queryAllByText(/this machine/i).length).toBeGreaterThan(0)
   })
-
-  const configure: HTMLElement | null = screen.queryByRole('button', { name: /let me choose/i })
-
-  if (configure) {
-    fireEvent.click(configure)
-  }
 
   return result
 }
@@ -179,6 +174,7 @@ beforeEach((): void => {
   queryClient.clear()
   queryClient.setDefaultOptions({ queries: { ...queryClient.getDefaultOptions().queries, retry: false } })
   mocked.getLocalModelsStatus.mockResolvedValue(BASE_STATUS)
+  mocked.getOllamaStatus.mockResolvedValue(NO_OLLAMA)
   mocked.getLocalHardware.mockResolvedValue(BASE_HARDWARE)
   mocked.getLocalCatalog.mockResolvedValue({ models: [FITTING_MODEL, SPILLED_MODEL, REFUSED_MODEL] })
   // The backend mock ECHOES the atom: the watcher's immediate poll reads
@@ -447,71 +443,6 @@ describe('LocalModelsSettings', () => {
   })
 })
 
-describe('quickstart', () => {
-  it('leads with one button on a fresh machine and fires the quickstart job', async () => {
-    mocked.quickstartLocalModels.mockResolvedValue({
-      display_name: 'Qwen3.6 27B',
-      download_bytes: FITTING_MODEL.size_bytes,
-      job_id: 'q1',
-      model_id: 'qwen3.6-27b',
-      needs_download: true,
-      needs_runtime: true
-    })
-    renderPane()
-
-    // The card names the recommended model and the one-click action; the
-    // runtime/model machinery is NOT on screen.
-    expect(await screen.findByRole('button', { name: /set up for me/i })).toBeTruthy()
-    expect(screen.queryByText('Install the local runtime')).toBeNull()
-
-    fireEvent.click(screen.getByRole('button', { name: /set up for me/i }))
-    await waitFor(() => {
-      expect(mocked.quickstartLocalModels).toHaveBeenCalled()
-    })
-  })
-
-  it('pins the quickstart progress view while the job runs', async () => {
-    queryClient.setQueryData(localModelsKey(localModelsOwner(), 'jobs'), [
-      {
-        job_id: 'q1',
-        kind: 'quickstart',
-        target: 'Qwen3.6 27B',
-        model_id: 'qwen3.6-27b',
-        status: 'running',
-        phase: 'downloading',
-        detail: 'Qwen3.6 27B — 17.6 GB',
-        total_bytes: 100,
-        done_bytes: 30,
-        percent: 30,
-        error: null
-      }
-    ])
-    renderPane()
-
-    // The hero names the model and shows the composed status line
-    // (state · bytes · speed · ETA) while the job runs; the raw backend
-    // detail is only the lead when there are no bytes to report yet.
-    expect(await screen.findByText('Qwen3.6 27B')).toBeTruthy()
-    expect(await screen.findByText(/^Downloading · /)).toBeTruthy()
-    // One job, one view: no setup or model-choice buttons while it runs.
-    expect(screen.queryByRole('button', { name: /set up for me/i })).toBeNull()
-  })
-
-  it('skips the card entirely once a model is staged', async () => {
-    mocked.getLocalModelsStatus.mockResolvedValue({
-      ...BASE_STATUS,
-      runtime_installed: true,
-      runtime_backend: 'cuda',
-      models: [{ id: 'Qwen3.6-27B-UD-Q4_K_XL', size_bytes: 17 * 2 ** 30, size_label: '17.6 GB' }]
-    })
-    renderPane()
-
-    // Straight to the full pane — no quickstart hero for a working setup.
-    expect(await screen.findByText('Qwen3.6 27B')).toBeTruthy()
-    expect(screen.queryByRole('button', { name: /set up for me/i })).toBeNull()
-  })
-})
-
 describe('BrowseSection', () => {
   it('keeps manual spill selection and HF browsing available without an automatic recommendation', async (): Promise<void> => {
     const stagedId: string = 'Spilled-Model-Q4_K_M'
@@ -558,7 +489,6 @@ describe('BrowseSection', () => {
     await waitFor((): void => {
       expect(mocked.activateLocalModel).toHaveBeenCalledWith(stagedId, { connectionId: null, profile: 'default' })
     })
-    expect(mocked.quickstartLocalModels).not.toHaveBeenCalled()
   })
 
   it('searches HF after a pause and shows fit-priced files on demand', async () => {
@@ -587,8 +517,6 @@ describe('BrowseSection', () => {
       await act(async () => {
         await vi.runOnlyPendingTimersAsync()
       })
-      // Fresh machine leads with the quickstart card — enter the full pane.
-      fireEvent.click(screen.getByRole('button', { name: /let me choose/i }))
 
       const box = screen.getByPlaceholderText(/search models/i)
       fireEvent.change(box, { target: { value: 'qwen' } })
@@ -658,88 +586,48 @@ describe('added-by-you rows', () => {
   })
 })
 
-describe('quickstart completion navigation', () => {
-  it('lands on a new chat when a quickstart it watched finishes; stale done jobs on mount never navigate', async () => {
-    const routeProbe = vi.fn()
-
-    function Probe() {
-      const loc = useLocation()
-      routeProbe(loc.pathname)
-
-      return null
-    }
-
-    const doneJob: LocalRuntimeJob = {
-      done_bytes: 0,
-      detail: '',
-      error: null,
-      job_id: 'stale-done',
-      kind: 'quickstart',
-      model_id: 'qwen3.8-27b',
-      phase: 'done',
-      status: 'done',
-      target: 'Qwen3.8 27B',
-      total_bytes: null
-    }
-
-    // A finished quickstart already in history when the pane mounts —
-    // must NOT trigger navigation.
-    queryClient.setQueryData(localModelsKey(localModelsOwner(), 'jobs'), [doneJob])
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={['/settings']}>
-          <I18nProvider>
-            <LocalModelsSettings />
-          </I18nProvider>
-          <Probe />
-        </MemoryRouter>
-      </QueryClientProvider>
-    )
-    await act(async () => {})
-    expect(routeProbe).not.toHaveBeenCalledWith('/')
-
-    // A quickstart the pane SAW running that then completes -> navigate.
-    const running: LocalRuntimeJob = { ...doneJob, job_id: 'live-run', phase: 'downloading', status: 'running' }
-    await act(async (): Promise<void> => {
-      queryClient.setQueryData(localModelsKey(localModelsOwner(), 'jobs'), [doneJob, running])
-      await new Promise<void>((resolve): void => {
-        setTimeout(resolve, 0)
-      })
+describe('Ollama', (): void => {
+  it('lists the Ollama library instead of the managed runtime and offers no one-click setup', async (): Promise<void> => {
+    mocked.getOllamaStatus.mockResolvedValue({
+      ...NO_OLLAMA,
+      active_model: 'llama3.2:3b',
+      models: ['llama3.2:3b', 'qwen3:8b'],
+      reachable: true
     })
-    await act(async () => {
-      queryClient.setQueryData(localModelsKey(localModelsOwner(), 'jobs'), [
-        doneJob,
-        { ...running, phase: 'done', status: 'done' }
-      ])
-    })
-    await waitFor((): void => expect(routeProbe).toHaveBeenCalledWith('/'))
-  })
-})
-
-describe('quickstart finalization', (): void => {
-  it('quickstart hero suppresses the byte counter outside download phases', async () => {
-    queryClient.setQueryData(localModelsKey(localModelsOwner(), 'jobs'), [
-      {
-        job_id: 'q1',
-        kind: 'quickstart',
-        target: 'Qwen3.6 27B',
-        model_id: 'qwen3.6-27b',
-        status: 'running',
-        phase: 'installing-runtime',
-        detail: 'Unpacking runtime',
-        total_bytes: 100,
-        done_bytes: 100,
-        percent: 100,
-        error: null
-      }
-    ])
-
     renderPane()
-    await screen.findByText('Unpacking runtime')
 
-    // Stage detail yes; byte counter no — a 100% counter on an install
-    // phase would lie about the model leg still ahead.
-    expect(screen.queryByText(/of/)).toBeNull()
+    expect(await screen.findByText('qwen3:8b')).toBeTruthy()
+    expect(screen.getByText('llama3.2:3b')).toBeTruthy()
+    expect(screen.getByText('Default')).toBeTruthy()
+    expect(screen.queryByText('Install the local runtime')).toBeNull()
+    expect(screen.queryByText('Qwen3.6 27B')).toBeNull()
+    expect(screen.queryByRole('button', { name: /set up for me/i })).toBeNull()
+  })
+
+  it('makes a library model the default through the custom endpoint', async (): Promise<void> => {
+    mocked.getOllamaStatus.mockResolvedValue({ ...NO_OLLAMA, models: ['qwen3:8b'], reachable: true })
+    mocked.setModelAssignment.mockResolvedValue({ ok: true, provider: 'custom', model: 'qwen3:8b' } as never)
+    renderPane()
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Use' }))
+    await waitFor((): void => {
+      expect(mocked.setModelAssignment).toHaveBeenCalledWith(
+        expect.objectContaining({
+          base_url: 'http://localhost:11434/v1',
+          model: 'qwen3:8b',
+          provider: 'custom',
+          scope: 'main'
+        }),
+        expect.anything()
+      )
+    })
+  })
+
+  it('says Ollama is not running and keeps the managed runtime without the setup hero', async (): Promise<void> => {
+    renderPane()
+
+    expect(await screen.findByText('Ollama not detected')).toBeTruthy()
+    expect(await screen.findByText('Qwen3.6 27B')).toBeTruthy()
+    expect(screen.queryByRole('button', { name: /set up for me/i })).toBeNull()
   })
 })

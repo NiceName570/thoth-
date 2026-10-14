@@ -2,7 +2,7 @@
 name: first-task
 description: "Run the first task chat that setup hands off."
 version: 0.3.0
-author: "Siddharth Balyan (alt-glitch) + Hermes Agent"
+author: "Siddharth Balyan (alt-glitch) + Thoth"
 license: MIT
 platforms: [linux, macos, windows]
 metadata:

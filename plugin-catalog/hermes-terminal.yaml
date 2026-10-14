@@ -2,7 +2,7 @@ name: hermes-terminal
 repo: https://github.com/Adolanium/hermes-terminal
 sha: 4decbf0585af9d12071e0bfddcad9a1d1540c98a
 version: "0.0.4"
-description: Run the Hermes terminal interface in a Hermes Desktop workspace tab.
+description: Run the Thoth terminal interface in a Thoth workspace tab.
 maintainer: Adolanium
 tier: community
 category: desktop

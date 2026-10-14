@@ -24,7 +24,7 @@ def _find_stale_dashboard_pids(*, exclude_pids: set[int] | None = None,
                                scope_home: str | None = None) -> list[int]:
     """PIDs of running ``dashboard``/``serve`` backends the caller may stop.
 
-    *scope_home*: keep only backends whose resolved Hermes home (see
+    *scope_home*: keep only backends whose resolved Thoth home (see
     ``_hermes_home_for_pid``) is this home; unreadable ownership is spared, never guessed.
     ``--stop`` and the post-update cleanup pass their own home so another install's or
     profile's backend on the same machine is never a target (#113978).
@@ -103,7 +103,7 @@ def _restart_managed_dashboard_service(reason: str, unit: str = _DASHBOARD_SYSTE
     def _systemctl(*args: str, timeout: int = 10) -> subprocess.CompletedProcess:
         return _run_probe(["systemctl", *args], timeout=timeout)
 
-    # User manager first (Hermes installs Linux services in the user scope by
+    # User manager first (Thoth installs Linux services in the user scope by
     # default), system manager only when the unit isn't there. Keep the selected
     # scope for ALL probes and the restart — a user unit must never be restarted
     # through the system manager (or raw-killed).
@@ -932,7 +932,7 @@ def _attach_to_host_backend(args, headless_backend: bool) -> None:
     url = f"http://{format_url_host(hr.dial_host(record))}:{record.port}/?profile={wanted}"
 
     kind = "backend" if headless_backend else "dashboard"
-    print(f"Hermes {kind} already running on this host: PID {record.pid}, port {record.port}.")
+    print(f"Thoth {kind} already running on this host: PID {record.pid}, port {record.port}.")
     print(f"  Managing profile '{wanted}': {url}")
     if not headless_backend and not args.no_open:
         with contextlib.suppress(Exception):

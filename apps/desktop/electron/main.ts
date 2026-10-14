@@ -1070,7 +1070,7 @@ if (IS_WINDOWS || process.platform === 'linux') {
   // engaged — icacls /T recurses the whole install tree, so healthy launches
   // skip it (the installer already granted the ACE at install time). Repair
   // targets the install dir only: granting AppContainer read on userData would
-  // expose Hermes sessions/config to every packaged app on the machine.
+  // expose Thoth sessions/config to every packaged app on the machine.
   if (shouldAttemptAclRepair(priorMarker)) {
     const exeDir = path.dirname(process.execPath)
     const acl = grantAllApplicationPackagesAcl(exeDir, { execFileSync })
@@ -1227,7 +1227,7 @@ ipcMain.handle('hermes:embed-host:origin', () => embedHostOrigin())
 // `backgroundThrottling: false` on every chat window) pinned every renderer's
 // `document.visibilityState` to 'visible' forever — which silently turned all
 // the renderer's visibility-gated backstop polls and clock ticks into
-// always-on timers. A completely idle, minimized Hermes burned ~20% CPU
+// always-on timers. A completely idle, minimized Thoth burned ~20% CPU
 // around the clock. Throttling is now a runtime dial scoped to streaming:
 // see createStreamThrottle() — chat windows are unthrottled while any turn is
 // in flight (so a live answer keeps painting while blurred, occluded, or
@@ -1277,7 +1277,7 @@ function acquireSingleInstanceLock(): boolean {
 const isPrimaryInstance: boolean = acquireSingleInstanceLock()
 
 if (!isPrimaryInstance) {
-  console.error('[hermes] another Hermes Desktop instance holds the single-instance lock; exiting')
+  console.error('[hermes] another Thoth instance holds the single-instance lock; exiting')
   app.exit(0)
 }
 
@@ -1338,7 +1338,7 @@ let desktopSshPathOverride = ''
   }
 }
 
-// ACTIVE_HERMES_ROOT — the canonical mutable Hermes install. Same path
+// ACTIVE_HERMES_ROOT — the canonical mutable Thoth install. Same path
 // install.ps1 / install.sh use, so a desktop-only user and a CLI-only user end
 // up with identical layouts and can share one install.
 const ACTIVE_HERMES_ROOT = path.join(HERMES_HOME, 'hermes-agent')
@@ -1370,7 +1370,7 @@ const DESKTOP_UPDATE_CONFIG_PATH = path.join(app.getPath('userData'), 'updates.j
 const DESKTOP_WINDOW_STATE_PATH = path.join(app.getPath('userData'), 'window-state.json')
 const DESKTOP_BACKEND_OWNERSHIP_PATH = path.join(app.getPath('userData'), 'backend-ownership.json')
 const DESKTOP_MANAGED_SSH_RECOVERY_PATH = path.join(app.getPath('userData'), 'managed-ssh-update-recovery.json')
-// active-profile.json records which Hermes profile the desktop launches its
+// active-profile.json records which Thoth profile the desktop launches its
 // local backend as. When set, startHermes() passes `hermes --profile <name>
 // dashboard …`, which deterministically pins HERMES_HOME (see
 // _apply_profile_override in hermes_cli/main.py) and bypasses the sticky
@@ -1435,7 +1435,7 @@ const BOOT_FAKE_STEP_MS = (() => {
   return Math.max(120, raw)
 })()
 
-const APP_NAME: string = IDENTITY_APP_NAME || process.env.HERMES_DESKTOP_APP_NAME || 'Hermes'
+const APP_NAME: string = IDENTITY_APP_NAME || process.env.HERMES_DESKTOP_APP_NAME || 'Thoth'
 const HUD_WINDOW_TITLE = `${APP_NAME} HUD`
 const TITLEBAR_HEIGHT = 34
 const MACOS_TRAFFIC_LIGHTS_HEIGHT = 14
@@ -1850,7 +1850,7 @@ if (IS_WINDOWS) {
   app.setAppUserModelId(IDENTITY_APP_NAME ? PRODUCT_IDENTITY.appId : 'com.nousresearch.hermes')
 }
 
-// Seed the native About panel with the best-known Hermes version. This is
+// Seed the native About panel with the best-known Thoth version. This is
 // refreshed on every open via showAboutPanelFresh, so an in-place
 // `hermes update` mid-session is reflected without an app restart; the seed
 // covers the first open and any non-menu invocation path. Never seed empty:
@@ -2105,7 +2105,7 @@ function logPoolSpawnFailure(label: string, error: unknown): void {
     rememberLog(`Profile backend ${label} slot wait timed out (background); retry is backing off`)
   } else {
     rememberLog(
-      `Hermes backend for profile ${label} failed to start: ${error instanceof Error ? error.message : String(error)}`
+      `Thoth backend for profile ${label} failed to start: ${error instanceof Error ? error.message : String(error)}`
     )
   }
 }
@@ -2247,7 +2247,7 @@ let bootProgressState = {
   error: null,
   fakeMode: BOOT_FAKE_MODE,
   isCloudBackendDown: false,
-  message: 'Waiting to start Hermes backend',
+  message: 'Waiting to start Thoth backend',
   phase: 'idle',
   progress: 0,
   retryable: false,
@@ -2847,25 +2847,12 @@ function getFirstRunSetupGate() {
   return firstRunSetupGate
 }
 
-async function waitForFirstRunSetupChoice(backend) {
-  const gate = getFirstRunSetupGate()
+async function waitForFirstRunSetupChoice(_backend) {
+  // Thoth installs locally on first launch with no choice screen to sit on;
+  // a remote gateway is added later from Settings -> Gateway.
+  continueFirstRunLocalBootstrap()
 
-  if (!gate.shouldGate(backend)) {
-    return 'continue-local'
-  }
-
-  updateBootProgress(
-    {
-      error: null,
-      message: 'Waiting for first-run setup choice',
-      phase: 'bootstrap.choice',
-      progress: 12,
-      running: true
-    },
-    { allowDecrease: true }
-  )
-
-  return gate.wait(backend)
+  return 'continue-local' as const
 }
 
 function continueFirstRunLocalBootstrap() {
@@ -3075,7 +3062,7 @@ async function waitForUpdateToFinish() {
 
         await advanceBootProgress(
           'backend.update-wait',
-          'An update is still running — Hermes will start automatically when it finishes. Its progress is in logs/update.log.',
+          'An update is still running — Thoth will start automatically when it finishes. Its progress is in logs/update.log.',
           12
         )
 
@@ -3084,7 +3071,7 @@ async function waitForUpdateToFinish() {
 
       await advanceBootProgress(
         'backend.update-wait',
-        'An update is finishing — Hermes will start automatically when it completes…',
+        'An update is finishing — Thoth will start automatically when it completes…',
         12
       )
     },
@@ -3128,7 +3115,7 @@ async function waitForUpdateToFinish() {
       log: rememberLog
     })
   ) {
-    await advanceBootProgress('backend.update-restart', 'Restarting Hermes to load the updated app…', 14)
+    await advanceBootProgress('backend.update-restart', 'Restarting Thoth to load the updated app…', 14)
     // Park while the scheduled exit lands so this stale build never starts a
     // backend; the failsafe below only runs if the exit somehow does not.
     await new Promise(resolve => setTimeout(resolve, BUNDLE_SWAP_RELAUNCH_FAILSAFE_MS))
@@ -3307,7 +3294,7 @@ async function findSystemPython() {
   //      miss real Python 3.13 installs (user-reported case).
   //
   // We also restrict ourselves to Python 3.11–3.13. 3.14 is the latest
-  // CPython but several Hermes deps (notably pywinpty's Rust-built
+  // CPython but several Thoth deps (notably pywinpty's Rust-built
   // windows_x86_64_msvc crate) don't yet publish 3.14 wheels, and
   // `pip install -e .` falls back to source-build, which fails without
   // a Rust toolchain. install.ps1 sidesteps this by pinning to 3.11
@@ -4092,7 +4079,7 @@ function isShimLocked(shimPath) {
   }
 }
 
-// Kill only Hermes-OWNED venv daemons (the memory plugin's hindsight daemon:
+// Kill only Thoth-OWNED venv daemons (the memory plugin's hindsight daemon:
 // exe under venv\Scripts AND cmdline referencing hindsight_api.main). The
 // daemon is spawned DETACHED, so it outlives the backend tree-kill and keeps
 // venv files mapped. External holders (a user terminal running `hermes`,
@@ -4136,7 +4123,7 @@ function killHermesOwnedVenvDaemons(updateRoot) {
     const pid = Number(holder?.ProcessId)
 
     if (Number.isInteger(pid) && pid > 0) {
-      rememberLog(`[updates] stopping Hermes-owned venv daemon (hindsight) PID ${pid} before hand-off`)
+      rememberLog(`[updates] stopping Thoth-owned venv daemon (hindsight) PID ${pid} before hand-off`)
 
       try {
         forceKillProcessTree(pid)
@@ -4149,12 +4136,12 @@ function killHermesOwnedVenvDaemons(updateRoot) {
   }
 }
 
-// Kill EXTERNAL Hermes processes that hold this install's venv shim (#62311):
+// Kill EXTERNAL Thoth processes that hold this install's venv shim (#62311):
 // the gateway Startup item and dashboard Scheduled Task are launched outside
 // this app (Task Scheduler / autostart), so the backend teardown above never
 // sees them — yet they map venv files and made every update hand-off abort
 // with "venv shim still locked". Selection is deliberately narrow
-// (isExternalVenvHolder: exe under venv\Scripts AND unambiguously a Hermes
+// (isExternalVenvHolder: exe under venv\Scripts AND unambiguously a Thoth
 // program) — unrelated processes that merely mention the install root or use
 // the venv interpreter for their own scripts are never killed; the shim-lock
 // probe still aborts the hand-off for those. Called before the release gate
@@ -4181,7 +4168,7 @@ function killExternalVenvHolders(updateRoot) {
 
     if (Number.isInteger(pid) && pid > 0) {
       rememberLog(
-        `[updates] stopping external Hermes venv holder (autostart gateway/dashboard) PID ${pid} before hand-off`
+        `[updates] stopping external Thoth venv holder (autostart gateway/dashboard) PID ${pid} before hand-off`
       )
 
       try {
@@ -4543,7 +4530,7 @@ async function claimBackendChild(
   if (decision.action === 'fail') {
     await localBackendLifecycle.stop(child)
     throw new Error(
-      `Hermes backend (PID ${child.pid}) died before its identity could be recorded: ${decision.reason}${outputTail?.describe() ?? ''}`
+      `Thoth backend (PID ${child.pid}) died before its identity could be recorded: ${decision.reason}${outputTail?.describe() ?? ''}`
     )
   }
 
@@ -4552,7 +4539,7 @@ async function claimBackendChild(
   if (decision.action === 'degrade') {
     startMarker = pidOnlyStartMarker(child.pid)
     rememberLog(
-      `WARNING: process start marker probe failed for live Hermes backend PID ${child.pid}; ` +
+      `WARNING: process start marker probe failed for live Thoth backend PID ${child.pid}; ` +
         `claiming with PID-only identity instead of stopping it: ${decision.reason}`
     )
   } else {
@@ -4579,7 +4566,7 @@ async function claimBackendChild(
   } catch (error) {
     await localBackendLifecycle.stop(child)
     throw new Error(
-      `Could not persist ownership for the Hermes backend: ${error.message}${outputTail?.describe() ?? ''}`
+      `Could not persist ownership for the Thoth backend: ${error.message}${outputTail?.describe() ?? ''}`
     )
   }
 }
@@ -4659,14 +4646,14 @@ async function releaseBackendLock(updateRoot: string, tag: string): Promise<{ un
   // through the CLI, rather than targeting a gateway worker by PID.
   stopGatewayBeforeUpdate(venvHermesShimPath(updateRoot), HERMES_HOME)
 
-  // Reap Hermes-OWNED venv daemons the tree-kill above cannot reach: the
+  // Reap Thoth-OWNED venv daemons the tree-kill above cannot reach: the
   // memory plugin's hindsight daemon is spawned DETACHED (it outlives the
   // backend) yet runs off venv\Scripts\pythonw.exe, keeping venv files
   // mapped past the backend teardown (#75477/#75478). Narrowly scoped
   // (venv-holder-select) — external holders are never killed here.
   killHermesOwnedVenvDaemons(updateRoot)
 
-  // External autostart Hermes processes (gateway Startup item, dashboard
+  // External autostart Thoth processes (gateway Startup item, dashboard
   // Scheduled Task) also hold the venv shim and are invisible to the backend
   // teardown (#62311). Kill them before the gate AND re-scan inside each gate
   // pass, so a respawning holder loses the race instead of the update.
@@ -4735,7 +4722,7 @@ async function releaseBackendLock(updateRoot: string, tag: string): Promise<{ un
 //
 // The desktop is a pure consumer: it does NOT git pull / pip install / rebuild
 // itself (the old open-coded git dance lived here and drifted from
-// `hermes update`). Instead we spawn the staged Hermes-Setup binary with
+// `hermes update`). Instead we spawn the staged Thoth-Setup binary with
 // --update and quit, so it can run `hermes update` (which refuses while we
 // hold the venv shim) and rebuild the desktop with our exe already gone.
 //
@@ -5139,7 +5126,7 @@ function isPackagedInstallPath(dir) {
 
 function resolveHermesCwd() {
   // In a packaged build, `process.cwd()` resolves to the install root (e.g.
-  // `…/win-unpacked` on Windows or `/Applications/Hermes.app/Contents/...`
+  // `…/win-unpacked` on Windows or `/Applications/Thoth.app/Contents/...`
   // on macOS). Sessions spawned there leave files inside the app bundle
   // and bewilder users when "where did my files go?" is the install dir.
   // The user-configurable default project directory wins over everything,
@@ -5306,12 +5293,12 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
     } else if (!isWindowsBinaryPathInWsl(hermesOverride, { isWsl: IS_WSL })) {
       hermesCommand = hermesOverride
     } else {
-      rememberLog(`Ignoring Windows Hermes override under WSL: ${hermesOverride}`)
+      rememberLog(`Ignoring Windows Thoth override under WSL: ${hermesOverride}`)
     }
 
     if (hermesCommand) {
       if (looksLikeDesktopAppBinary(hermesCommand)) {
-        rememberLog(`Ignoring desktop app executable on PATH while resolving Hermes CLI: ${hermesCommand}`)
+        rememberLog(`Ignoring desktop app executable on PATH while resolving Thoth CLI: ${hermesCommand}`)
         hermesCommand = null
       } else {
         const unwrapped: Awaited<ReturnType<typeof unwrapWindowsVenvHermesCommand>> =
@@ -5328,7 +5315,7 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
           (await verifyHermesCli(hermesCommand, { shell: shellForProbe }))
         ) {
           return {
-            label: `existing Hermes CLI at ${hermesCommand}`,
+            label: `existing Thoth CLI at ${hermesCommand}`,
             command: hermesCommand,
             args: backendArgs,
             bootstrap: false,
@@ -5340,7 +5327,7 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
         }
 
         rememberLog(
-          `Ignoring existing Hermes CLI at ${hermesCommand}: --version probe failed; falling through to bootstrap.`
+          `Ignoring existing Thoth CLI at ${hermesCommand}: --version probe failed; falling through to bootstrap.`
         )
       }
     }
@@ -5364,7 +5351,7 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
   if (activeBackend && !bootstrapRepairRequested) {
     if (!activeRuntime.hasValidMarker) {
       rememberLog(
-        `[bootstrap] Active Hermes runtime at ${ACTIVE_HERMES_ROOT} is usable but the bootstrap marker is missing or stale; skipping first-run bootstrap.`
+        `[bootstrap] Active Thoth runtime at ${ACTIVE_HERMES_ROOT} is usable but the bootstrap marker is missing or stale; skipping first-run bootstrap.`
       )
     }
 
@@ -5387,14 +5374,14 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
       )
 
       if (userBackend) {
-        rememberLog(`[boot] Using Hermes install at ${userInstall.root} (published launcher ${userInstall.launcher})`)
+        rememberLog(`[boot] Using Thoth install at ${userInstall.root} (published launcher ${userInstall.launcher})`)
 
         return userBackend
       }
 
-      rememberLog(`[bootstrap] Hermes install at ${userInstall.root} (from ${userInstall.launcher}) is not usable`)
+      rememberLog(`[bootstrap] Thoth install at ${userInstall.root} (from ${userInstall.launcher}) is not usable`)
     } else {
-      rememberLog(`[bootstrap] no usable Hermes install at ${ACTIVE_HERMES_ROOT} and no published user-bin launcher`)
+      rememberLog(`[bootstrap] no usable Thoth install at ${ACTIVE_HERMES_ROOT} and no published user-bin launcher`)
     }
   }
 
@@ -5410,7 +5397,7 @@ async function resolveHermesBackend(backendArgs: string[]): Promise<ResolvedHerm
   //    is a recoverable state the GUI can drive through.
   return {
     kind: 'bootstrap-needed',
-    label: 'Hermes Agent not installed yet; bootstrap required',
+    label: 'Thoth not installed yet; bootstrap required',
     command: null,
     args: backendArgs,
     bootstrap: true,
@@ -5470,7 +5457,7 @@ async function ensureRuntime(
     rememberLog('[bootstrap] REFUSING installer on a bundled install; payload missing or damaged — reinstall the app')
 
     const bundledError: Error & { isBootstrapFailure?: boolean } = new Error(
-      'This app bundles its own Hermes runtime, but the runtime files are missing or damaged. Reinstall Hermes Desktop to restore it.'
+      'This app bundles its own Thoth runtime, but the runtime files are missing or damaged. Reinstall Thoth to restore it.'
     )
 
     bundledError.isBootstrapFailure = true
@@ -5479,11 +5466,11 @@ async function ensureRuntime(
   }
 
   if (backend.kind === 'bootstrap-needed') {
-    rememberLog('[bootstrap] no Hermes install found; starting first-launch bootstrap')
+    rememberLog('[bootstrap] no Thoth install found; starting first-launch bootstrap')
 
     if (await handOffWindowsBootstrapRecovery('bootstrap-needed')) {
       const handoffError: Error & { isBootstrapFailure?: boolean; bootstrapHandedOff?: boolean } = new Error(
-        'Hermes recovery was handed off to Hermes Setup. The desktop will restart when recovery completes.'
+        'Thoth recovery was handed off to Thoth Setup. The desktop will restart when recovery completes.'
       )
 
       handoffError.isBootstrapFailure = true
@@ -5547,7 +5534,7 @@ async function ensureRuntime(
     bootstrapAbortController = null
 
     if (bootstrapResult.cancelled) {
-      const cancelledError = new Error('Hermes install was cancelled.') as any
+      const cancelledError = new Error('Thoth install was cancelled.') as any
       cancelledError.isBootstrapFailure = true
       cancelledError.bootstrapCancelled = true
       bootstrapFailure = cancelledError
@@ -5622,7 +5609,7 @@ function fetchJson(url, token, options: any = {}) {
         const timeoutMs = resolveTimeoutMs(options.timeoutMs, DEFAULT_FETCH_TIMEOUT_MS)
 
         if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-          reject(new Error(`Unsupported Hermes backend URL protocol: ${parsed.protocol}`))
+          reject(new Error(`Unsupported Thoth backend URL protocol: ${parsed.protocol}`))
 
           return
         }
@@ -5698,7 +5685,7 @@ function fetchJson(url, token, options: any = {}) {
 
         req.on('error', reject)
         req.setTimeout(timeoutMs, () => {
-          req.destroy(new Error(`Timed out connecting to Hermes backend after ${timeoutMs}ms`))
+          req.destroy(new Error(`Timed out connecting to Thoth backend after ${timeoutMs}ms`))
         })
 
         // From here the request goes on the wire: a later transport error can no
@@ -5741,7 +5728,7 @@ function fetchPublicJson(url, options: any = {}) {
         const timeoutMs = resolveTimeoutMs(options.timeoutMs, DEFAULT_FETCH_TIMEOUT_MS)
 
         if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-          reject(new Error(`Unsupported Hermes backend URL protocol: ${parsed.protocol}`))
+          reject(new Error(`Unsupported Thoth backend URL protocol: ${parsed.protocol}`))
 
           return
         }
@@ -5802,7 +5789,7 @@ function fetchPublicJson(url, options: any = {}) {
 
         req.on('error', reject)
         req.setTimeout(timeoutMs, () => {
-          req.destroy(new Error(`Timed out connecting to Hermes backend after ${timeoutMs}ms`))
+          req.destroy(new Error(`Timed out connecting to Thoth backend after ${timeoutMs}ms`))
         })
 
         // Past this point the request is on the wire — see fetchJson.
@@ -6573,7 +6560,7 @@ function sendOpenFolderRequested() {
 
 // Tell the renderer the machine just woke. Sleep silently drops the
 // renderer's WebSocket to the local backend; the renderer reconnects on this
-// signal so the chat composer doesn't stay stuck on "Starting Hermes...".
+// signal so the chat composer doesn't stay stuck on "Starting Thoth...".
 function sendPowerResume() {
   if (!mainWindow || mainWindow.isDestroyed()) {
     return
@@ -7258,7 +7245,7 @@ function safeFrameOrigin(frame: { origin?: string } | null | undefined): string 
 // ---------------------------------------------------------------------------
 // OAuth remote-gateway auth.
 //
-// Hosted Hermes gateways gate the dashboard behind an OAuth provider (e.g.
+// Hosted Thoth gateways gate the dashboard behind an OAuth provider (e.g.
 // Nous Research) instead of a static session token. The auth model is
 // fundamentally different from the token path:
 //
@@ -7350,7 +7337,7 @@ function getOauthSessionForUrl(url, { connectionId = '', pendingAuthMode = '', p
 // hydrating from disk and return an empty array — even though the user is
 // signed in. That false-negative used to make hasLiveOauthSession() report
 // "not signed in", which on the initial boot path (startHermes → the renderer's
-// single-shot boot() with no retry) surfaced as the "Hermes couldn't start"
+// single-shot boot() with no retry) surfaced as the "Thoth couldn't start"
 // OAuth overlay that vanishes the instant the user clicks Retry.
 //
 // We force the store to hydrate once, up front: flushStorageData() then a
@@ -7479,7 +7466,7 @@ async function hasLiveOauthSession(baseUrl) {
 
   // Cold-start false-negative guard. A `persist:` partition's cookie store
   // loads lazily, so the FIRST read on a fresh boot can come back empty even
-  // for a signed-in user — the exact race that produced the transient "Hermes
+  // for a signed-in user — the exact race that produced the transient "Thoth
   // couldn't start / not signed in" overlay that Retry always cleared. Before
   // trusting a negative, force the store to hydrate and re-read a couple of
   // times with a short backoff. A genuinely signed-out user still resolves
@@ -7621,7 +7608,7 @@ function openOauthLoginWindow(
       win = new BrowserWindow({
         width: 520,
         height: 720,
-        title: silent ? 'Connecting to Hermes Cloud agent…' : 'Sign in to Hermes gateway',
+        title: silent ? 'Connecting to Hermes Cloud agent…' : 'Sign in to Thoth gateway',
         autoHideMenuBar: true,
         // Silent cascade: start HIDDEN. The auto-SSO 302 chain completes in
         // well under a second, so the window normally never needs to show. We
@@ -7752,7 +7739,7 @@ function fetchJsonViaOauthSession(url, options: any = {}) {
       }
 
       if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-        reject(new Error(`Unsupported Hermes backend URL protocol: ${parsed.protocol}`))
+        reject(new Error(`Unsupported Thoth backend URL protocol: ${parsed.protocol}`))
 
         return
       }
@@ -7795,7 +7782,7 @@ function fetchJsonViaOauthSession(url, options: any = {}) {
           // already finished
         }
 
-        reject(new Error(`Timed out connecting to Hermes backend after ${timeoutMs}ms`))
+        reject(new Error(`Timed out connecting to Thoth backend after ${timeoutMs}ms`))
       }, timeoutMs)
 
       request.on('response', (res: Electron.IncomingMessage): void => {
@@ -9600,7 +9587,7 @@ async function buildRemoteConnection(
 
   if (!token) {
     throw new Error(
-      'Remote Hermes gateway is selected, but no session token is saved. ' +
+      'Remote Thoth gateway is selected, but no session token is saved. ' +
         'Open Settings → Gateway and save a token, or switch back to Local.'
     )
   }
@@ -10582,7 +10569,7 @@ async function requestJsonForProfile(profile: string, path: string, method: stri
 
 async function probeRemoteAuthMode(rawUrl) {
   // Determine how a remote gateway expects callers to authenticate, WITHOUT
-  // sending any credentials. ``/api/status`` is public on every Hermes
+  // sending any credentials. ``/api/status`` is public on every Thoth
   // gateway (it backs the portal liveness probe) and reports:
   //   auth_required: true  → OAuth gate is engaged (cookie + ws-ticket auth)
   //   auth_required: false → loopback/--insecure: legacy session-token auth
@@ -10697,7 +10684,7 @@ async function testDesktopConnectionConfig(input: any = {}) {
             return {
               reachable: false,
               sshError: 'update-required',
-              error: 'Update Hermes on the remote host before connecting with Desktop SSH.'
+              error: 'Update Thoth on the remote host before connecting with Desktop SSH.'
             }
           }
 
@@ -10774,7 +10761,7 @@ async function testDesktopConnectionConfig(input: any = {}) {
   // connects — a separate transport with separate server-side guards (Host/
   // Origin, ws-ticket/token auth). Validating only the HTTP side produced a
   // false-positive "reachable" while the real boot still failed with "Could not
-  // connect to Hermes gateway". Mirror the renderer's connect here so the test
+  // connect to Thoth gateway". Mirror the renderer's connect here so the test
   // reflects the full path the app actually uses.
   const wsUrl = await resolveTestWsUrl(baseUrl, authMode, token, {
     mintTicket: url => mintGatewayWsTicket(url, testHeaders)
@@ -12222,7 +12209,7 @@ async function runPoolBackendStart(
   assertLocalProfileCanStart(profile, profileDeletionGate, key =>
     directoryExists(path.join(HERMES_HOME, 'profiles', key))
   )
-  rememberLog(`Starting Hermes backend for profile "${profile}" via ${backend.label}`)
+  rememberLog(`Starting Thoth backend for profile "${profile}" via ${backend.label}`)
 
   const parentStartMarker = await desktopParentStartMarker()
   const backendNonce = crypto.randomBytes(16).toString('hex')
@@ -12281,22 +12268,22 @@ async function runPoolBackendStart(
   startFailed.catch(() => {})
 
   child.once('error', error => {
-    rememberLog(`Hermes backend for profile "${profile}" failed to start: ${error.message}`)
+    rememberLog(`Thoth backend for profile "${profile}" failed to start: ${error.message}`)
     void teardownFailedLocalBackend(poolKey, entry).catch(cleanupError => {
       rememberLog(
-        `Hermes backend for profile "${profile}" cleanup failed: ${cleanupError instanceof Error ? cleanupError.message : String(cleanupError)}`
+        `Thoth backend for profile "${profile}" cleanup failed: ${cleanupError instanceof Error ? cleanupError.message : String(cleanupError)}`
       )
     })
     rejectStart?.(error)
   })
   child.once('exit', (code, signal) => {
-    rememberLog(formatBackendExitLine(`Hermes backend for profile "${profile}" exited`, code, signal, outputTail))
+    rememberLog(formatBackendExitLine(`Thoth backend for profile "${profile}" exited`, code, signal, outputTail))
     releaseBackendChild(child)
 
     if (!ready) {
       rejectStart?.(
         new Error(
-          `Hermes backend for profile "${profile}" exited before it became ready (${signal || code}).${outputTail.describe()}`
+          `Thoth backend for profile "${profile}" exited before it became ready (${signal || code}).${outputTail.describe()}`
         )
       )
     }
@@ -12338,7 +12325,7 @@ async function runPoolBackendStart(
 
   const authToken = await adoptServedDashboardToken(baseUrl, token, {
     childAlive,
-    label: `Hermes backend for profile "${profile}"`,
+    label: `Thoth backend for profile "${profile}"`,
     rememberLog
   })
 
@@ -12360,7 +12347,7 @@ async function runPoolBackendStart(
 
   if (!wsProbe.ok) {
     throw new Error(
-      `Hermes backend for profile "${profile}" is HTTP-reachable but the WebSocket (/api/ws) rejected the session token: ${wsProbe.reason}`
+      `Thoth backend for profile "${profile}" is HTTP-reachable but the WebSocket (/api/ws) rejected the session token: ${wsProbe.reason}`
     )
   }
 
@@ -12464,7 +12451,7 @@ async function stopAllPoolBackends() {
  * root — it is machine-scoped and shared with the surviving gateway and
  * other installs; image locks there are the updater's pause/resume job.
  * Runs after the graceful backend teardown, skips the pids it owned and
- * every live Hermes runtime process, so it is only the net for what
+ * every live Thoth runtime process, so it is only the net for what
  * detached. Best effort throughout; see package-process-reap.ts.
  */
 function reapInstallRootedStragglers(excludePids: number[]): void {
@@ -12656,7 +12643,7 @@ function startAttachedBackendMonitor(attached: AttachedBackend) {
         stopAttachedBackendMonitor()
         rememberLog(`[attach] attached backend on ${attached.baseUrl} (pid ${attached.pid}) is gone; recovering`)
         backendConnectionState.invalidate()
-        scheduleUnexpectedPrimaryRecovery({ error: 'The Hermes backend this app attached to exited.', ready: true })
+        scheduleUnexpectedPrimaryRecovery({ error: 'The Thoth backend this app attached to exited.', ready: true })
       })
   }, ATTACHED_LIVENESS_POLL_MS)
 
@@ -12819,7 +12806,7 @@ function reportPrimaryRecoveryCrashLoop(code: number | null, signal: string | nu
   }
 
   const message =
-    'Hermes backend keeps crashing right after it restarts; not restarting it again. Relaunch Hermes Desktop.'
+    'Thoth backend keeps crashing right after it restarts; not restarting it again. Relaunch Thoth.'
 
   rememberLog(`[supervisor] ${message}`)
   sendBackendExit({ code, signal, error: message })
@@ -12906,7 +12893,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
   // otherwise SIGTERMs the running instance's live backend (#87295).
   if (!isPrimaryInstance) {
     rememberLog('[boot] non-primary instance: skipping backend machinery')
-    throw new Error('Hermes Desktop is already running in another window.')
+    throw new Error('Thoth is already running in another window.')
   }
 
   await reapOrphanedBackendsOnce()
@@ -12936,7 +12923,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
   // E2E: simulate a boot failure without breaking the real backend. The boot
   // progresses a few steps, then fails with the given error message.
   if (BOOT_FAKE_ERROR) {
-    await advanceBootProgress('backend.resolve', 'Resolving Hermes backend', 8)
+    await advanceBootProgress('backend.resolve', 'Resolving Thoth backend', 8)
     const error = new Error(BOOT_FAKE_ERROR) as any
     error.isBootstrapFailure = true
     bootstrapFailure = error
@@ -12988,7 +12975,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
       // remotes and Apply invalidated this attempt), bail before probing.
       backendConnectionState.assertCurrentAttempt(connectionAttempt)
 
-      await advanceBootProgress('backend.remote', `Connecting to remote Hermes backend at ${remote.baseUrl}`, 24)
+      await advanceBootProgress('backend.remote', `Connecting to remote Thoth backend at ${remote.baseUrl}`, 24)
       await waitForRemoteHermes(remote)
 
       // Second async boundary: the health probe itself can outlive the
@@ -12997,7 +12984,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
 
       updateBootProgress({
         phase: 'backend.ready',
-        message: 'Remote Hermes backend is ready',
+        message: 'Remote Thoth backend is ready',
         progress: 94,
         running: true,
         error: null
@@ -13006,7 +12993,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
       return createPrimaryRemoteConnection(remote, hermesLog.slice(-80), getWindowState())
     }
 
-    await advanceBootProgress('backend.resolve', 'Resolving Hermes backend', 8)
+    await advanceBootProgress('backend.resolve', 'Resolving Thoth backend', 8)
     // Resolve for the desktop's primary profile so a per-profile remote
     // override on the active profile is honored (falls back to env / global).
 
@@ -13028,7 +13015,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
     const token = crypto.randomBytes(32).toString('base64url')
     // Pin the desktop's chosen profile via the global --profile flag. A launch
     // override is persisted into active-profile.json before startHermes, so
-    // Hermes.exe --profile <name> and hermes -p <name> desktop both land here.
+    // Thoth.exe --profile <name> and hermes -p <name> desktop both land here.
     // Null (no stored preference, no launch flag) keeps the legacy bare serve
     // so the child still follows the sticky active_profile file.
     // `activeProfile` is the SAME decision that pinned routing above — never
@@ -13044,7 +13031,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
       ensureLocalRuntime: backend =>
         ensureRuntime(backend, () => backendConnectionState.assertCurrentAttempt(connectionAttempt)),
       prepareLocalBackend: async () => {
-        await advanceBootProgress('backend.runtime', 'Resolving Hermes runtime', 28)
+        await advanceBootProgress('backend.runtime', 'Resolving Thoth runtime', 28)
 
         return resolveHermesBackend(backendArgs)
       },
@@ -13094,7 +13081,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
 
       updateBootProgress({
         phase: 'backend.ready',
-        message: 'Attached to the running Hermes backend',
+        message: 'Attached to the running Thoth backend',
         progress: 94,
         running: true,
         error: null
@@ -13133,8 +13120,8 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
 
     const readyFile = backend.readyFile ? makeDashboardReadyFile() : null
 
-    await advanceBootProgress('backend.spawn', `Starting Hermes backend via ${backend.label}`, 84)
-    rememberLog(`Starting Hermes backend via ${backend.label}`)
+    await advanceBootProgress('backend.spawn', `Starting Thoth backend via ${backend.label}`, 84)
+    rememberLog(`Starting Thoth backend via ${backend.label}`)
 
     const profile = primaryProfile
     const parentStartMarker = await desktopParentStartMarker()
@@ -13222,7 +13209,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
     if (!processOwner) {
       await localBackendLifecycle.stop(hermesProcess)
       releaseBackendChild(hermesProcess)
-      throw new Error('Hermes backend start was superseded by a newer connection attempt.')
+      throw new Error('Thoth backend start was superseded by a newer connection attempt.')
     }
 
     hermesProcess.stdout.on('data', rememberLog)
@@ -13238,9 +13225,9 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
       releaseBackendChild(hermesProcess)
 
       if (!backendConnectionState.clearForCurrentProcess(processOwner)) {
-        rememberLog(`Ignoring stale Hermes backend error: ${error.message}`)
+        rememberLog(`Ignoring stale Thoth backend error: ${error.message}`)
         scheduleUnexpectedPrimaryRecovery({ error: error.message, ready: backendReady })
-        rejectBackendStart?.(new Error('Hermes backend start was superseded by a newer connection attempt.'))
+        rejectBackendStart?.(new Error('Thoth backend start was superseded by a newer connection attempt.'))
 
         return
       }
@@ -13250,11 +13237,11 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
       // (#108417), and the stale branch above never reaches this clear.
       primaryProfilePin.clear()
 
-      rememberLog(`Hermes backend failed to start: ${error.message}`)
+      rememberLog(`Thoth backend failed to start: ${error.message}`)
       updateBootProgress(
         {
           error: error.message,
-          message: `Hermes backend failed to start: ${error.message}`,
+          message: `Thoth backend failed to start: ${error.message}`,
           phase: 'backend.error',
           running: false
         },
@@ -13267,18 +13254,18 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
       releaseBackendChild(hermesProcess)
 
       if (!backendConnectionState.clearForCurrentProcess(processOwner)) {
-        rememberLog(formatBackendExitLine('Ignoring stale Hermes backend exit', code, signal, primaryOutputTail))
+        rememberLog(formatBackendExitLine('Ignoring stale Thoth backend exit', code, signal, primaryOutputTail))
 
         scheduleUnexpectedPrimaryRecovery({ code, signal, ready: backendReady })
 
         if (!backendReady) {
-          rejectBackendStart?.(new Error('Hermes backend start was superseded by a newer connection attempt.'))
+          rejectBackendStart?.(new Error('Thoth backend start was superseded by a newer connection attempt.'))
         }
 
         return
       }
 
-      rememberLog(formatBackendExitLine('Hermes backend exited', code, signal, primaryOutputTail))
+      rememberLog(formatBackendExitLine('Thoth backend exited', code, signal, primaryOutputTail))
 
       // The current primary child is gone; release its routing pin so the
       // next startHermes() re-reads active-profile.json instead of re-pinning
@@ -13292,7 +13279,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
       }
 
       if (!backendReady) {
-        const message = `Hermes backend exited before it became ready (${signal || code}).${primaryOutputTail.describe()}`
+        const message = `Thoth backend exited before it became ready (${signal || code}).${primaryOutputTail.describe()}`
         updateBootProgress(
           {
             error: message,
@@ -13304,13 +13291,13 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
         )
         rejectBackendStart?.(
           new Error(
-            `Hermes backend exited before it became ready (${signal || code}). Log: ${DESKTOP_LOG_PATH}\n${recentHermesLog()}`
+            `Thoth backend exited before it became ready (${signal || code}). Log: ${DESKTOP_LOG_PATH}\n${recentHermesLog()}`
           )
         )
       }
     })
 
-    await advanceBootProgress('backend.port', 'Waiting for Hermes backend to launch', 86)
+    await advanceBootProgress('backend.port', 'Waiting for Thoth backend to launch', 86)
     backendConnectionState.assertCurrentAttempt(connectionAttempt)
 
     // Discover the ephemeral port the child bound to
@@ -13322,7 +13309,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
     }
 
     const baseUrl = `http://127.0.0.1:${port}`
-    await advanceBootProgress('backend.wait', 'Waiting for Hermes backend to become ready', 90)
+    await advanceBootProgress('backend.wait', 'Waiting for Thoth backend to become ready', 90)
     backendConnectionState.assertCurrentAttempt(connectionAttempt)
     await Promise.race([waitForHermes(baseUrl, token), backendStartFailed])
     backendConnectionState.assertCurrentAttempt(connectionAttempt)
@@ -13355,13 +13342,13 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
 
     if (!wsProbe.ok) {
       throw new Error(
-        `Local Hermes backend is HTTP-reachable but the WebSocket (/api/ws) rejected the session token: ${wsProbe.reason}`
+        `Local Thoth backend is HTTP-reachable but the WebSocket (/api/ws) rejected the session token: ${wsProbe.reason}`
       )
     }
 
     updateBootProgress({
       phase: 'backend.ready',
-      message: 'Hermes backend is ready. Finalizing desktop startup',
+      message: 'Thoth backend is ready. Finalizing desktop startup',
       progress: 94,
       running: true,
       error: null
@@ -13700,7 +13687,7 @@ function focusWindow(win) {
   }
 
   // #83998: show() and focus() both seize the Windows OS foreground,
-  // dismissing other apps' native save/confirm dialogs while Hermes streams
+  // dismissing other apps' native save/confirm dialogs while Thoth streams
   // in the background. Reveal without activation, and only take the keyboard
   // when the window doesn't already have focus — a redundant focus() still
   // pumps SetForegroundWindow.
@@ -13726,7 +13713,7 @@ function spawnSecondaryWindow({
     height: SESSION_WINDOW_MIN_HEIGHT,
     minWidth: SESSION_WINDOW_MIN_WIDTH,
     minHeight: SESSION_WINDOW_MIN_HEIGHT,
-    title: 'Hermes',
+    title: 'Thoth',
     titleBarStyle: 'hidden',
     titleBarOverlay: getTitleBarOverlayOptions(),
     trafficLightPosition: IS_MAC ? WINDOW_BUTTON_POSITION : undefined,
@@ -13831,7 +13818,7 @@ function spawnBrowserWindow(tabId) {
     height: BROWSER_WINDOW_HEIGHT,
     minWidth: BROWSER_WINDOW_MIN_WIDTH,
     minHeight: BROWSER_WINDOW_MIN_HEIGHT,
-    title: 'Hermes',
+    title: 'Thoth',
     titleBarStyle: 'hidden',
     titleBarOverlay: getTitleBarOverlayOptions(),
     trafficLightPosition: IS_MAC ? WINDOW_BUTTON_POSITION : undefined,
@@ -13943,7 +13930,7 @@ function createInstanceWindow(
     ...nextInstanceBounds(source),
     minWidth: WINDOW_MIN_WIDTH,
     minHeight: WINDOW_MIN_HEIGHT,
-    title: 'Hermes',
+    title: 'Thoth',
     titleBarStyle: 'hidden',
     titleBarOverlay: getTitleBarOverlayOptions(),
     trafficLightPosition: IS_MAC ? WINDOW_BUTTON_POSITION : undefined,
@@ -14024,7 +14011,7 @@ registerMachineProfile()
 
 // The pet overlay: a single transparent, frameless, always-on-top window that
 // hosts ONLY the floating mascot. Shift-clicking the in-window pet "pops it out"
-// here so it can leave the app's bounds and stay visible while Hermes is
+// here so it can leave the app's bounds and stay visible while Thoth is
 // minimized (Codex-style task-completion glance). It carries no gateway
 // connection of its own — the main renderer is the single source of truth and
 // pushes pet state over IPC (hermes:pet-overlay:state); the overlay just renders
@@ -14072,7 +14059,7 @@ function spawnPetOverlayWindow(bounds) {
     // taskbar/alt-tab entry. On macOS, cmd-tab is app-level and this can make
     // the whole app look like it vanished when the only newly-created visible
     // window is a frameless overlay. Use NSPanel + Mission Control hiding below
-    // instead, leaving the main Hermes app as the Dock/cmd-tab anchor.
+    // instead, leaving the main Thoth app as the Dock/cmd-tab anchor.
     skipTaskbar: !IS_MAC,
     hasShadow: false,
     alwaysOnTop: true,
@@ -14082,7 +14069,7 @@ function spawnPetOverlayWindow(bounds) {
     hiddenInMissionControl: IS_MAC,
     // Non-activating: the overlay must never become the app's key/main window,
     // or it (a frameless, taskbar-skipping panel) becomes the app's switcher
-    // anchor and the Hermes icon drops out of cmd/alt-tab — especially when the
+    // anchor and the Thoth icon drops out of cmd/alt-tab — especially when the
     // main window is minimized. We flip this on only while the composer needs
     // the keyboard (see hermes:pet-overlay:set-focusable).
     focusable: false,
@@ -14125,7 +14112,7 @@ function spawnPetOverlayWindow(bounds) {
   try {
     // Electron docs: macOS may transform process type on each
     // setVisibleOnAllWorkspaces() call unless skipTransformProcessType=true,
-    // which briefly hides the Dock/cmd-tab presence. Keep Hermes in the normal
+    // which briefly hides the Dock/cmd-tab presence. Keep Thoth in the normal
     // ForegroundApplication class so shift-clicking the pet never drops the app
     // out of app switchers.
     win.setVisibleOnAllWorkspaces(
@@ -14252,7 +14239,7 @@ function rehomePetOverlay() {
 // ── HUD mode ────────────────────────────────────────────────────────────────
 //
 // The chrome-free floating chat: a transparent, frameless, always-on-top
-// window showing only the composer and its scrollback, so Hermes can be driven
+// window showing only the composer and its scrollback, so Thoth can be driven
 // while the user works in another app.
 //
 // Unlike the pet overlay / quick entry, this is a FULL app renderer with its
@@ -14270,7 +14257,7 @@ const hudWindows = new WeakSet<BrowserWindow>()
 // live main window exists at HUD-open time, visible or not: the HUD hides the
 // app window itself, so a main window minimized or behind another app when
 // the HUD opened still needs a surface back — arming only on `isVisible()`
-// left the user with NO Hermes window after the second toggle (#88513).
+// left the user with NO Thoth window after the second toggle (#88513).
 let hudRestoreMainWindow = false
 
 // The session the HUD is currently on, reported by its renderer whenever the
@@ -15028,7 +15015,7 @@ function createWindow() {
     ),
     minWidth: WINDOW_MIN_WIDTH,
     minHeight: WINDOW_MIN_HEIGHT,
-    title: 'Hermes',
+    title: 'Thoth',
     // Frameless title bar on every platform so the renderer can paint the
     // "hide sidebar" button (and other left-side titlebar tools) flush with
     // the top edge — matching the macOS layout where the traffic lights sit
@@ -15408,7 +15395,7 @@ function createWindow() {
         const exit = details?.exitCode === undefined ? '' : `, exit code ${String(details.exitCode)}`
         rememberLog(`[renderer:main] renderer terminated while live (reason=${reason}${exit}); surfacing recovery page`)
         void loadRendererLoadErrorPage(mainWindow, {
-          title: 'Hermes desktop UI was terminated',
+          title: 'Thoth desktop UI was terminated',
           errorDescription:
             `The desktop UI process was terminated unexpectedly (reason: ${reason}${exit}). ` +
             'Your sessions and the background gateway are unaffected — reload to continue.',
@@ -15588,7 +15575,7 @@ ipcMain.on('hermes:connection:active-route', (event, route) => recordWindowConne
 // so the 'exit'/'error' handlers that would clear a dead connection promise never
 // fire — once the remote becomes unreachable across a sleep/wake the renderer
 // re-dials the same dead descriptor forever and the composer stays stuck on
-// "Starting Hermes…". Before the renderer's backoff loop reconnects, it asks us
+// "Starting Thoth…". Before the renderer's backoff loop reconnects, it asks us
 // to confirm the cached PRIMARY backend is still reachable; if a remote one is
 // not, we drop the cache so the next getConnection() rebuilds it. Local backends
 // self-heal via their child 'exit' handler, so we never touch them here.
@@ -15774,7 +15761,7 @@ ipcMain.handle('hermes:window:openInTerminal', async (_event, sessionId, opts) =
     const backend = await resolveHermesBackend(tuiResumeArgs(sessionId.trim(), profile || undefined))
 
     if (!backend.command) {
-      return { ok: false, error: 'Hermes is not installed yet' }
+      return { ok: false, error: 'Thoth is not installed yet' }
     }
 
     const { cwd } = sanitizeWorkspaceCwd(opts?.cwd)
@@ -18198,7 +18185,7 @@ ipcMain.on('hermes:translucency:support', event => {
 // Feature-flag facts the renderer needs before first paint (same sendSync
 // pattern as translucency). Resolved in feature-flags.ts from the launch
 // argv and the artifact's channel: `--local` (from `hermes desktop --local`
-// or directly on Hermes.exe, a shortcut edit) gates the local-models GUI on
+// or directly on Thoth.exe, a shortcut edit) gates the local-models GUI on
 // stable builds, and canary builds get the same surfaces by default. Launch
 // flags survive self-relaunches because collectRelaunchArgs only strips
 // internal flags.
@@ -18371,7 +18358,7 @@ ipcMain.handle('hermes:quick-entry:submit', (event, payload) => {
   }
 
   if (!mainWindow || mainWindow.isDestroyed()) {
-    return { code: 'no-primary', message: 'The primary Hermes window is unavailable.', ok: false, retryable: true }
+    return { code: 'no-primary', message: 'The primary Thoth window is unavailable.', ok: false, retryable: true }
   }
 
   const target =
@@ -18701,7 +18688,7 @@ async function detectRendererSkew() {
   return checkRendererSkew(resolveUpdateRoot())
 }
 
-// Re-resolve the live Hermes version and push it into the native About panel
+// Re-resolve the live Thoth version and push it into the native About panel
 // just before showing it, so an in-place `hermes update` is reflected without
 // an app restart. macOS only — `showAboutPanel()` is a no-op elsewhere, and the
 // other platforms don't use this menu item.
@@ -18756,7 +18743,7 @@ ipcMain.handle('hermes:version', async (_event, scope?: { connectionId?: string;
   }
 })
 
-// The About page's "Restart Hermes" button (shown when bundleSwapPending):
+// The About page's "Restart Thoth" button (shown when bundleSwapPending):
 // load the already-swapped bundle without asking the user to quit manually.
 // app.relaunch() re-executes by path, so the fresh process picks up whatever
 // bundle now lives there.
@@ -18968,7 +18955,7 @@ async function runDesktopUninstall(mode: string): Promise<DesktopUninstallResult
     return {
       ok: false,
       error: 'agent-missing',
-      message: `Can't run the uninstaller: no Hermes agent venv at ${VENV_ROOT}.`
+      message: `Can't run the uninstaller: no Thoth agent venv at ${VENV_ROOT}.`
     }
   }
 
@@ -19087,7 +19074,7 @@ ipcMain.handle('hermes:vscode-theme:search', async (_event, query) => searchMark
 
 // ---------------------------------------------------------------------------
 // hermes:// deep links (e.g. hermes://blueprint/morning-brief?time=08:00,
-// hermes://mcp/install?name=NAME&config=B64 — the vendor "Add to Hermes"
+// hermes://mcp/install?name=NAME&config=B64 — the vendor "Add to Thoth"
 // button, or hermes://plugin/install?repo=owner/repo). Dev
 // (`HERMES_DESKTOP_DEV_SERVER`) registers hermes-dev:// instead — bare
 // Electron or a stale OS handler often owns hermes:// on dev machines.
@@ -19293,7 +19280,7 @@ if (!isPrimaryInstance) {
       handleDeepLink(url)
     }
 
-    // #130810: a second Start-menu / shortcut / Hermes.exe launch must never
+    // #130810: a second Start-menu / shortcut / Thoth.exe launch must never
     // silently exit. Log it so a future silent exit stays diagnosable, then
     // restore a live primary with activation (restore + show + focus), or
     // re-create it when it was destroyed.
@@ -19318,7 +19305,7 @@ app.on('open-url', (event, url) => {
 app.whenReady().then(() => {
   // Post-update relaunch detection (App Installer arm): when the previous
   // version wrote the one-shot pending-relaunch marker before quitting into
-  // an OS package swap, consume it here — the renderer toasts "Hermes
+  // an OS package swap, consume it here — the renderer toasts "Thoth
   // updated to vX.Y.Z" once its bridge is up. Same-version markers (update
   // never landed) are deleted silently.
   const relaunchInfo: ConsumedRelaunch = consumePendingRelaunch(app, app.getVersion())
@@ -19746,7 +19733,7 @@ app.on('before-quit', event => {
   hudWindow = null
 
   // Same for the Quick Entry composer — and release its global accelerator so a
-  // quitting Hermes never keeps another app's chord hostage.
+  // quitting Thoth never keeps another app's chord hostage.
   closeQuickEntryWindow()
 
   // Quitting mid-install should stop the installer, not orphan it.

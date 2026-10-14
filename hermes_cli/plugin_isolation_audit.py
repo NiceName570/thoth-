@@ -1,16 +1,16 @@
 """Static answer to "will this plugin run in the plugin host?" (``plugins.isolation: host``).
 
 Reads a plugin directory's manifest and Python source (never imports it) and reports whether the
-plugin reaches Hermes only through ``ctx`` surfaces that cross the host boundary. The rules come
+plugin reaches Thoth only through ``ctx`` surfaces that cross the host boundary. The rules come
 from :mod:`hermes_cli.plugin_isolation`, the same tables the host enforces at runtime, so a plugin
 the audit calls host-ready loads in the host, and one it flags fails there with the same reason.
 
 What it cannot see in a process boundary it flags:
 
 * ctx methods that hand over live objects (platform adapters, SDK clients, argparse);
-* writing attributes of Hermes modules (monkeypatching): the patch lands in the host's copy;
+* writing attributes of Thoth modules (monkeypatching): the patch lands in the host's copy;
 * mutating a global registry directly instead of through ``ctx``: the registration lands in the
-  host's registry, which Hermes never reads;
+  host's registry, which Thoth never reads;
 * gateway platform adapters (``kind: platform``), model-provider profiles that build their own SDK
   client (``create_client``), and dashboard APIs that stream (the host bridge buffers responses).
 
@@ -29,19 +29,19 @@ VERDICT_HOST = "host"
 VERDICT_IN_PROCESS = "in_process"
 VERDICT_PORTABLE = "portable"
 
-# Top-level packages that are Hermes's own process state when imported by a plugin.
+# Top-level packages that are Thoth's own process state when imported by a plugin.
 HERMES_PACKAGES: frozenset = frozenset({
     "agent", "tools", "hermes_cli", "gateway", "cron", "providers", "plugins", "tui_gateway",
     "acp_adapter", "run_agent", "cli", "model_tools", "toolsets", "hermes_state", "hermes_constants",
     "hermes_logging", "hermes_time", "utils", "registration_lifecycle", "hermes_platform",
 })
-# ``<module>.<callable>`` that mutate a Hermes-process registry when called from plugin code.
+# ``<module>.<callable>`` that mutate a Thoth-process registry when called from plugin code.
 _DIRECT_REGISTRY_CALLS: frozenset = frozenset({
     ("tools.registry", "register"), ("tools.registry", "deregister"),
     ("gateway.platform_registry", "register"), ("providers", "register_provider"),
 })
 _MANIFEST_KIND_REASONS: dict[str, str] = {
-    "platform": "kind 'platform': gateway platform adapters run in the Hermes process",
+    "platform": "kind 'platform': gateway platform adapters run in the Thoth process",
 }
 _STREAMING_MARKERS = ("StreamingResponse", "EventSourceResponse", ".websocket(", "WebSocket")
 _SKIP_DIRS = frozenset({"tests", "test", ".git", "__pycache__", "node_modules", ".venv", "venv", "docs"})
@@ -83,7 +83,7 @@ def _python_files(plugin_dir: Path) -> list[Path]:
 
 
 class _SourceVisitor(ast.NodeVisitor):
-    """Collects ctx method calls, Hermes-module aliases, and writes through those aliases."""
+    """Collects ctx method calls, Thoth-module aliases, and writes through those aliases."""
 
     def __init__(self, rel: str, *, model_provider: bool = False):
         from hermes_cli.plugin_isolation import (
@@ -125,8 +125,8 @@ class _SourceVisitor(ast.NodeVisitor):
         if isinstance(target, ast.Attribute):
             owner = self._resolve(target.value)
             if owner:
-                self.reasons.append(f"{self.rel}:{line} patches {owner}.{target.attr} (a Hermes module "
-                                    f"attribute; the host's copy is not the one Hermes runs)")
+                self.reasons.append(f"{self.rel}:{line} patches {owner}.{target.attr} (a Thoth module "
+                                    f"attribute; the host's copy is not the one Thoth runs)")
 
     def visit_Assign(self, node: ast.Assign) -> None:
         for target in node.targets:
@@ -142,7 +142,7 @@ class _SourceVisitor(ast.NodeVisitor):
         if isinstance(func, ast.Name) and func.id == "setattr" and node.args:
             owner = self._resolve(node.args[0])
             if owner:
-                self.reasons.append(f"{self.rel}:{node.lineno} setattr() on {owner} (patches a Hermes module)")
+                self.reasons.append(f"{self.rel}:{node.lineno} setattr() on {owner} (patches a Thoth module)")
         if isinstance(func, ast.Attribute):
             name = func.attr
             if name in self._unsupported:
@@ -169,7 +169,7 @@ class _SourceVisitor(ast.NodeVisitor):
         if (module, attr) in _DIRECT_REGISTRY_CALLS or (
                 module.endswith("_registry") and attr in {"register", "register_provider"}):
             self.reasons.append(f"{self.rel}:{line} calls {target}() directly instead of "
-                                f"through ctx (registers in the host, not in Hermes)")
+                                f"through ctx (registers in the host, not in Thoth)")
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
         if self.model_provider and any(isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef))

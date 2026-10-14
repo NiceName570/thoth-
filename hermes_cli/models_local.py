@@ -65,7 +65,30 @@ def _configured_ollama_base_url() -> str:
 
 
 def _ollama_host_from_env(env_host: str) -> str:
-    """Apply Ollama's own ``OLLAMA_HOST`` defaulting rules (port 11434, IPv6 bracketing)."""
+    """Apply Ollama's own ``OLLAMA_HOST`` defaulting rules (port 11434, IPv6 bracketing), dialing a
+    wildcard bind address over loopback: ``OLLAMA_HOST=0.0.0.0`` (serve on the LAN) is where the
+    server listens, and Windows refuses a connect to ``0.0.0.0`` / ``::``."""
+    return _dial_wildcard_as_loopback(_ollama_host_url(env_host))
+
+
+_WILDCARD_LOOPBACK = {"0.0.0.0": "127.0.0.1", "::": "[::1]"}
+
+
+def _dial_wildcard_as_loopback(url: str) -> str:
+    try:
+        parts = urllib.parse.urlsplit(url if "://" in url else "http://" + url)
+        loopback = _WILDCARD_LOOPBACK.get(parts.hostname or "")
+        port = parts.port
+    except ValueError:
+        return url
+    if not loopback:
+        return url
+    userinfo = parts.netloc.rsplit("@", 1)[0] + "@" if "@" in parts.netloc else ""
+    dialed = parts._replace(netloc=f"{userinfo}{loopback}" + (f":{port}" if port else "")).geturl()
+    return dialed if "://" in url else dialed.split("://", 1)[1]
+
+
+def _ollama_host_url(env_host: str) -> str:
     port = _OLLAMA_DEFAULT_PORT
     if env_host.startswith(":") and not env_host.startswith("::"):
         return "127.0.0.1" + env_host
@@ -362,6 +385,50 @@ def _ollama_local_catalog(force_refresh: bool) -> list[str]:
     fallback_base = _normalize_openai_base_url(config.get("base_url") or base_url)
     fallback_headers = _get_ollama_native_headers(fallback_base, api_key=fallback_key)
     return fetch_api_models(fallback_key, fallback_base, headers=fallback_headers or None) or []
+
+
+def configured_ollama_roots(config: dict) -> list[str]:
+    """Native API roots of every endpoint config.yaml points at that could be this machine's Ollama:
+    the resolved Ollama URL, ``model.base_url`` and each ``providers:``/``custom_providers:`` URL.
+    Loopback only (a wildcard bind is dialed as loopback): an eject must never probe a remote
+    provider or unload models from a shared LAN/cloud Ollama other people are using."""
+    from agent.proxy_bypass import is_loopback_host
+    from hermes_cli.config import get_compatible_custom_providers
+    urls = [_get_ollama_base_url(), str((config.get("model") or {}).get("base_url") or "")]
+    urls += [str(entry.get("base_url") or "") for entry in get_compatible_custom_providers(config)]
+    roots: list[str] = []
+    for url in urls:
+        root = _dial_wildcard_as_loopback(_root_for_ollama_native_api(url).rstrip("/")) if url else ""
+        try:
+            host = urllib.parse.urlsplit(root).hostname if root else None
+        except ValueError:
+            continue
+        if is_loopback_host(host) and root not in roots:
+            roots.append(root)
+    return roots
+
+
+def unload_ollama_models(root: str, probe_timeout: float = 2.0, timeout: float = 30.0) -> Optional[list[str]]:
+    """Drop every model resident on the Ollama server at *root* from RAM/VRAM (``/api/ps``, then
+    ``keep_alive: 0`` per model): frees memory like a restart without killing the server, and the
+    next request reloads on demand. ``None`` when *root* does not answer as an Ollama server."""
+    from hermes_cli.models import _get_json, _urlopen_model_catalog_request
+    try:
+        payload = _get_json(root + "/api/ps", timeout=probe_timeout)
+    except (ValueError, OSError, http.client.HTTPException):
+        return None
+    running = payload.get("models") if isinstance(payload, dict) else None
+    if not isinstance(running, list):
+        return None
+    names = [str(m.get("name") or m.get("model")) for m in running
+             if isinstance(m, dict) and (m.get("name") or m.get("model"))]
+    for name in names:
+        req = urllib.request.Request(
+            root + "/api/generate", data=json.dumps({"model": name, "keep_alive": 0}).encode(),
+            headers={"Content-Type": "application/json"}, method="POST")
+        with _urlopen_model_catalog_request(req, timeout=timeout) as resp:
+            resp.read()
+    return names
 
 
 def _lmstudio_server_root(base_url: Optional[str]) -> Optional[str]:

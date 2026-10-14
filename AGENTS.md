@@ -1,4 +1,4 @@
-# Hermes Agent - Development Guide
+# Thoth - Development Guide
 
 For AI coding assistants and developers working on hermes-agent. This root file is a hub: what
 applies everywhere, then a routing table. Each area's `AGENTS.md` loads automatically when you work
@@ -7,9 +7,9 @@ and every root-to-area chain at 30k, so it loads whole on 128k+ models: long for
 
 **Never give up on the right solution.**
 
-## What Hermes Is
+## What Thoth Is
 
-Hermes is a personal AI agent that runs the same agent core across a CLI, a messaging
+Thoth is a personal AI agent that runs the same agent core across a CLI, a messaging
 gateway (Telegram, Discord, Slack, ~20 platforms), a TUI, and an Electron desktop app. It
 learns across sessions (memory + skills), delegates to subagents, runs scheduled jobs, and
 drives a real terminal and browser. It is extended primarily through **plugins and skills**,
@@ -132,7 +132,7 @@ Every former god file is a **facade** (public entry points + the names other pac
   § Profile scope (HX002/HX004/HX005/HX012, PS-P05/P06).
 - **Machine facts and executable lookup go through `hermes_platform`** (`hermes_platform/AGENTS.md`).
 - **Dependencies carry upper bounds** (`>=floor,<next_major`; git URLs and Actions pinned to a SHA);
-  after editing `pyproject.toml` run `hermes pm lock` and commit `uv.lock`; never mutate a Hermes
+  after editing `pyproject.toml` run `hermes pm lock` and commit `uv.lock`; never mutate a Thoth
   environment with raw pip/uv. Full policy: `pm/AGENTS.md`.
 - **TypeScript (desktop, TUI, website):** feature-owned nanostores over threaded state, thin route
   roots, narrow hooks and colocated action modules, `interface` for props and shared shapes,

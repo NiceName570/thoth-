@@ -4,6 +4,10 @@ export const frModelMenu = {
   editModels: 'Modifier les modèles…',
   followDefault: 'Utiliser le modèle par défaut des Réglages',
   refreshModels: 'Actualiser les modèles',
+  ejectOllama: 'Éjecter les modèles Ollama',
+  ejectedOllama: (count: number) =>
+    count === 0 ? 'Aucun modèle Ollama chargé' : `${count} modèle(s) Ollama retiré(s) de la mémoire`,
+  ejectOllamaFailed: 'Impossible d’éjecter les modèles Ollama',
   favorites: 'Favoris',
   addFavorite: 'Ajouter aux favoris',
   removeFavorite: 'Retirer des favoris',

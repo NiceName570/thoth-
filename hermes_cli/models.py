@@ -285,7 +285,7 @@ def union_with_nous_on_sale_models(curated_ids: list[str], pricing: dict[str, di
     discount first. A sale lives only in ``/v1/models`` ``pricing.original``, so without this the
     picker badges discounts on curated rows but never shows a discounted model the curated list and
     Portal recommendations omit. Free rows stay with ``freeRecommendedModels``; rows the gateway
-    marks tool-less (``"tools": False``) are skipped because Hermes is tool-calling-first, and
+    marks tool-less (``"tools": False``) are skipped because Thoth is tool-calling-first, and
     image/video generation rows are skipped because they are not chat models."""
     from math import isfinite
 
@@ -1232,7 +1232,7 @@ def _strip_vendor_prefix(model_id: str) -> str:
 
 
 def model_supports_fast_mode(model_id: Optional[str]) -> bool:
-    """Return whether Hermes should expose the /fast toggle for this model."""
+    """Return whether Thoth should expose the /fast toggle for this model."""
     from agent.model_metadata import is_grok_46_family
 
     return (
@@ -1475,7 +1475,7 @@ def _nous_catalog(normalized: str, force_refresh: bool) -> Optional[list[str]]:
     except Exception:
         pass
     # Live failed / no creds: the docs-hosted manifest — NOT the in-repo snapshot — so newly added
-    # Portal models still surface without a Hermes release.
+    # Portal models still surface without a Thoth release.
     return get_curated_nous_model_ids() or None
 
 
@@ -1545,7 +1545,7 @@ def _openai_catalog(normalized: str, force_refresh: bool) -> Optional[list[str]]
     # entries, so intersect with the curated agentic catalog so ``/model`` matches ``hermes model``.
     # Model not in live /v1/models — check the curated catalog before rejecting. Providers may omit models
     # from their live listing that are still valid (stale cache, partial rollout, gated previews). Use the
-    # pure-catalog helper (no extra live fetch) so we only accept models Hermes actually ships. (#46850)
+    # pure-catalog helper (no extra live fetch) so we only accept models Thoth actually ships. (#46850)
     # Their /v1/models listing is access-scoped and authoritative — a model absent from it is one this key
     # CANNOT serve, so the curated soft-accept would manufacture a selection that 400s at first use. Custom
     # OpenAI-compatible proxies keep the fallback (incomplete listings are common there).

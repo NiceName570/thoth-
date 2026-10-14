@@ -284,7 +284,7 @@ def release(commit: str, *, bump: str, repo: Path, remote: str, repository: str,
             url = (execute([
                 "gh", "release", "create", tag, "--repo", repository,
                 "--verify-tag", "--draft", "--notes-file", file.name,
-                "--title", f"Hermes Agent v{version}",
+                "--title", f"Thoth v{version}",
             ]) or "").strip()
         finally:
             os.unlink(file.name)

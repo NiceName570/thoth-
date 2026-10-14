@@ -1,4 +1,4 @@
-# venv-style activation of the Hermes dev environment for fish.
+# venv-style activation of the Thoth dev environment for fish.
 #
 #   source ./activate.fish
 #

@@ -535,9 +535,9 @@ def _read_process_cmdline(pid: int) -> Optional[str]:
 
 
 def _gateway_command_subcommand(command: str | None) -> str | None:
-    """Hermes gateway lifecycle subcommand from a command line, or None. No loose substring matches
+    """Thoth gateway lifecycle subcommand from a command line, or None. No loose substring matches
     (``"gateway" in cmdline`` also matched ``gateway status`` / ``python -m tui_gateway``): needs a
-    Hermes entrypoint plus the ``gateway`` subcommand, or a gateway-dedicated entrypoint. Tokenizes
+    Thoth entrypoint plus the ``gateway`` subcommand, or a gateway-dedicated entrypoint. Tokenizes
     quote-aware (Windows paths with spaces); ``--profile``/``-p`` selectors are stripped anywhere in
     argv since ``_apply_profile_override`` removes them before argparse."""
     if not command:
@@ -556,7 +556,7 @@ def _gateway_command_subcommand(command: str | None) -> str | None:
     # the inline source will spawn later, not to this process (#107002). Case-preserving tokens:
     # the operand-taking ``-X``/``-W``/``-Q`` must not be conflated with ``-q``/``-b``.
     if command_line_runs_inline_source(cased_tokens):
-        # …unless the source is a Hermes bootstrap running the entry point in THIS process (store
+        # …unless the source is a Thoth bootstrap running the entry point in THIS process (store
         # launcher, launcher script, venv_sync re-entry): then its argv is this process's (#124318).
         cased_tokens = inline_bootstrap_argv(cased_tokens)
         if cased_tokens is None:
@@ -570,7 +570,7 @@ def _gateway_command_subcommand(command: str | None) -> str | None:
     # Gateway-dedicated entrypoints carry no subcommand to inspect.
     if any(t == "gateway/run.py" or t.endswith("/gateway/run.py") for t in tokens):
         return "run"
-    # Atomic Hermes' bundled desktop runner shares HERMES_HOME with the CLI; without this,
+    # Atomic Thoth's bundled desktop runner shares HERMES_HOME with the CLI; without this,
     # `gateway run --replace` does not recognise it as a running gateway, skips the
     # terminate-and-scoped-lock-handoff path, and collides with its still-held scoped locks
     # (e.g. the Discord bot-token lock). See #22418.
@@ -642,12 +642,12 @@ def looks_like_gateway_command_line(command: str | None) -> bool:
 def looks_like_gateway_runtime_command_line(command: str | None) -> bool:
     """True for command lines that can host the runtime (``run`` or ``restart``: without a service
     manager the manual restart fallback runs ``run_gateway()`` in-process). For validating
-    Hermes-owned records / cleanup scans only; ``looks_like_gateway_command_line`` stays strict."""
+    Thoth-owned records / cleanup scans only; ``looks_like_gateway_command_line`` stays strict."""
     return _gateway_command_subcommand(command) in {"run", "restart"}
 
 
 def _looks_like_gateway_process(pid: int) -> bool:
-    """True when the live PID still looks like the Hermes gateway."""
+    """True when the live PID still looks like the Thoth gateway."""
     cmdline = _read_process_cmdline(pid)
     return bool(cmdline) and looks_like_gateway_command_line(cmdline)
 
@@ -1292,7 +1292,7 @@ class GatewayLiveness:
 
 
 def profile_name_for_home(profile_home: Path) -> Optional[str]:
-    """Profile id of any Hermes home: ``<root>/profiles/<name>`` → ``<name>``, the default root →
+    """Profile id of any Thoth home: ``<root>/profiles/<name>`` → ``<name>``, the default root →
     ``"default"``, anything else → None. Multiplex-only makes ``default`` an ordinary served
     profile, so reporting surfaces need a name for it too."""
     home = Path(profile_home)

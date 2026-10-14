@@ -254,7 +254,7 @@ def test_nonzero_exit_after_the_commit_point_is_installed_with_a_followup(tmp_pa
     assert result.returncode == 0, result.stdout + result.stderr
     receipt = json.loads((home / ".hermes-update-result.json").read_text(encoding="utf-8-sig"))
     assert (receipt["ok"], receipt["exit_code"], receipt["manual"]) == (True, 0, True), receipt
-    assert receipt["message"].startswith("Hermes was updated, but"), receipt
+    assert receipt["message"].startswith("Thoth was updated, but"), receipt
     assert [w.split(":")[0] for w in receipt["warnings"]] == ["update"], receipt
     assert f"exited {code} after the commit point" in receipt["warnings"][0]
 
@@ -304,17 +304,17 @@ def test_nonzero_exit_without_this_runs_committed_receipt_still_fails(tmp_path, 
 
 def test_interrupted_app_swap_is_rolled_back_at_the_next_run(tmp_path):
     home, install = _install(tmp_path)
-    app = tmp_path / "Applications" / "Hermes.app"
-    previous = app.with_name("Hermes.app.old")
+    app = tmp_path / "Applications" / "Thoth.app"
+    previous = app.with_name("Thoth.app.old")
     (previous / "Contents").mkdir(parents=True)
     (previous / "Contents" / "Info.plist").write_text("previous", encoding="utf-8")
-    (app.with_name("Hermes.app.new") / "Contents").mkdir(parents=True)  # partial staged copy
+    (app.with_name("Thoth.app.new") / "Contents").mkdir(parents=True)  # partial staged copy
 
     result = _run(tmp_path, home, install, "--relaunch-target", str(app))
 
     assert result.returncode == 0, result.stdout + result.stderr
     assert (app / "Contents" / "Info.plist").read_text(encoding="utf-8-sig") == "previous"
-    assert not previous.exists() and not app.with_name("Hermes.app.new").exists()
+    assert not previous.exists() and not app.with_name("Thoth.app.new").exists()
 
 
 def _custodian(home: Path) -> str:

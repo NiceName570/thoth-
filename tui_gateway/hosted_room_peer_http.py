@@ -288,7 +288,7 @@ class PeerRunsHTTPClient:
             headers={
                 "Authorization": (
                     f"HermesRoom {room_grant}" if room_grant else f"Bearer {self.api_key}"),
-                "Content-Type": "application/json", "User-Agent": "Hermes-RoomLink/1.0",
+                "Content-Type": "application/json", "User-Agent": "Thoth-RoomLink/1.0",
                 **(headers or {})})
         try:
             with open_credentialed_url(request, timeout=self.timeout_seconds) as response:

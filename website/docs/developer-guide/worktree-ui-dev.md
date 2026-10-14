@@ -32,7 +32,7 @@ Two env vars name the canonical checkout:
 | `HERMES_MAIN_CHECKOUT` | The deps checkout — where `node_modules` really lives, and whose `.venv/bin/python` runs the backend. |
 | `HERMES_GUI_DEPS_CHECKOUT` | Where the desktop deps (`apps/desktop/node_modules`) live. Defaults to `HERMES_MAIN_CHECKOUT`; override only if you keep desktop deps elsewhere. |
 
-Neither is read by Hermes itself — they're private to these helpers. The variables Hermes *does* read are covered in [Environment Variables](../reference/environment-variables.md).
+Neither is read by Thoth itself — they're private to these helpers. The variables Thoth *does* read are covered in [Environment Variables](../reference/environment-variables.md).
 
 ## `htui` — TUI from the worktree
 
@@ -41,7 +41,7 @@ The Ink TUI has a dev path already: `hermes --tui --dev` runs the TypeScript sou
 ```bash
 htui() {
   local root
-  root="$(_hermes_root)" || { echo "htui: not in a Hermes checkout" >&2; return 1; }
+  root="$(_hermes_root)" || { echo "htui: not in a Thoth checkout" >&2; return 1; }
   ( cd "$root" && PYTHONPATH="$root" \
       "$HERMES_MAIN_CHECKOUT/.venv/bin/python" -m hermes_cli.main --tui --dev "$@" )
 }
@@ -50,7 +50,7 @@ htui() {
 `--dev` compiles from source, so it links `ui-tui/node_modules` from `HERMES_MAIN_CHECKOUT` when the root lockfile matches and installs locally otherwise (see [`_hermes_root` / linking helpers](#shared-helpers)).
 
 :::warning `--dev` and `HERMES_TUI_DIR` are mutually exclusive
-`HERMES_TUI_DIR` points Hermes at a *prebuilt* bundle (Nix, system packages), which has no source to hot-reload. If it's set in your shell, `hermes --tui --dev` exits with an error. Run `unset HERMES_TUI_DIR` before `htui`.
+`HERMES_TUI_DIR` points Thoth at a *prebuilt* bundle (Nix, system packages), which has no source to hot-reload. If it's set in your shell, `hermes --tui --dev` exits with an error. Run `unset HERMES_TUI_DIR` before `htui`.
 :::
 
 ## `hgui` — desktop app from the worktree
@@ -72,7 +72,7 @@ hgui() (
     fi
   done
 
-  root="$(_hermes_root)" || { print -u2 'hgui: not in a Hermes checkout'; return 1; }
+  root="$(_hermes_root)" || { print -u2 'hgui: not in a Thoth checkout'; return 1; }
   deps="${HERMES_GUI_DEPS_CHECKOUT:-$HERMES_MAIN_CHECKOUT}"
   desktop="$root/apps/desktop"
 
@@ -118,7 +118,7 @@ Slot `0` uses ports `5174`/`9222`; slot `1` uses `5175`/`9223`. Slots are caller
 
 | Variable | Role in `hgui` |
 |----------|----------------|
-| `HGUI_SLOT` | Helper-only slot number, `0`–`9`; not a Hermes setting. |
+| `HGUI_SLOT` | Helper-only slot number, `0`–`9`; not a Thoth setting. |
 | `HERMES_DESKTOP_HERMES_ROOT` | Runs the backend from this worktree, not the packaged/PATH runtime. |
 | `HERMES_DESKTOP_PYTHON` | Reuses the main checkout's Python environment. Adjust for an installation that uses `venv` rather than `.venv`. |
 | `HERMES_DESKTOP_CWD` | Roots new desktop work in the worktree. |
@@ -140,7 +140,7 @@ Quit the app normally or press Ctrl-C in its launching terminal. `concurrently -
 Both functions resolve the enclosing checkout and link deps the same way:
 
 ```bash
-# The enclosing worktree, verified as a real Hermes checkout.
+# The enclosing worktree, verified as a real Thoth checkout.
 _hermes_root() {
   local root
   root="$(git rev-parse --show-toplevel 2>/dev/null)" || return 1
@@ -165,4 +165,4 @@ A symlink to a divergent `node_modules` is worse than no install — the worktre
 - [TUI](../user-guide/tui.md) — `hermes --tui --dev` and the `HERMES_TUI_DIR` prebuild path
 - [Desktop App](../user-guide/desktop.md) — building from source and the backend resolution ladder
 - [`apps/desktop/README.md`](https://github.com/NousResearch/hermes-agent/blob/main/apps/desktop/README.md) — dev server, sandbox script, and packaging
-- [Environment Variables](../reference/environment-variables.md) — every `HERMES_*` variable Hermes reads
+- [Environment Variables](../reference/environment-variables.md) — every `HERMES_*` variable Thoth reads

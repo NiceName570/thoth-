@@ -1548,7 +1548,7 @@ class TestMacOSTCCGrants:
 
     @staticmethod
     def _darwin_bundle(monkeypatch, tmp_path, dr):
-        monkeypatch.setattr(doctor_platform, "_desktop_app_bundle", lambda: tmp_path / "Hermes.app")
+        monkeypatch.setattr(doctor_platform, "_desktop_app_bundle", lambda: tmp_path / "Thoth.app")
         if dr is not ...:
             monkeypatch.setattr(doctor_platform, "_macos_desktop_dr", lambda app: dr)
 

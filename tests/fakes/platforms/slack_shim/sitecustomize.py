@@ -4,11 +4,11 @@ slack_sdk has no base-URL environment variable, so this module is put on ``PYTHO
 ``hermes gateway run`` process by the contract harness. Python imports ``sitecustomize`` at startup;
 when ``HERMES_STANDIN_SLACK_API`` is set (e.g. ``http://127.0.0.1:PORT/api/``) every Web API client
 the Slack adapter builds defaults its ``base_url`` to the stand-in, which also moves
-``apps.connections.open`` and therefore the Socket Mode websocket. Nothing in Hermes is touched: the
+``apps.connections.open`` and therefore the Socket Mode websocket. Nothing in Thoth is touched: the
 redirect lives at the SDK/HTTP boundary, exactly where DNS would send the real traffic.
 
 Side effect: when the variable is set, slack_sdk (and aiohttp) are imported eagerly at interpreter
-startup, before Hermes runs, so the child pays that import up front even if Slack never connects.
+startup, before Thoth runs, so the child pays that import up front even if Slack never connects.
 """
 
 import os

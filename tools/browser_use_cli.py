@@ -144,7 +144,7 @@ def _blocked_url_in_code(code: str) -> Optional[str]:
 def _base_subprocess_env() -> dict:
     from tools.browser_tool import _build_browser_env
     env = _build_browser_env()
-    # The harness runs on Hermes's own interpreter, but a bundled Desktop install boots that
+    # The harness runs on Thoth's own interpreter, but a bundled Desktop install boots that
     # interpreter with its site dir on PYTHONPATH (no venv to activate), and the harness's daemon
     # re-runs sys.executable. Point PYTHONPATH at the harness's site dir, replacing whatever the
     # agent process inherited, so both the CLI and its daemon import the same packages.
@@ -257,7 +257,7 @@ def default_downgrade_notice() -> Optional[str]:
             stamp.parent.mkdir(parents=True, exist_ok=True)
             stamp.touch()
             os.utime(stamp, (now, now))
-        return ("browser-harness is missing from Hermes's Python environment — using the built-in browser tools. "
+        return ("browser-harness is missing from Thoth's Python environment — using the built-in browser tools. "
                 "Run `hermes update` to re-sync it, or set `browser.backend: off` in config.yaml to silence this.")
     except Exception as e:  # pragma: no cover — a notice must never break startup
         logger.debug("browser-use downgrade notice failed: %s", e)
@@ -265,7 +265,7 @@ def default_downgrade_notice() -> Optional[str]:
 
 
 def _harness_site_dir() -> Optional[str]:
-    """The site dir Hermes's interpreter imports ``browser_harness`` from, or None."""
+    """The site dir Thoth's interpreter imports ``browser_harness`` from, or None."""
     spec = importlib.util.find_spec("browser_harness")
     if spec is None or not spec.origin:
         return None
@@ -273,7 +273,7 @@ def _harness_site_dir() -> Optional[str]:
 
 
 def _find_cli() -> Optional[list[str]]:
-    """The Browser Use CLI's engine (browser-harness) is a core dependency of Hermes's own venv,
+    """The Browser Use CLI's engine (browser-harness) is a core dependency of Thoth's own venv,
     so every install, the Desktop bundle included, runs it on the current interpreter."""
     if _harness_site_dir() is None:
         return None
@@ -344,7 +344,7 @@ def _backend_cache_key(task_id: Optional[str], session_name: str = "") -> str:
 
 
 def _resolve_lightpanda_cdp(env: dict, task_id: Optional[str], session_name: str = "") -> Optional[str]:
-    """Point the harness at a Hermes-spawned ``lightpanda serve`` (``browser.engine: lightpanda`` and
+    """Point the harness at a Thoth-spawned ``lightpanda serve`` (``browser.engine: lightpanda`` and
     nothing of higher precedence claimed the session). Each cache key gets its own process via the
     legacy ``_get_session_info()`` (cache, reaper, atexit): private browser, own-tab preamble skipped."""
     try:
@@ -393,7 +393,7 @@ def _reach_sandbox_cdp(cdp: str) -> str:
 
 
 def _resolve_managed_chromium_cdp(env: dict, task_id: Optional[str], session_name: str = "") -> Optional[str]:
-    """Point the harness at Hermes' packaged Chromium, launched through agent-browser for this cache key —
+    """Point the harness at Thoth's packaged Chromium, launched through agent-browser for this cache key —
     the same browser the built-in tools drive. Left alone, the harness discovers the user's INSTALLED
     Chrome on its default profile, which needs the chrome://inspect toggle + an Allow popup per run and
     is blocked outright on Chrome >=136; on a headless box it just reports ``chrome-not-running``.
@@ -433,7 +433,7 @@ def _resolve_backend_cdp(env: dict, task_id: Optional[str], session_name: str = 
     Precedence: (1) ``BU_CDP_WS``/``BU_CDP_URL`` already in env (operator override); (2) ``BROWSER_CDP_URL``
     env / ``browser.cdp_url`` (``/browser connect``); (3) a cloud provider via the legacy ``_get_session_info()``
     so browser_exec shares the SAME session machinery (per-task cache, expiry, reaper, atexit);
-    (4) the local engine — ``browser.engine: lightpanda`` or Hermes' packaged Chromium via agent-browser
+    (4) the local engine — ``browser.engine: lightpanda`` or Thoth's packaged Chromium via agent-browser
     (never the harness's own discovery of the user's installed Chrome); (5) BU direct-API configs → None:
     the CLI reaches BU cloud natively (BU_AUTOSPAWN). ``session_name`` (BU_NAME) keys the session cache so
     each name gets its OWN browser — what makes named sessions concurrent-safe.
@@ -638,7 +638,7 @@ def browser_exec(code: str, session: str = "", timeout_s: int = _DEFAULT_TIMEOUT
 
     cmd = _find_cli()
     if not cmd:
-        return tool_error("browser-harness is missing from Hermes's Python environment. "
+        return tool_error("browser-harness is missing from Thoth's Python environment. "
                           "Run `hermes update` to re-sync it.")
 
     env = _base_subprocess_env()
@@ -793,7 +793,7 @@ def _dynamic_schema_overrides() -> dict:
         props = dict(BROWSER_EXEC_SCHEMA["parameters"]["properties"])
         props["local"] = {
             "type": "boolean", "default": False,
-            "description": ("Drive the user's own local browser (a Hermes-managed copy of their real "
+            "description": ("Drive the user's own local browser (a Thoth-managed copy of their real "
                             "default-Chromium profile, logins/cookies included) instead of the configured "
                             "cloud browser backend. Use when the user asks to act as themselves — their "
                             "accounts, their sessions. No-op when the backend is already local. Default false."),

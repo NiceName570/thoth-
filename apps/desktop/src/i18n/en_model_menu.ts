@@ -6,6 +6,10 @@ export const enModelMenu: Translations['shell']['modelMenu'] = {
   editModels: 'Edit models…',
   followDefault: 'Use Settings default',
   refreshModels: 'Refresh models',
+  ejectOllama: 'Eject Ollama models',
+  ejectedOllama: (count: number) =>
+    count === 0 ? 'No Ollama models were loaded' : `Ejected ${count} Ollama ${count === 1 ? 'model' : 'models'} from memory`,
+  ejectOllamaFailed: 'Could not eject Ollama models',
   favorites: 'Favorites',
   addFavorite: 'Add to favorites',
   removeFavorite: 'Remove from favorites',

@@ -70,7 +70,7 @@ def _operator_home() -> str:
 
 
 def _minimal_env(home: Path, hermes_home: Path, token: str, extra: dict[str, str] | None) -> dict[str, str]:
-    """A clean child env: nothing Hermes-, provider- or credential-shaped leaks in from the test runner."""
+    """A clean child env: nothing Thoth-, provider- or credential-shaped leaks in from the test runner."""
     env = {k: os.environ[k] for k in ("PATH", "LANG", "LC_ALL", "TERM", "SYSTEMROOT") if k in os.environ}
     tmpdir = home.parent / "tmp"
     tmpdir.mkdir(parents=True, exist_ok=True)
@@ -106,7 +106,7 @@ class Backend:
     def start(self, *, timeout: float = 90.0) -> "Backend":
         operator_root = (Path(_operator_home()) / ".hermes").resolve()
         assert operator_root not in (self.hermes_home.resolve(), *self.hermes_home.resolve().parents), (
-            f"sandbox {self.hermes_home} sits inside the operator's Hermes home {operator_root}")
+            f"sandbox {self.hermes_home} sits inside the operator's Thoth home {operator_root}")
         self.llm.start()
         write_hermes_home(self.hermes_home, self.llm.base_url, extra_config=self.extra_config)
         self._stdout = open(self.root / "serve.stdout.log", "wb")

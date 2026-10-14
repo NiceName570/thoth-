@@ -2,14 +2,14 @@
 sidebar_position: 12
 sidebar_label: "Built-in Plugins"
 title: "Built-in Plugins"
-description: "Plugins shipped with Hermes Agent that run automatically via lifecycle hooks — disk-cleanup and friends"
+description: "Plugins shipped with Thoth that run automatically via lifecycle hooks — disk-cleanup and friends"
 ---
 
 # Built-in Plugins
 
-Hermes ships a small set of plugins bundled with the repository. They live under `<repo>/plugins/<name>/` and load automatically alongside user-installed plugins in `~/.hermes/plugins/`. They use the same plugin surface as third-party plugins — hooks, tools, slash commands — just maintained in-tree.
+Thoth ships a small set of plugins bundled with the repository. They live under `<repo>/plugins/<name>/` and load automatically alongside user-installed plugins in `~/.hermes/plugins/`. They use the same plugin surface as third-party plugins — hooks, tools, slash commands — just maintained in-tree.
 
-See the [Plugins](./plugins.md) page for the general plugin system, and [Build a Hermes Plugin](../../developer-guide/plugins/index.md) to write your own.
+See the [Plugins](./plugins.md) page for the general plugin system, and [Build a Thoth Plugin](../../developer-guide/plugins/index.md) to write your own.
 
 ## How discovery works
 
@@ -40,7 +40,7 @@ plugins:
     - disk-cleanup
 ```
 
-This is the same mechanism user-installed plugins use. Bundled plugins are never auto-enabled — not on fresh install, not for existing users upgrading to a newer Hermes. You always opt in explicitly.
+This is the same mechanism user-installed plugins use. Bundled plugins are never auto-enabled — not on fresh install, not for existing users upgrading to a newer Thoth. You always opt in explicitly.
 
 To turn a bundled plugin off again:
 
@@ -63,7 +63,7 @@ The repo ships these bundled plugins under `plugins/`. All are opt-in — enable
 | `image_gen/openai` | image backend | OpenAI GPT Image 2 and 2.5 Flare/Sunburst generation and editing (API key) |
 | `image_gen/openai-codex` | image backend | OpenAI image generation via Codex OAuth |
 | `image_gen/xai` | image backend | xAI `grok-2-image` backend |
-| `hermes-achievements` | dashboard tab | Steam-style collectible badges generated from your real Hermes session history |
+| `hermes-achievements` | dashboard tab | Steam-style collectible badges generated from your real Thoth session history |
 | `kanban/dashboard` | dashboard tab | Kanban board UI for the multi-agent dispatcher — tasks, comments, fan-out, board switching. See [Kanban Multi-Agent](./kanban.md). |
 
 Memory providers (`plugins/memory/*`) and context engines (`plugins/context_engine/*`) are listed separately on [Memory Providers](./memory-providers.md) — they're managed through `hermes memory` and `hermes plugins` respectively. The full per-plugin detail for the two long-running hooks-based plugins follows.
@@ -141,7 +141,7 @@ The file is still written. The model reads the warning in the next turn's tool m
 
 ### observability/langfuse
 
-Traces Hermes turns, LLM calls, and tool invocations to [Langfuse](https://langfuse.com) — an open-source LLM observability platform. One span per turn, one generation per API call, one tool observation per tool call. Usage totals, per-type token counts, and cost estimates come out of Hermes' canonical `agent.usage_pricing` numbers, so the Langfuse dashboard sees the same breakdown (input / output / `cache_read_input_tokens` / `cache_creation_input_tokens` / `reasoning_tokens`) that appears in `hermes logs`.
+Traces Thoth turns, LLM calls, and tool invocations to [Langfuse](https://langfuse.com) — an open-source LLM observability platform. One span per turn, one generation per API call, one tool observation per tool call. Usage totals, per-type token counts, and cost estimates come out of Thoth's canonical `agent.usage_pricing` numbers, so the Langfuse dashboard sees the same breakdown (input / output / `cache_read_input_tokens` / `cache_creation_input_tokens` / `reasoning_tokens`) that appears in `hermes logs`.
 
 The plugin is fail-open: no SDK installed, no credentials, or a transient Langfuse error — all turn into a silent no-op in the hook. The agent loop is never impacted.
 
@@ -152,14 +152,14 @@ hermes tools          # → Langfuse Observability → Cloud or Self-Hosted
 ```
 
 The wizard collects your keys, prepares the declared `langfuse` extra through PM
-when needed, and enables `observability/langfuse`. Restart Hermes and the next
+when needed, and enables `observability/langfuse`. Restart Thoth and the next
 turn ships a trace. If preparation fails, retry through `hermes tools`; do not
 install the SDK into the selected environment with pip.
 
 **Setup (manual):**
 
 For a source checkout, first follow the [PM developer workflow](../../reference/package-management.md#developer-workflow)
-with the intended Hermes home. Use the checkout's prepared Python:
+with the intended Thoth home. Use the checkout's prepared Python:
 
 ```bash
 python -c "import pm; pm.sync_venv(['langfuse'], explicit=True)"
@@ -180,18 +180,18 @@ HERMES_LANGFUSE_BASE_URL=https://cloud.langfuse.com   # or your self-hosted URL
 
 | Hook | Behaviour |
 |---|---|
-| `pre_api_request` / `pre_llm_call` | Open (or reuse) a per-turn root span "Hermes turn". Start a `generation` child observation for this API call with serialized recent messages as input. |
+| `pre_api_request` / `pre_llm_call` | Open (or reuse) a per-turn root span "Thoth turn". Start a `generation` child observation for this API call with serialized recent messages as input. |
 | `post_api_request` / `post_llm_call` | Close the generation, attach `usage_details`, `cost_details`, `finish_reason`, assistant output + tool calls. If no tool calls and non-empty content, close the turn. |
 | `pre_tool_call` | Start a `tool` child observation with sanitized `args`. |
 | `post_tool_call` | Close the tool observation with sanitized `result`. `read_file` payloads get summarized (head + tail + omitted-line count) so a huge file read stays under `HERMES_LANGFUSE_MAX_CHARS`. |
 
-Session grouping keys off the Hermes session ID (or task ID for sub-agents) via `langfuse.propagate_attributes`, so everything in a single `hermes chat` session lives under one Langfuse session.
+Session grouping keys off the Thoth session ID (or task ID for sub-agents) via `langfuse.propagate_attributes`, so everything in a single `hermes chat` session lives under one Langfuse session.
 
 **Verify:**
 
 ```bash
 hermes plugins list                 # observability/langfuse should show "enabled"
-hermes chat -q "hello"              # check the Langfuse UI for a "Hermes turn" trace
+hermes chat -q "hello"              # check the Langfuse UI for a "Thoth turn" trace
 ```
 
 **Optional tuning** (in `.env`):
@@ -204,7 +204,7 @@ hermes chat -q "hello"              # check the Langfuse UI for a "Hermes turn" 
 | `HERMES_LANGFUSE_MAX_CHARS` | `12000` | Per-field truncation for message content / tool args / tool results |
 | `HERMES_LANGFUSE_DEBUG` | `false` | Verbose plugin logging to `agent.log` |
 
-Hermes-prefixed and standard SDK env vars (`LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, `LANGFUSE_BASE_URL`) are both accepted — Hermes-prefixed wins when both are set.
+Thoth-prefixed and standard SDK env vars (`LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, `LANGFUSE_BASE_URL`) are both accepted — Thoth-prefixed wins when both are set.
 
 **Performance:** the Langfuse client is cached after the first hook call. If credentials or SDK are missing, that decision is also cached — subsequent hooks fast-return without re-checking env vars or reloading config.
 
@@ -212,9 +212,9 @@ Hermes-prefixed and standard SDK env vars (`LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECR
 
 ### NeMo Relay native integration (migration note)
 
-NeMo Relay is no longer a bundled Hermes plugin. Do not run `hermes plugins enable observability/nemo_relay`; Hermes core now owns the Relay session, turn, LLM, and tool lifecycles.
+NeMo Relay is no longer a bundled Thoth plugin. Do not run `hermes plugins enable observability/nemo_relay`; Thoth core now owns the Relay session, turn, LLM, and tool lifecycles.
 
-Configure Relay middleware or exporters through a standard Relay `plugins.toml`. Hermes loads Relay's user configuration (`~/.config/nemo-relay/plugins.toml`) and then its machine-wide system configuration (`/etc/nemo-relay/plugins.toml`, or `%ProgramData%\nemo-relay\plugins.toml` on Windows). Set `HERMES_NEMO_RELAY_PLUGINS_TOML` before starting Hermes only when you want an explicit file to replace the user configuration; the system configuration still has higher precedence. The policy is process-wide for every profile hosted by that Hermes process. Run `hermes doctor` to see which files apply. See the [NeMo Relay observability configuration](https://docs.nvidia.com/nemo/relay/configure-plugins/observability/about) for ATOF, ATIF, and OpenTelemetry options.
+Configure Relay middleware or exporters through a standard Relay `plugins.toml`. Thoth loads Relay's user configuration (`~/.config/nemo-relay/plugins.toml`) and then its machine-wide system configuration (`/etc/nemo-relay/plugins.toml`, or `%ProgramData%\nemo-relay\plugins.toml` on Windows). Set `HERMES_NEMO_RELAY_PLUGINS_TOML` before starting Thoth only when you want an explicit file to replace the user configuration; the system configuration still has higher precedence. The policy is process-wide for every profile hosted by that Thoth process. Run `hermes doctor` to see which files apply. See the [NeMo Relay observability configuration](https://docs.nvidia.com/nemo/relay/configure-plugins/observability/about) for ATOF, ATIF, and OpenTelemetry options.
 
 The old `HERMES_NEMO_RELAY_ATOF_*` and `HERMES_NEMO_RELAY_ATIF_*` settings no longer configure exporters. When `HERMES_NEMO_RELAY_PLUGINS_TOML` is unset, the gateway warns about remaining legacy variables and `hermes doctor` reports them. Independently discovered Relay user or system exporters still apply.
 
@@ -242,7 +242,7 @@ mode = "append"
 
 [components.config.atif]
 enabled = true
-agent_name = "Hermes Agent"
+agent_name = "Thoth"
 model_name = "unknown"
 output_directory = "/home/you/.hermes/telemetry/nemo-relay/atif"
 filename_template = "trajectory-{session_id}.json"
@@ -309,7 +309,7 @@ The agent kicks off the meeting join, streams the transcription back into its co
 
 ### hermes-achievements
 
-Adds a **Steam-style achievements tab to the dashboard** — 60+ collectible, tiered badges generated from your real Hermes session history. Tool-chain feats, debugging patterns, vibe-coding streaks, skill/memory usage, model/provider variety, lifestyle quirks (weekend and night sessions). Originally authored by [@PCinkusz](https://github.com/PCinkusz) as an external plugin; brought in-tree so it stays in lockstep with Hermes feature changes.
+Adds a **Steam-style achievements tab to the dashboard** — 60+ collectible, tiered badges generated from your real Thoth session history. Tool-chain feats, debugging patterns, vibe-coding streaks, skill/memory usage, model/provider variety, lifestyle quirks (weekend and night sessions). Originally authored by [@PCinkusz](https://github.com/PCinkusz) as an external plugin; brought in-tree so it stays in lockstep with Thoth feature changes.
 
 **How it works:**
 
@@ -326,7 +326,7 @@ Adds a **Steam-style achievements tab to the dashboard** — 60+ collectible, ti
 |---|---|
 | Unlocked | At least one tier achieved |
 | Discovered | Known achievement, progress visible, not yet earned |
-| Secret | Hidden until Hermes detects the first related signal in your history |
+| Secret | Hidden until Thoth detects the first related signal in your history |
 
 **API** — routes mount under `/api/plugins/hermes-achievements/`:
 
@@ -343,7 +343,7 @@ Adds a **Steam-style achievements tab to the dashboard** — 60+ collectible, ti
 
 | File | Contents |
 |---|---|
-| `state.json` | Unlock history: which badges you've earned and when. Stable across Hermes updates. |
+| `state.json` | Unlock history: which badges you've earned and when. Stable across Thoth updates. |
 | `scan_snapshot.json` | Last completed scan payload (served immediately on dashboard load) |
 | `scan_checkpoint.json` | Per-session stats cache keyed by fingerprint (makes warm rescans fast) |
 
@@ -360,7 +360,7 @@ Adds a **Steam-style achievements tab to the dashboard** — 60+ collectible, ti
 
 ## Adding a bundled plugin
 
-Bundled plugins are written exactly like any other Hermes plugin — see [Build a Hermes Plugin](../../developer-guide/plugins/index.md). The only differences are:
+Bundled plugins are written exactly like any other Thoth plugin — see [Build a Thoth Plugin](../../developer-guide/plugins/index.md). The only differences are:
 
 - Directory lives at `<repo>/plugins/<name>/` instead of `~/.hermes/plugins/<name>/`
 - Manifest source is reported as `bundled` in `hermes plugins list`

@@ -137,7 +137,7 @@ class TurnExplainersMixin:
             if changed is not None:
                 changed.update(landed_paths)
             # Feed the checkpoint agent-write ledger so /rollback's safe mode can tell
-            # Hermes-authored content from later user hand-edits.
+            # Thoth-authored content from later user hand-edits.
             mgr = getattr(self, "_checkpoint_mgr", None)
             if mgr is not None and getattr(mgr, "enabled", False):
                 from tools.file_tools_paths import container_backend_for_task

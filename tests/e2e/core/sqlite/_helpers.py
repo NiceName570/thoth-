@@ -1,6 +1,6 @@
 """Harness for the multi-process SQLite torture chamber (issue class C1: state.db integrity).
 
-One real ``state.db`` under ``tmp_path``, in either journal mode Hermes deploys (see ``JOURNAL_MODES``); every
+One real ``state.db`` under ``tmp_path``, in either journal mode Thoth deploys (see ``JOURNAL_MODES``); every
 role is a separate OS process running ``_roles.py`` against it (see that module for the journal/report
 protocol). This module owns:
 
@@ -44,7 +44,7 @@ SEED_ENV = "HERMES_SQLITE_TORTURE_SEED"
 JOURNAL_MODES = ("wal", "delete")
 # Read ONLY by _roles.py in each child: the SQLite version its production version probe reports.
 SQLITE_PIN_ENV = "HERMES_E2E_SQLITE_VERSION_PIN"
-VULNERABLE_SQLITE = "3.50.4"  # bundled by uv's CPython 3.11.14 (the unit CI job): Hermes runs DELETE there
+VULNERABLE_SQLITE = "3.50.4"  # bundled by uv's CPython 3.11.14 (the unit CI job): Thoth runs DELETE there
 # DELETE mode holds an EXCLUSIVE lock for every commit's journal+db fsyncs and has no writer fairness: an unpaced
 # append loop starves every other writer and reader. Gateway/TUI writers are paced by turns in the field.
 DELETE_WRITER_PACE = 0.02
@@ -56,11 +56,11 @@ def linked_sqlite_is_wal_capable() -> bool:
 
 
 def skip_unless_deployable(journal: str) -> None:
-    """WAL is not what Hermes runs on a vulnerable SQLite, so that arm is not deployable there; DELETE always is."""
+    """WAL is not what Thoth runs on a vulnerable SQLite, so that arm is not deployable there; DELETE always is."""
     if journal == "wal" and not linked_sqlite_is_wal_capable():
         import pytest
 
-        pytest.skip(f"linked SQLite {sqlite3.sqlite_version} runs Hermes in DELETE mode; the delete arm covers it")
+        pytest.skip(f"linked SQLite {sqlite3.sqlite_version} runs Thoth in DELETE mode; the delete arm covers it")
 
 
 def base_seed() -> int:
@@ -79,7 +79,7 @@ def child_env(home: Path, hermes_home: Path) -> dict:
         "HERMES_HOME": str(hermes_home),
         "PYTHONUNBUFFERED": "1",
         # The child's HERMES_HOME *is* this chamber's private home, which the live-DB guard reads as
-        # "the real Hermes root"; HOME/HERMES_HOME above already keep it off the production install.
+        # "the real Thoth root"; HOME/HERMES_HOME above already keep it off the production install.
         "HERMES_STATE_DB_GUARD_BYPASS": "1",
         "PYTHONPATH": os.pathsep.join(p for p in (str(REPO_ROOT), os.environ.get("PYTHONPATH", "")) if p),
     })

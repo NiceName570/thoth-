@@ -56,7 +56,7 @@ export function createCoreSandbox(label: string): CoreSandbox {
   // token` for GitHub credentials; with a sandbox HOME a real gh can block on
   // the desktop keyring for ~60 s, and a probe in flight at quit outlives the
   // backend (reported as a finding) — which would make the orphan census
-  // depend on the runner's keyring rather than on Hermes.
+  // depend on the runner's keyring rather than on Thoth.
   const bin = path.join(root, 'bin')
   fs.mkdirSync(bin, { recursive: true })
   fs.writeFileSync(path.join(bin, 'gh'), '#!/bin/sh\necho "no oauth token found for github.com" >&2\nexit 1\n', {
@@ -79,7 +79,7 @@ export function createCoreSandbox(label: string): CoreSandbox {
 
 /**
  * Sandbox config: only the scripted provider. The approval prompts under test
- * come from Hermes's own detector.
+ * come from Thoth's own detector.
  */
 export function providerConfigYaml(providerUrl: string, extra = '', approvals: 'manual' | 'off' = 'off'): string {
   return `model:

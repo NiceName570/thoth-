@@ -1,6 +1,6 @@
 """SQLite torture chamber: state.db integrity under real multi-process load (issue class C1).
 
-One ``state.db`` per journal mode Hermes deploys — WAL, and DELETE (what it runs on a WAL-reset-vulnerable
+One ``state.db`` per journal mode Thoth deploys — WAL, and DELETE (what it runs on a WAL-reset-vulnerable
 SQLite and on network/FUSE homes; selected by the production ``apply_wal_with_fallback`` through a pinned
 version probe in every child, see ``_helpers``); every role is its own OS process running the production
 ``SessionDB``:

@@ -1296,7 +1296,7 @@ _hermes_home: Path | None = None
 
 
 def _get_hermes_home() -> Path:
-    """Hermes home at call time (honouring the test override). Cron is per-profile: never freeze
+    """Thoth home at call time (honouring the test override). Cron is per-profile: never freeze
     this at import or anchor it at the shared default root — either breaks profile isolation.
 
     Cron is per-profile by design (#4707): the in-process ticker runs inside a profile-scoped gateway, so
@@ -1745,7 +1745,7 @@ def _blocked_config_result(job_id: str, job_name: str, _pf_reason: str) -> tuple
         "The pre-run configuration check found a problem, so the agent did not run "
         "(nothing was charged).\n\n"
         f"**Reason:** {_pf_reason}\n\n"
-        "Hermes tries again at the next scheduled time and clears this state on the first healthy "
+        "Thoth tries again at the next scheduled time and clears this state on the first healthy "
         "run; this alert is not repeated. Check with `hermes cron doctor`. Set `cron.preflight: "
         "false` in config.yaml to disable this check."
     )
@@ -4055,7 +4055,7 @@ def _worktree_maintenance_repos() -> list[str]:
     filtered to those that actually have a ``.worktrees/`` dir."""
     repos: set = set()
 
-    # Hermes source checkout (git installs only; wheel installs have no .git).
+    # Thoth source checkout (git installs only; wheel installs have no .git).
     with contextlib.suppress(Exception):
         install_root = Path(__file__).resolve().parent.parent
         if (install_root / ".git").exists():

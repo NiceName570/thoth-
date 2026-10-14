@@ -1,6 +1,6 @@
-# Hermes Agent bootstrap: git checkout + venv + hermes command on PATH.
+# Thoth bootstrap: git checkout + venv + hermes command on PATH.
 # Heavy dependencies (tool binaries, browsers, node) are pm's job after
-# this: `hermes pm install`. Stage protocol kept for Hermes-Setup:
+# this: `hermes pm install`. Stage protocol kept for Thoth-Setup:
 #   -Manifest             print the stage list as JSON
 #   -Stage NAME [-Json]   run one stage
 #   -NonInteractive       skip stages that need input
@@ -71,7 +71,7 @@ $script:BoundParams = $PSBoundParameters
 # Under iex, script scope is the caller's session and outlives a run; start
 # each run without the previous run's answer (see Set-LauncherUserPath).
 $script:BinDirOnCallerPath = $null
-$RepoUrl = if ($env:HERMES_REPO_URL) { $env:HERMES_REPO_URL } else { "https://github.com/NousResearch/hermes-agent.git" }
+$RepoUrl = if ($env:HERMES_REPO_URL) { $env:HERMES_REPO_URL } else { "https://github.com/NiceName570/thoth-.git" }
 
 # --- BEGIN GENERATED: bootstrap pins (scripts/gen-bootstrap-pins.py) ---
 # Derived from pm/lock.json. DO NOT EDIT BY HAND:
@@ -512,12 +512,12 @@ function Invoke-DownloadWithProgress {
 # (<store>\uv-<version>-<target>\), sha256-verified, so pm adopts the same
 # bytes — no astral-latest, no irm|iex. Returns the uv.exe path.
 function Get-Uv {
-    # Always the pinned artifact, never a uv already on PATH: Hermes runs only
+    # Always the pinned artifact, never a uv already on PATH: Thoth runs only
     # its own packaged toolchain.
     $target = "win32-$(Get-WindowsArch)"
     $pin = $script:UvPinFiles[$target]
     if (-not $pin) {
-        Fail "no pinned uv artifact for $target; Hermes does not support this host" unsupported_platform
+        Fail "no pinned uv artifact for $target; Thoth does not support this host" unsupported_platform
     }
     $entry = Join-Path (Get-PmStoreRoot) "uv-$($script:UvPinVersion)-$target"
     $uvExe = Join-Path $entry "uv.exe"
@@ -616,7 +616,7 @@ function Write-Err([string]$msg) { Write-Host "[X] $msg" -ForegroundColor Red }
 function Write-Banner {
     Write-Host ""
     Write-Host "+---------------------------------------------------------+" -ForegroundColor Magenta
-    Write-Host "|             * Hermes Agent Installer                    |" -ForegroundColor Magenta
+    Write-Host "|             * Thoth Installer                           |" -ForegroundColor Magenta
     Write-Host "+---------------------------------------------------------+" -ForegroundColor Magenta
     Write-Host "|  An open source AI agent by Nous Research.              |" -ForegroundColor Magenta
     Write-Host "+---------------------------------------------------------+" -ForegroundColor Magenta
@@ -650,7 +650,7 @@ function Invoke-Native([scriptblock]$Command, [switch]$Utf8Output) {
 
 # Interactive runs collapse child-process output (git, uv, pm, the builds)
 # into one status line. CI, -Verbose and redirected output -- the
-# Hermes-Setup -Json driver, E2E transcripts -- keep the full stream those
+# Thoth-Setup -Json driver, E2E transcripts -- keep the full stream those
 # readers parse.
 function Test-QuietOutput {
     if ($env:CI -or $env:GITHUB_ACTIONS -or $env:HERMES_INSTALL_VERBOSE) { return $false }
@@ -738,7 +738,7 @@ function Fail([string]$msg, [string]$Class = "other") {
 
 # One local receipt per full-ladder run, under the profile's shared-metrics dir.
 # Only closed tokens and two timestamps (never the error text, paths or URLs);
-# the installer never sends anything. Hermes reports it as hermes.install.run on
+# the installer never sends anything. Thoth reports it as hermes.install.run on
 # a later start only while shared metrics collection is on, and deletes it
 # unreported when collection is off. Best effort: never fails the install.
 function Write-InstallReceipt([string]$Outcome, [string]$FailedStage, [string]$Class) {
@@ -780,7 +780,7 @@ function Emit-Frame([bool]$ok, [string]$name, [bool]$skipped, [string]$reason = 
 $ProductTitle = if ($IncludeDesktop) { "Install command and app + desktop" } else { "Install command and app" }
 $Stages = @(
     @{ name = "prerequisites"; title = "System prerequisites"; category = "runtime"; needs_user_input = $false },
-    @{ name = "repository"; title = "Download Hermes Agent"; category = "runtime"; needs_user_input = $false },
+    @{ name = "repository"; title = "Download Thoth"; category = "runtime"; needs_user_input = $false },
     @{ name = "venv"; title = "Create Python environment"; category = "runtime"; needs_user_input = $false },
     @{ name = "python-deps"; title = "Install Python dependencies"; category = "runtime"; needs_user_input = $false },
     @{ name = "config"; title = "Prepare config and skills"; category = "configuration"; needs_user_input = $false },
@@ -817,7 +817,7 @@ function Stage-Repository {
         $item = Get-Item -LiteralPath $InstallDir -Force
         $empty = $item.PSIsContainer -and -not $item.LinkType -and -not (Get-ChildItem -LiteralPath $InstallDir -Force | Select-Object -First 1)
         if (-not $empty) {
-            Fail "$InstallDir exists and is not a Hermes git checkout. Move it aside, or install elsewhere with -InstallDir <path>." dir_not_checkout
+            Fail "$InstallDir exists and is not a Thoth git checkout. Move it aside, or install elsewhere with -InstallDir <path>." dir_not_checkout
         }
     }
     if (-not (Ensure-Git)) { Fail "no pinned Git artifact for this Windows architecture" unsupported_platform }
@@ -901,7 +901,7 @@ function Stage-Repository {
         }
         if ($LASTEXITCODE) { Fail "git checkout failed" git_checkout_failed }
         # --no-stat: across a large gap (v2026.7.1 -> today is ~27k lines) the
-        # diffstat arrives as one burst. Hermes-Setup.exe forwards every line
+        # diffstat arrives as one burst. Thoth-Setup.exe forwards every line
         # to its window as a separate event; the burst overflows the Windows
         # posted-message queue (10k), events drop, and the installer's Launch
         # button can then hang on "Launching" forever.
@@ -1004,7 +1004,7 @@ function Stage-Repository {
             }
             Move-Item -LiteralPath $tree -Destination $InstallDir
             Disable-TreelessGraphWrites $InstallDir
-            Write-Ok "Hermes Agent cloned"
+            Write-Ok "Thoth cloned"
         } finally {
             Remove-Item -LiteralPath $staged -Recurse -Force -ErrorAction SilentlyContinue
         }
@@ -1229,16 +1229,16 @@ function Confirm-DesktopArtifact {
     try {
         $desktopDir = Join-Path $InstallDir "apps\desktop"
         $candidates = @(
-            (Join-Path $desktopDir "release\win-unpacked\Hermes.exe"),
-            (Join-Path $desktopDir "release\win-ia32-unpacked\Hermes.exe"),
-            (Join-Path $desktopDir "release\win-arm64-unpacked\Hermes.exe")
+            (Join-Path $desktopDir "release\win-unpacked\Thoth.exe"),
+            (Join-Path $desktopDir "release\win-ia32-unpacked\Thoth.exe"),
+            (Join-Path $desktopDir "release\win-arm64-unpacked\Thoth.exe")
         )
         $desktopExe = $null
         foreach ($cand in $candidates) {
             if (Test-Path $cand) { $desktopExe = $cand; break }
         }
         if (-not $desktopExe) {
-            Fail "desktop build produced no Hermes.exe under $desktopDir\release\*-unpacked" products_build_failed
+            Fail "desktop build produced no Thoth.exe under $desktopDir\release\*-unpacked" products_build_failed
         }
         Write-Ok "Desktop ready: $desktopExe"
 
@@ -1278,7 +1278,7 @@ function Stage-Complete {
             completedAt = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
         }
         $marker | ConvertTo-Json -Depth 4 | Set-Content (Join-Path $InstallDir ".hermes-bootstrap-complete") -Encoding UTF8
-        Write-Ok "Hermes Agent install complete (pinned $commit). Run: hermes"
+        Write-Ok "Thoth install complete (pinned $commit). Run: hermes"
     }
 }
 
@@ -1305,8 +1305,8 @@ function New-DesktopShortcuts {
         }
 
         $targets = @(
-            (Join-Path ([Environment]::GetFolderPath('Programs')) 'Hermes.lnk'),
-            (Join-Path ([Environment]::GetFolderPath('Desktop')) 'Hermes.lnk')
+            (Join-Path ([Environment]::GetFolderPath('Programs')) 'Thoth.lnk'),
+            (Join-Path ([Environment]::GetFolderPath('Desktop')) 'Thoth.lnk')
         )
 
         foreach ($lnkPath in $targets) {
@@ -1319,7 +1319,7 @@ function New-DesktopShortcuts {
                 $sc.TargetPath = $TargetExe
                 $sc.WorkingDirectory = $workDir
                 $sc.IconLocation = $iconLocation
-                $sc.Description = 'Hermes Agent'
+                $sc.Description = 'Thoth'
                 $sc.Save()
                 Write-Ok "Shortcut created: $lnkPath"
             } catch {
@@ -1330,7 +1330,7 @@ function New-DesktopShortcuts {
         # Bust the Windows shell icon cache so the desktop/Start-Menu shortcut
         # repaints with the (possibly newly-stamped) icon instead of a stale
         # cached bitmap. Critical on the --update path: the exe was re-stamped
-        # with the Hermes icon, but without this the shortcut can keep drawing
+        # with the Thoth icon, but without this the shortcut can keep drawing
         # the old Electron icon until the user manually refreshes / reboots.
         # Best-effort and silent -- never fail the install over a cosmetic cache.
         try {

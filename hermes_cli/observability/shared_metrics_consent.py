@@ -126,11 +126,11 @@ def offer_consent(config: dict | None = None, *, reask: bool = False) -> bool:
     from hermes_cli.cli_output import print_info, print_success
     from hermes_cli.curses_ui import curses_radiolist, flush_stdin
 
-    # The offer appears seconds into startup; an Enter typed while Hermes booted would otherwise
+    # The offer appears seconds into startup; an Enter typed while Thoth booted would otherwise
     # answer it ("No thanks") before it was ever on screen, so the user was never really asked.
     flush_stdin()
     idx = curses_radiolist(
-        "Help improve Hermes?", [label for label, _, _ in OFFER_CHOICES], selected=_NO_THANKS, cancel_returns=-1,
+        "Help improve Thoth?", [label for label, _, _ in OFFER_CHOICES], selected=_NO_THANKS, cancel_returns=-1,
         description=f"{_REASK_NOTE}\n{_OFFER_DESCRIPTION}" if reask else _OFFER_DESCRIPTION,
     )
     if idx < 0 and reask:
@@ -138,7 +138,7 @@ def offer_consent(config: dict | None = None, *, reask: bool = False) -> bool:
         print_info("Kept \"No thanks\". Change it any time with `hermes setup telemetry`.")
         return True
     if idx < 0:
-        print_info("Not answered; Hermes will ask again. Decide any time with `hermes setup telemetry`.")
+        print_info("Not answered; Thoth will ask again. Decide any time with `hermes setup telemetry`.")
         return False
     _, enabled, send = OFFER_CHOICES[idx]
     save_consent(enabled, send, config)

@@ -47,7 +47,7 @@ def test_venv_import_setup_scopes_to_sys_path_not_global_environ(
     ``_ensure_windows_gateway_venv_imports`` patches the CURRENT process via
     ``sys.path``/``site.addsitedir`` only. Mutating ``os.environ["PYTHONPATH"]``
     there poisoned every child process spawned from the gateway session —
-    non-Hermes Python tools resolved Hermes' venv packages ahead of their own.
+    non-Thoth Python tools resolved Thoth's venv packages ahead of their own.
     """
     import gateway.run as gateway_run
 
@@ -70,7 +70,7 @@ def test_venv_import_setup_scopes_to_sys_path_not_global_environ(
     assert str(site_packages) in sys.path
     # VIRTUAL_ENV stays — standard, scoped, no cross-process poisoning.
     assert os.environ["VIRTUAL_ENV"] == str(venv.resolve())
-    # The inherited PYTHONPATH must be untouched — no Hermes paths prepended.
+    # The inherited PYTHONPATH must be untouched — no Thoth paths prepended.
     assert os.environ["PYTHONPATH"] == "already-there"
     assert str(site_packages) not in os.environ["PYTHONPATH"]
     assert str(root) not in os.environ["PYTHONPATH"]

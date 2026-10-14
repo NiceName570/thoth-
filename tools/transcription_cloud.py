@@ -283,7 +283,7 @@ def _transcribe_xai(
     def _post() -> Any:
         from tools.xai_http import hermes_xai_user_agent
         # Always name the model: xAI moved the server default from 1.0 to 2.0 mid-September and
-        # will retire 1.0, so an omitted field silently changes what Hermes runs.
+        # will retire 1.0, so an omitted field silently changes what Thoth runs.
         resolved_model = normalize_xai_stt_model(model_name)
         data: dict[str, str] = {"model": resolved_model}
         if language:

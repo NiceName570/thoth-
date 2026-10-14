@@ -1465,16 +1465,15 @@ export interface Translations extends NoticeTranslations {
       downloadResumeAction: string
       downloadDoneToast: (model: string) => string
       installDoneToast: string
-      quickstartTitle: string
-      quickstartDetail: (model: string, size: string) => string
-      quickstartDetailReady: (model: string) => string
-      quickstartAction: string
-      quickstartConfigure: string
+      ollamaTitle: string
+      ollamaDetected: (url: string) => string
+      ollamaNotFoundTitle: string
+      ollamaNotFoundDetail: (url: string) => string
+      ollamaEmpty: string
+      ollamaUsing: (model: string) => string
+      ollamaUseFailed: (model: string) => string
       quickstartDoneToast: (model: string) => string
       quickstartFailed: string
-      quickstartStageEngine: string
-      quickstartStageModel: string
-      quickstartStageFinish: string
       useAction: string
       activePill: string
       updateTitle: string
@@ -3552,7 +3551,7 @@ export interface Translations extends NoticeTranslations {
     }
     // First-launch set-up failure notice: the free tier could not be created at boot.
     // One sentence per backend code (`hermes_cli/anon_auth.py::ANON_*`); the copy never says
-    // the free MODEL is off — what is unavailable is using Hermes without signing in.
+    // the free MODEL is off — what is unavailable is using Thoth without signing in.
     setupFailed: {
       gateClosed: string
       paused: string

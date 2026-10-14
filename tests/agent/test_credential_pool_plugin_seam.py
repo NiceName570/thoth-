@@ -124,7 +124,7 @@ def test_plugin_refresh_outcome(plugin_profiles, caplog, hook, status, tokens, e
 
 
 def test_plugin_refresh_adopts_peer_rotation_without_spending_token(plugin_profiles):
-    """Two Hermes processes share one auth.json: the second refresh adopts the first's rotated pair
+    """Two Thoth processes share one auth.json: the second refresh adopts the first's rotated pair
     instead of POSTing the same single-use refresh token again."""
     calls = []
 

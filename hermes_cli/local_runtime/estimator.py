@@ -114,7 +114,7 @@ class HardwareBudget:
     platform: str = ""          # sys.platform of the machine being priced
     gpu_pci_id: int | None = None  # nvidia-smi's packed PCI device/vendor ID
     # The engine reads lazy tensors from disk here. llama.cpp's own default does so everywhere
-    # except integrated GPUs (b11370 #28160); Hermes passes --lazy-mode on to NVIDIA's, so only
+    # except integrated GPUs (b11370 #28160); Thoth passes --lazy-mode on to NVIDIA's, so only
     # AMD/Intel integrated GPUs load them up front.
     lazy_reads: bool = True
 

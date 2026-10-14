@@ -447,7 +447,7 @@ class CLIVoiceMixin:
                     self._disable_voice_mode()
                     return
                 # Fail-closed echo guard: playback-phase capture has no echo cancellation, so
-                # a close match for what Hermes just spoke is speaker bleed, not a user turn.
+                # a close match for what Thoth just spoke is speaker bleed, not a user turn.
                 if getattr(self, "_voice_barge_phase", None) == "playback":
                     from tools.voice_mode_transcript import is_tts_echo
                     if is_tts_echo(transcript, getattr(self, "_voice_last_tts_text", "")):

@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 title: "Updating & Uninstalling"
-description: "How to update Hermes Agent to the latest version or uninstall it"
+description: "How to update Thoth to the latest version or uninstall it"
 ---
 
 # Updating & Uninstalling
@@ -65,8 +65,8 @@ including through `hermes update` or `hermes update --check`. They explain:
 
 > This build doesn't get updates. Ask the developer who gave it to you for a new build.
 
-Separate applications still share Hermes profiles, configuration, and sessions
-under the same Hermes home. Running different builds against one profile is not
+Separate applications still share Thoth profiles, configuration, and sessions
+under the same Thoth home. Running different builds against one profile is not
 schema isolation: newer builds can change stored data that an older build cannot
 read. Back up shared data before testing. The desktop and standalone CLI warn
 when another live installation uses the same profile; this is advisory, not a
@@ -92,13 +92,13 @@ This suppresses both cached update notices and passive update-check network requ
 
 For an admitted source checkout, `hermes update` runs these phases:
 
-1. **Pre-update snapshot** — Hermes saves selected state files for every profile in that profile's `state-snapshots/` directory. These include pairing data, cron jobs, `config.yaml`, `.env`, and `auth.json`. Automatic quick snapshots skip individual files larger than 1 GiB. `updates.pre_update_backup` selects `quick`, `full`, or `off`. Full archives use the [backup exclusions](../reference/faq.md#hermes-backup-vs-hermes-profile-export). Recovery uses [Snapshots and rollback](../user-guide/checkpoints-and-rollback.md). Quick snapshots recover state files, not application code. The snapshot is best-effort: if it fails, the update prints a `⚠ Pre-update snapshot FAILED` warning and continues, and the receipt records `pre_update_backup` as a failed step (a deliberate `off`/`--no-backup` lands in the receipt's skips with its reason instead).
+1. **Pre-update snapshot** — Thoth saves selected state files for every profile in that profile's `state-snapshots/` directory. These include pairing data, cron jobs, `config.yaml`, `.env`, and `auth.json`. Automatic quick snapshots skip individual files larger than 1 GiB. `updates.pre_update_backup` selects `quick`, `full`, or `off`. Full archives use the [backup exclusions](../reference/faq.md#hermes-backup-vs-hermes-profile-export). Recovery uses [Snapshots and rollback](../user-guide/checkpoints-and-rollback.md). Quick snapshots recover state files, not application code. The snapshot is best-effort: if it fails, the update prints a `⚠ Pre-update snapshot FAILED` warning and continues, and the receipt records `pre_update_backup` as a failed step (a deliberate `off`/`--no-backup` lands in the receipt's skips with its reason instead).
 2. **Code update** — applies the configured source branch or stable release tag and updates submodules. On Linux and macOS every gateway running from this install is paused immediately before the first change to the checkout (see [Gateway downtime during an update](#gateway-downtime-during-an-update)); an update that has nothing to apply, or that fails before it changes the checkout, stops nothing.
-3. **Post-pull syntax validation + auto-rollback** — after the pull, Hermes compiles the nine critical files every `hermes` invocation imports at startup. If any fails to parse (e.g. an orphan merge-conflict marker, an accidentally truncated file), Hermes rolls the install back so your shell stays bootable: it resets the checkout to the commit it ran before the pull (`git reset --hard <pre-pull-sha>`), or, when the update switched away from a detached checkout or a parked feature branch, returns there with `git checkout --detach <sha>` / `git checkout <branch>` (a branch it cannot check out again is restored detached at the same commit). Re-run `hermes update` once the upstream fix lands.
-4. **Dependency preparation** — PM provisions required tools and prepares a complete Python environment from the new lock, existing extras, and enabled plugin requirements. It validates that environment before publishing its selection. A plugin never fails the update. A plugin that no longer fits the new core is added to `plugins.disabled` in every profile that enables it (a memory provider has `memory.provider` cleared). That covers a `requires-python` that excludes Hermes's Python, a `manifest_version` newer than this Hermes supports, and dependencies that the resolver proves can't resolve alongside core and earlier plugins in config order, or that fail their own build. A download or network failure gets one retry and is disabled if it fails again. The update prints `⚠ Disabled plugin '<name>' in <home>: <reason>`, records it in the receipt's warnings, and continues. Re-enable it with `hermes plugins enable <name>` once the plugin ships a compatible release, or once the network is back. A `requires_hermes` range the running version misses never disables a plugin, because a source checkout without release tags can read as an older release. That plugin sits out instead (`⚠ Left plugin '<name>' … out of this update`), stays enabled, and rejoins once Hermes reports a version it accepts. A secondary profile whose config cannot be read sits out the same way until the config is fixed. Only a core that cannot build on its own fails this step.
+3. **Post-pull syntax validation + auto-rollback** — after the pull, Thoth compiles the nine critical files every `hermes` invocation imports at startup. If any fails to parse (e.g. an orphan merge-conflict marker, an accidentally truncated file), Thoth rolls the install back so your shell stays bootable: it resets the checkout to the commit it ran before the pull (`git reset --hard <pre-pull-sha>`), or, when the update switched away from a detached checkout or a parked feature branch, returns there with `git checkout --detach <sha>` / `git checkout <branch>` (a branch it cannot check out again is restored detached at the same commit). Re-run `hermes update` once the upstream fix lands.
+4. **Dependency preparation** — PM provisions required tools and prepares a complete Python environment from the new lock, existing extras, and enabled plugin requirements. It validates that environment before publishing its selection. A plugin never fails the update. A plugin that no longer fits the new core is added to `plugins.disabled` in every profile that enables it (a memory provider has `memory.provider` cleared). That covers a `requires-python` that excludes Thoth's Python, a `manifest_version` newer than this Thoth supports, and dependencies that the resolver proves can't resolve alongside core and earlier plugins in config order, or that fail their own build. A download or network failure gets one retry and is disabled if it fails again. The update prints `⚠ Disabled plugin '<name>' in <home>: <reason>`, records it in the receipt's warnings, and continues. Re-enable it with `hermes plugins enable <name>` once the plugin ships a compatible release, or once the network is back. A `requires_hermes` range the running version misses never disables a plugin, because a source checkout without release tags can read as an older release. That plugin sits out instead (`⚠ Left plugin '<name>' … out of this update`), stays enabled, and rejoins once Thoth reports a version it accepts. A secondary profile whose config cannot be read sits out the same way until the config is fixed. Only a core that cannot build on its own fails this step.
 5. **Config migration** — detects new config options added since your version and prompts you to set them
-6. **Desktop rebuild (stage-and-swap)** — if the Hermes Desktop app was built from this checkout, it is rebuilt so the GUI matches the new code. The rebuild packs into a temporary staging directory next to `apps/desktop/release/`, verifies the staged app, and only then renames it over the previous build (on Windows a real-time scanner briefly holding `release/win-unpacked` is ridden out with a few short retries). A rebuild that fails at any point — corrupt Electron download, missing dependency, disk full — leaves the previous app untouched and launchable; the update prints a `⚠` line, still finishes the remaining steps (config migration, gateway restart) and exits 0 with a `build` follow-up in its receipt, and the next launch, `hermes update` or `hermes desktop --build-only --force-build` retries the rebuild. On macOS the rebuilt bundle is then copied (with `ditto`, signature intact) over a stale `/Applications/Hermes.app` or `~/Applications/Hermes.app`, so the copy Finder and the Dock launch matches the backend; an installed copy that is currently running is left alone and the update tells you to quit it and run `hermes update` again. If a copy an earlier update installed has since been removed (including dragged to the Trash), the update rebuilds it if needed, puts it back and says so, so Finder, the Dock and Spotlight find Hermes again; `hermes uninstall` removes the app for good. On Windows, when the update finishes from inside the Desktop app it would rebuild (the app completing an interrupted update at launch), the rebuild is skipped with a notice instead: Windows locks a running app's files, and stopping the app would end the update with it. The rest of the update completes; quit Hermes Desktop and run `hermes desktop` from a terminal, or use **Update now** in **Settings → About**, to rebuild and reopen it.
-7. **Gateway auto-restart**: on Linux and macOS, gateways paused for the update are started again as soon as the dependencies are prepared and the launchers refreshed, before the product builds; on Windows they restart after the builds. Any other running gateway is refreshed after the update completes. Service-managed gateways (systemd on Linux, launchd on macOS) restart through the service manager. Manual gateways are relaunched when Hermes can map their PID to a profile. Manually launched `hermes serve` / `hermes dashboard` backends are different: the updater leaves them running and asks their owner to restart them. See [Manual backend restart reminders](#manual-backend-restart-reminders). Backends owned by a running Desktop app remain the app's responsibility.
+6. **Desktop rebuild (stage-and-swap)** — if the Thoth app was built from this checkout, it is rebuilt so the GUI matches the new code. The rebuild packs into a temporary staging directory next to `apps/desktop/release/`, verifies the staged app, and only then renames it over the previous build (on Windows a real-time scanner briefly holding `release/win-unpacked` is ridden out with a few short retries). A rebuild that fails at any point — corrupt Electron download, missing dependency, disk full — leaves the previous app untouched and launchable; the update prints a `⚠` line, still finishes the remaining steps (config migration, gateway restart) and exits 0 with a `build` follow-up in its receipt, and the next launch, `hermes update` or `hermes desktop --build-only --force-build` retries the rebuild. On macOS the rebuilt bundle is then copied (with `ditto`, signature intact) over a stale `/Applications/Thoth.app` or `~/Applications/Thoth.app`, so the copy Finder and the Dock launch matches the backend; an installed copy that is currently running is left alone and the update tells you to quit it and run `hermes update` again. If a copy an earlier update installed has since been removed (including dragged to the Trash), the update rebuilds it if needed, puts it back and says so, so Finder, the Dock and Spotlight find Thoth again; `hermes uninstall` removes the app for good. On Windows, when the update finishes from inside the Desktop app it would rebuild (the app completing an interrupted update at launch), the rebuild is skipped with a notice instead: Windows locks a running app's files, and stopping the app would end the update with it. The rest of the update completes; quit Thoth and run `hermes desktop` from a terminal, or use **Update now** in **Settings → About**, to rebuild and reopen it.
+7. **Gateway auto-restart**: on Linux and macOS, gateways paused for the update are started again as soon as the dependencies are prepared and the launchers refreshed, before the product builds; on Windows they restart after the builds. Any other running gateway is refreshed after the update completes. Service-managed gateways (systemd on Linux, launchd on macOS) restart through the service manager. Manual gateways are relaunched when Thoth can map their PID to a profile. Manually launched `hermes serve` / `hermes dashboard` backends are different: the updater leaves them running and asks their owner to restart them. See [Manual backend restart reminders](#manual-backend-restart-reminders). Backends owned by a running Desktop app remain the app's responsibility.
 8. **Multiplex migration (multi-profile installs)** — once the fleet is verified on the new code, an install with two or more profiles that still run **one gateway per profile** is folded into a single multiplexed default gateway when nothing blocks it (same as `hermes gateway migrate --multiplex --yes`); if a blocker exists (a bot token shared by two profiles, a secondary profile binding a port with no `/p/<profile>/` ingress) the update prints the blockers with their fixes and changes nothing. Single-profile installs are never touched. See [Migrating from per-profile gateways](../user-guide/multi-profile-gateways.md#migrating-from-per-profile-gateways).
 
 ### Gateway downtime during an update
@@ -106,9 +106,9 @@ For an admitted source checkout, `hermes update` runs these phases:
 On Linux and macOS, `hermes update` stops every gateway running from this install right before it first changes the checkout, and starts exactly that set again on the new code once the dependencies are prepared (before the web UI, TUI and Desktop builds, which can take minutes). Your bots are offline for that window: typically the git update plus the dependency sync. Before this, a gateway kept running old code while git rewrote the files under it, and any module it imported lazily in that window came from the new code.
 
 - The update prints one line naming what it paused (`⏸ Paused for the update: hermes-gateway.service`) and one when it is back (`▶ Restarted paused gateway(s): …`).
-- systemd units and launchd agents are stopped and started through systemd/launchd, so the service manager cannot restart them on old code mid-update. A gateway you started by hand (`hermes gateway run`) is drained and then started again in the background from the same command line and Hermes home; its output goes to `logs/gateway-update-resume.log` in that home instead of your terminal.
+- systemd units and launchd agents are stopped and started through systemd/launchd, so the service manager cannot restart them on old code mid-update. A gateway you started by hand (`hermes gateway run`) is drained and then started again in the background from the same command line and Thoth home; its output goes to `logs/gateway-update-resume.log` in that home instead of your terminal.
 - `/update` from chat survives the pause: when the update runs inside the gateway's own systemd unit, it first moves itself into a scope of its own. A prompt asked while the gateways are paused takes its default immediately, because no gateway can relay it.
-- The paused set is recorded in the Hermes home before the first stop. If the update is killed, the next `hermes` command (or `hermes update`) starts exactly those gateways again. A failed update that never changed the checkout restarts them on the old code. If the dependency sync fails after the checkout moved, they restart once a launch has synced the dependencies.
+- The paused set is recorded in the Thoth home before the first stop. If the update is killed, the next `hermes` command (or `hermes update`) starts exactly those gateways again. A failed update that never changed the checkout restarts them on the old code. If the dependency sync fails after the checkout moved, they restart once a launch has synced the dependencies.
 - A gateway the updater cannot stop through its supervisor (an s6 or custom systemd unit, `--external-supervisor`, a launchd job that started this update) is left running and refreshed after the update, as before.
 - `--no-gateway-restart` stops nothing; you manage the gateways.
 - The pause never blocks an update. If it cannot list, record or stop the gateways, it restarts anything it stopped, says so, and the update continues the way it did before the pause existed: gateways run through the swap and are restarted afterwards.
@@ -145,9 +145,9 @@ Git 2.53 and newer can crash while fetching into a partial clone when some of it
 `.promisor` marker. That happens when a filtered fetch turned a full or shallow clone into a partial
 one, or when markers were lost. `hermes update` marks those packs and retries the fetch once, and
 an installer rerun marks them before it fetches. An install whose own updater predates that fix
-can't fetch it: rerun the installer, or mark the packs by hand (with Hermes closed) and update again.
+can't fetch it: rerun the installer, or mark the packs by hand (with Thoth closed) and update again.
 
-The checkout is `hermes-agent` under your Hermes home (`~/.hermes`, or `HERMES_HOME` when set;
+The checkout is `hermes-agent` under your Thoth home (`~/.hermes`, or `HERMES_HOME` when set;
 on Windows `%LOCALAPPDATA%\hermes` unless `HERMES_HOME` is set).
 
 ```bash
@@ -193,11 +193,11 @@ dependency work: one `git fetch --refetch --filter=blob:none` brings every commi
 converts it the same way. If that fetch fails, the update prints a warning, carries on, and retries
 the conversion next time.
 
-A Hermes Desktop built before the conversion existed runs path-filtered history walks every few
+A Thoth built before the conversion existed runs path-filtered history walks every few
 minutes, so on a treeless checkout it could fill a disk with pack files (one report reached 434 GB)
 and keep going after a failed update. To recover when that already happened:
 
-1. Quit Hermes Desktop, then end any leftover `git rev-list`, `git maintenance` or
+1. Quit Thoth, then end any leftover `git rev-list`, `git maintenance` or
    `git commit-graph` processes; quitting the app does not stop them.
 2. If the disk is completely full, delete the abandoned transfer files to get room back:
    `rm -f "$repo"/.git/objects/pack/tmp_pack_*` (Windows: delete `tmp_pack_*` in
@@ -221,7 +221,7 @@ previous update stopped. It deletes packs whose every object is also stored in a
 merges the smallest remaining packs while there are more than 50. Nothing stored locally is ever
 lost, and nothing depends on GitHub still serving it. Packs that a killed `git fetch` left pinned
 with a `.keep` file are included; git's own repack never touches those. To fold
-everything at once by hand instead (with Hermes closed; on a large checkout this is a full repack
+everything at once by hand instead (with Thoth closed; on a large checkout this is a full repack
 that can run for many minutes):
 
 ```bash
@@ -238,7 +238,7 @@ hermes update --branch release-candidate
 hermes update --check --branch experimental   # preview behindness only
 ```
 
-If your local checkout is on a different branch, Hermes auto-stashes any uncommitted work, switches HEAD to the target branch, and then pulls. Branches that don't exist locally are auto-tracked from `origin/<name>` (`git checkout -B <name> origin/<name>`). Branches that don't exist anywhere fail cleanly — your stashed changes are restored before exit so you're never stranded in a weird state. The `main`-only fork-upstream sync logic is automatically skipped on non-`main` branches.
+If your local checkout is on a different branch, Thoth auto-stashes any uncommitted work, switches HEAD to the target branch, and then pulls. Branches that don't exist locally are auto-tracked from `origin/<name>` (`git checkout -B <name> origin/<name>`). Branches that don't exist anywhere fail cleanly — your stashed changes are restored before exit so you're never stranded in a weird state. The `main`-only fork-upstream sync logic is automatically skipped on non-`main` branches.
 
 ### Checkout parked on a feature branch
 
@@ -249,7 +249,7 @@ If the source checkout was left sitting on a feature branch (by tooling, a workt
 
 If you *deliberately* run a custom branch (local patches maintained on top of main), set `updates.parked_branch_strategy: update_in_place` in `config.yaml`. The update then merges `origin/main` **into** your branch instead of switching away from it — the checkout never moves, your commits survive, and the running code advances. Fast-forward when possible; on divergence a true merge behind a `pre-update-<stamp>` safety tag, stopping cleanly (nothing changed) on conflict. `hermes update --switch-branch` overrides back to the switch path for one run — useful on a deep feature branch that must not accumulate update-driven merge commits.
 
-When the parked branch has **uncommitted changes** (dirty tree), Hermes does **not** touch it. The code update is marked **SKIPPED** with a loud warning naming the branch, how far behind `origin/main` it is, and the exact commands to resolve — instead of pretending the update succeeded. The completion line always shows the actual branch and HEAD (`✓ Update complete! [main @ 30fcf9580]`) so drift is visible at a glance. Set `updates.auto_switch_parked_branch: false` in `config.yaml` to disable the auto-switch entirely (the skip warning still fires).
+When the parked branch has **uncommitted changes** (dirty tree), Thoth does **not** touch it. The code update is marked **SKIPPED** with a loud warning naming the branch, how far behind `origin/main` it is, and the exact commands to resolve — instead of pretending the update succeeded. The completion line always shows the actual branch and HEAD (`✓ Update complete! [main @ 30fcf9580]`) so drift is visible at a glance. Set `updates.auto_switch_parked_branch: false` in `config.yaml` to disable the auto-switch entirely (the skip warning still fires).
 
 ### Local commits on the target branch
 
@@ -257,7 +257,7 @@ Commits made directly on the update target (`main`) stop fast-forwards once upst
 
 ### Local changes on non-interactive updates
 
-When you run `hermes update` in a terminal, Hermes stashes any uncommitted source-tree changes, pulls, then **asks** whether to restore them — exactly as it always has. Nothing changes for interactive updates.
+When you run `hermes update` in a terminal, Thoth stashes any uncommitted source-tree changes, pulls, then **asks** whether to restore them — exactly as it always has. Nothing changes for interactive updates.
 
 The autostash only ever covers *source-tree* changes. On a **flat install** — where the git checkout root is also `$HERMES_HOME` (for example an install made with `HERMES_INSTALL_DIR=$HERMES_HOME`, or one created by an older installer) — the profile's runtime state (`state.db` and its WAL/SHM sidecars, `state-snapshots/`, `backups/`, `sessions/`, `cron/jobs.json`, the `cron/*.db` stores, `config.yaml`, `auth.json`, `memories/`, lock/pid files, …) lives inside the checkout as untracked files. Those paths are git-ignored, so the autostash never touches them and the running gateway keeps its database through the update. If you keep other untracked files in a flat install's root, move them out of the checkout or add them to `.git/info/exclude`; anything untracked and not ignored is swept into the autostash like a source edit.
 
@@ -271,7 +271,7 @@ updates:
 ```
 
 - `stash` (default) — auto-stash, pull, then auto-restore your changes on top of the updated code. Nothing is lost; if a restore hits conflicts they're preserved in a git stash for manual recovery.
-- `discard` — auto-stash and drop the stash after the pull, so the update always lands on a clean tree. Use this only on machines where you never intend to keep local edits to the Hermes source. It stash-drops (not `git reset --hard` + `git clean -fd`), so ignored paths like `node_modules`, `venv`, and build outputs are never touched.
+- `discard` — auto-stash and drop the stash after the pull, so the update always lands on a clean tree. Use this only on machines where you never intend to keep local edits to the Thoth source. It stash-drops (not `git reset --hard` + `git clean -fd`), so ignored paths like `node_modules`, `venv`, and build outputs are never touched.
 
 In the desktop app this is **Settings → Advanced → In-App Update Local Changes**.
 
@@ -294,7 +294,7 @@ Package-owned installs report their external update method.
 
 ### Fleet preview: `hermes update --plan`
 
-Before updating a machine that runs several profiles or services, run `hermes update --plan`. It prints the install kind, running Hermes services across profiles, their supervisors and running code versions, and the restart mechanism for each service. Manually launched `hermes serve` / `hermes dashboard` backends appear with their recorded bind endpoint, but restart is deferred to their owner; the updater does not stop or relaunch them. Image- or package-managed installs report the external update command instead. The plan is read-only and safe on a live fleet.
+Before updating a machine that runs several profiles or services, run `hermes update --plan`. It prints the install kind, running Thoth services across profiles, their supervisors and running code versions, and the restart mechanism for each service. Manually launched `hermes serve` / `hermes dashboard` backends appear with their recorded bind endpoint, but restart is deferred to their owner; the updater does not stop or relaunch them. Image- or package-managed installs report the external update command instead. The plan is read-only and safe on a live fleet.
 
 The same inventory is embedded in every real update's receipt (`~/.hermes/logs/update_receipts/`), so after an update you can compare what the updater saw against what it did.
 
@@ -302,7 +302,7 @@ The same inventory is embedded in every real update's receipt (`~/.hermes/logs/u
 
 Every `hermes update` run writes a machine-readable receipt to `~/.hermes/logs/update_receipts/` (last 20 kept, `latest.json` always points at the most recent): the pre-update fleet plan, each step taken, anything skipped and why, the gateway restart outcome, and the final fleet version matrix. The SQLite runtime repair is one of those steps (`sqlite_runtime_repair`): a failed repair records the actual reason (for example the `uv sync` error) and the SQLite version pair, a deferred or not-applicable repair lands in the skips with its reason. After the restart phase the updater compares each live gateway's running code against the freshly updated checkout and prints a per-profile matrix — a gateway still serving pre-update code is reported loudly with the exact restart command and recorded as a `gateway_restart` follow-up in the receipt; the code is already in place, so the update still exits 0, and every later command warns until the fleet serves the new code, so a mixed-version fleet is never silently healthy. Both `--plan` and the fleet check ask each running gateway directly over its local control socket (`gateway.sock` in the profile's data directory, a named pipe on Windows) when available, so version and supervisor information comes from the gateway itself; gateways from older versions are still discovered through their state files as before.
 
-A multiplexed default gateway is one process serving several profiles, so it appears once in the matrix and vouches for every profile in its `served_profiles` record. The same coverage clears the "A previous `hermes update` pulled new code but did not restart running gateways" hint: once that gateway (or, after a manual `git pull`, every gateway an update restarted) runs the current code, `hermes gateway restart` is enough — the hint no longer waits for the next `hermes update` to write a fresh receipt. The same is true of the restart obligation left by an update that died before recording which gateways it owed (or by an older updater that never recorded them): once every live gateway runs the current checkout, the obligation is retired and the hint stops. On a host that runs no gateway at all (the Desktop app alone), it is retired once no profile has a gateway that went away without a clean stop and every running backend is restarted by its own supervisor or has its own reminder. That obligation is recorded once per HOST, in the cross-profile rendezvous directory (`$HERMES_GATEWAY_LOCK_DIR`, else `$XDG_STATE_HOME/hermes/gateway-locks`) as `host-update-restart-<install key>.json` (one per installation, so a second Hermes checkout for the same user keeps its own; an older release's unkeyed `host-update-restart.json` is honoured and cleared only by an installation that has no record of its own, so another checkout still on that release keeps its debt), so every profile's CLI sees the same one: `hermes -p coder update` and `hermes -p writer update` restart the shared multiplexed gateway once between them, not once each. An obligation left behind by an older per-profile updater (`fleet_restart_pending` in one profile's Hermes home) is still read and cleared. An update whose pre-update plan found no gateway at all owes nothing and leaves no breadcrumb. A backend supervised by Desktop, systemd or launchd is restarted by its supervisor and never blocks this settlement; only a manual backend whose reminder could not be saved keeps the obligation open.
+A multiplexed default gateway is one process serving several profiles, so it appears once in the matrix and vouches for every profile in its `served_profiles` record. The same coverage clears the "A previous `hermes update` pulled new code but did not restart running gateways" hint: once that gateway (or, after a manual `git pull`, every gateway an update restarted) runs the current code, `hermes gateway restart` is enough — the hint no longer waits for the next `hermes update` to write a fresh receipt. The same is true of the restart obligation left by an update that died before recording which gateways it owed (or by an older updater that never recorded them): once every live gateway runs the current checkout, the obligation is retired and the hint stops. On a host that runs no gateway at all (the Desktop app alone), it is retired once no profile has a gateway that went away without a clean stop and every running backend is restarted by its own supervisor or has its own reminder. That obligation is recorded once per HOST, in the cross-profile rendezvous directory (`$HERMES_GATEWAY_LOCK_DIR`, else `$XDG_STATE_HOME/hermes/gateway-locks`) as `host-update-restart-<install key>.json` (one per installation, so a second Thoth checkout for the same user keeps its own; an older release's unkeyed `host-update-restart.json` is honoured and cleared only by an installation that has no record of its own, so another checkout still on that release keeps its debt), so every profile's CLI sees the same one: `hermes -p coder update` and `hermes -p writer update` restart the shared multiplexed gateway once between them, not once each. An obligation left behind by an older per-profile updater (`fleet_restart_pending` in one profile's Thoth home) is still read and cleared. An update whose pre-update plan found no gateway at all owes nothing and leaves no breadcrumb. A backend supervised by Desktop, systemd or launchd is restarted by its supervisor and never blocks this settlement; only a manual backend whose reminder could not be saved keeps the obligation open.
 
 ### Manual backend restart reminders
 
@@ -310,9 +310,9 @@ After updating, ask the owner of each manually launched backend to relaunch `her
 
 For a verified live backend, the updater saves a reminder before recording its restart as `deferred`. This allows the update to complete if the remaining checks pass. An unknown process identity cannot qualify for fresh deferral.
 
-Reminders live in `serve_restart_pending/` under the active Hermes home, separately from rotating update receipts. Each reminder identifies a process by PID and creation time. Startup warnings retain it while that process is alive or its liveness is unknown, and remove it only when that exact process is confirmed gone. A later update or a healthy gateway does not remove it.
+Reminders live in `serve_restart_pending/` under the active Thoth home, separately from rotating update receipts. Each reminder identifies a process by PID and creation time. Startup warnings retain it while that process is alive or its liveness is unknown, and remove it only when that exact process is confirmed gone. A later update or a healthy gateway does not remove it.
 
-If saving fails, Hermes warns and carries the unsaved obligation into later receipts for retry. Check storage permissions and free space, and restart the backend as instructed. If both reminder and receipt storage fail, durable retention cannot be guaranteed.
+If saving fails, Thoth warns and carries the unsaved obligation into later receipts for retry. Check storage permissions and free space, and restart the backend as instructed. If both reminder and receipt storage fail, durable retention cannot be guaranteed.
 
 ### Automated updates from inside the gateway: `--no-gateway-restart`
 
@@ -362,7 +362,7 @@ updates:
 Legacy boolean values remain supported: `true` means `full`, and `false` means `off`.
 
 :::tip Moving to a new machine instead?
-Update backups protect an in-place update. If you're migrating your whole setup to different hardware, use `hermes backup` + `hermes import` instead — see [Exporting Hermes to another machine](../reference/faq.md#exporting-hermes-to-another-machine) and [`hermes backup` vs `hermes profile export`](../reference/faq.md#hermes-backup-vs-hermes-profile-export).
+Update backups protect an in-place update. If you're migrating your whole setup to different hardware, use `hermes backup` + `hermes import` instead — see [Exporting Thoth to another machine](../reference/faq.md#exporting-hermes-to-another-machine) and [`hermes backup` vs `hermes profile export`](../reference/faq.md#hermes-backup-vs-hermes-profile-export).
 :::
 
 ### Windows process ownership and dependency changes
@@ -373,7 +373,7 @@ imported libraries in place. A running process keeps its current imports until
 it restarts.
 
 Follow any blocker diagnostic for the specific process and installation. Do
-not kill every process named Python or Hermes. Source updates and MSIX package
+not kill every process named Python or Thoth. Source updates and MSIX package
 replacement have different owners and shutdown requirements.
 
 The parser retains `--force` and `--force-venv` for Windows compatibility. They
@@ -415,10 +415,10 @@ You no longer need to wrap `hermes update` in `screen` or `tmux` to survive a te
 
 A few situations stop with a message rather than carry on, because carrying on could leave a half-updated checkout or a gateway running old code:
 
-- **Another launch is repairing an interrupted update.** When an update was killed while git moved the checkout, the next `hermes` launch puts the checkout back first. Launches that start together (a restarting gateway or Desktop backend next to your CLI) take turns. A launch that waits more than 10 seconds for another one's repair exits with status 1: `hermes: another Hermes launch is finishing an interrupted 'hermes update'; launch again in a moment.` Launch again once the other one finishes. A backend started by Hermes Desktop at that moment shows up as a failed start; reopening it is enough.
+- **Another launch is repairing an interrupted update.** When an update was killed while git moved the checkout, the next `hermes` launch puts the checkout back first. Launches that start together (a restarting gateway or Desktop backend next to your CLI) take turns. A launch that waits more than 10 seconds for another one's repair exits with status 1: `hermes: another Thoth launch is finishing an interrupted 'hermes update'; launch again in a moment.` Launch again once the other one finishes. A backend started by Thoth at that moment shows up as a failed start; reopening it is enough.
 - **Windows git failure → ZIP fallback.** On Windows, a git error during `hermes update` falls back to downloading the release ZIP only when git has not touched the checkout yet: same commit and branch as when the update started, no stash taken, no tree move begun. Once git has stashed, switched branch or started moving files, the update reports the git error and exits 1 instead, because the ZIP overlay would bury that state. Re-run `hermes update` after fixing the git problem.
-- **Desktop builds need a writable `.git`.** Building Hermes Desktop from a checkout with `hermes desktop` takes the same checkout lock as `hermes update` (which needs it too), kept in the checkout's git directory. If that directory is not writable for your user (for example a checkout owned by another account), the build refuses with `.../.git/hermes-update.lock is not writable` instead of building alongside a possible update. Fix the ownership or permissions of `.git`. On macOS/Linux, a lock file left read-only by a `sudo hermes update` is still usable.
-- **Restart record not writable.** `hermes update` records the owed gateway restart before it moves the checkout, in the host state directory (`$HERMES_GATEWAY_LOCK_DIR`, else `$XDG_STATE_HOME/hermes/gateway-locks`). If that directory cannot be written, the record goes into the current profile's Hermes home instead. Only that profile reads it, so the update goes ahead only on an install with no other profile. If other profiles exist, or the profile list cannot be read, the update refuses before moving anything. Make the state directory writable and run it again.
+- **Desktop builds need a writable `.git`.** Building Thoth from a checkout with `hermes desktop` takes the same checkout lock as `hermes update` (which needs it too), kept in the checkout's git directory. If that directory is not writable for your user (for example a checkout owned by another account), the build refuses with `.../.git/hermes-update.lock is not writable` instead of building alongside a possible update. Fix the ownership or permissions of `.git`. On macOS/Linux, a lock file left read-only by a `sudo hermes update` is still usable.
+- **Restart record not writable.** `hermes update` records the owed gateway restart before it moves the checkout, in the host state directory (`$HERMES_GATEWAY_LOCK_DIR`, else `$XDG_STATE_HOME/hermes/gateway-locks`). If that directory cannot be written, the record goes into the current profile's Thoth home instead. Only that profile reads it, so the update goes ahead only on an install with no other profile. If other profiles exist, or the profile list cannot be read, the update refuses before moving anything. Make the state directory writable and run it again.
 
 ### Checking your current version
 
@@ -460,7 +460,7 @@ procedure. Do not run Git or pip inside a signed app or an immutable image.
 
 ### Python 3.14 and older interpreters
 
-Hermes runs only on **Python 3.14**. `pyproject.toml` still declares
+Thoth runs only on **Python 3.14**. `pyproject.toml` still declares
 `requires-python = ">=3.11,<3.15"`, but every runtime dependency carries a
 `python_version >= '3.14'` marker. The wider range exists for one reason: a
 source install whose venv predates the PM migration (Python 3.11–3.13) must be
@@ -520,7 +520,7 @@ removes data. `--data` removes user data without deleting package-owned code.
 These modes are destructive; make a backup first.
 
 For MSIX/Store, use Windows Settings → Apps → Installed apps. For macOS,
-quit Hermes and move its app bundle to Trash. Docker, Nix, and Termux use the
+quit Thoth and move its app bundle to Trash. Docker, Nix, and Termux use the
 same manager that installed them. Their package files are not removed by the
 source uninstaller. Data deletion is separate from package removal.
 

@@ -233,7 +233,7 @@ def test_direct_packaged_cli_exposes_shims_before_electron(tmp_path):
 
     home = tmp_path / "home"
     home.mkdir()
-    payload = tmp_path / "Hermes.app/Contents/Resources/agent-payload"
+    payload = tmp_path / "Thoth.app/Contents/Resources/agent-payload"
     repo = payload / "repo"
     _write_bundled_stamp(repo)
     (repo / "install-stamp.json").write_text(json.dumps({
@@ -270,7 +270,7 @@ class TestSymlinkSealedLaunchers:
         home = tmp_path / "home"
         home.mkdir()
         monkeypatch.setattr(Path, "home", staticmethod(lambda: home))
-        payload_bin = tmp_path / "Hermes.app" / "Contents" / "Resources" / "agent-payload" / "bin"
+        payload_bin = tmp_path / "Thoth.app" / "Contents" / "Resources" / "agent-payload" / "bin"
         payload_bin.mkdir(parents=True)
         for name in ("hermes", "hermes-agent", "hermes-acp"):
             (payload_bin / name).write_text("fake mach-o shim\n", encoding="utf-8")

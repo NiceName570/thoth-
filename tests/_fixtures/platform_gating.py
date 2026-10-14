@@ -6,7 +6,7 @@ import pytest
 # ---------------------------------------------------------------------------
 # OS gating
 #
-# Hermes runs on Linux, macOS and native Windows, and a lot of its behaviour
+# Thoth runs on Linux, macOS and native Windows, and a lot of its behaviour
 # genuinely differs per host: PTY vs pywinpty, taskkill vs SIGTERM, launchd
 # vs systemd, Keychain vs libsecret, ``%LOCALAPPDATA%`` vs ``~/.hermes``.
 #

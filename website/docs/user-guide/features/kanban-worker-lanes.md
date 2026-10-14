@@ -5,20 +5,20 @@ A **worker lane** is a class of process that the kanban dispatcher can route tas
 This page is the contract. It exists for two audiences:
 
 - **Operators** picking which lanes to wire into a board (which profiles to create, which assignees to use).
-- **Plugin / integration authors** wanting to add a new lane shape (a CLI worker that wraps Codex / Claude Code / OpenCode, a containerised review worker, a non-Hermes service that pulls tasks via the API).
+- **Plugin / integration authors** wanting to add a new lane shape (a CLI worker that wraps Codex / Claude Code / OpenCode, a containerised review worker, a non-Thoth service that pulls tasks via the API).
 
 If you're writing the worker code itself — the agent that runs *inside* a lane — the kanban lifecycle and reference details are injected into the worker's system prompt automatically (the `KANBAN_GUIDANCE` block in [`agent/prompt_builder.py`](https://github.com/NousResearch/hermes-agent/blob/main/agent/prompt_builder.py)).
 
 ## The hierarchy
 
 ```text
-Hermes Kanban  =  canonical task lifecycle + audit trail
+Thoth Kanban  =  canonical task lifecycle + audit trail
 Worker lane    =  implementation executor for one assigned card
 Reviewer       =  human or human-proxy that gates "done"
 GitHub PR      =  upstreamable artifact (optional, for code lanes)
 ```
 
-Hermes Kanban owns lifecycle truth — `ready` → `running` → `review` / `blocked` / `done` / `archived`. Worker lanes execute work but never own that truth; everything they do flows back through the kanban kernel via the `kanban_*` tools (or, for non-Hermes external workers, via the API). Reviewers gate the transition from "code change written" to "task done."
+Thoth Kanban owns lifecycle truth — `ready` → `running` → `review` / `blocked` / `done` / `archived`. Worker lanes execute work but never own that truth; everything they do flows back through the kanban kernel via the `kanban_*` tools (or, for non-Thoth external workers, via the API). Reviewers gate the transition from "code change written" to "task done."
 
 ## What a lane provides
 
@@ -26,11 +26,11 @@ To be a kanban worker lane, an integration must provide three things:
 
 ### 1. An assignee string
 
-The dispatcher matches `task.assignee` against either a Hermes profile name (the default lane shape) or a registered non-spawnable identifier (the plugin lane shape — see [Adding an external CLI worker lane](#adding-an-external-cli-worker-lane) below). Tasks whose assignee doesn't resolve are left on `ready` with a `skipped_nonspawnable` event so a board operator can fix them; they are not silently dropped or executed by an arbitrary fallback.
+The dispatcher matches `task.assignee` against either a Thoth profile name (the default lane shape) or a registered non-spawnable identifier (the plugin lane shape — see [Adding an external CLI worker lane](#adding-an-external-cli-worker-lane) below). Tasks whose assignee doesn't resolve are left on `ready` with a `skipped_nonspawnable` event so a board operator can fix them; they are not silently dropped or executed by an arbitrary fallback.
 
 ### 2. A spawn mechanism
 
-For Hermes profile lanes, the dispatcher's `_default_spawn` runs `hermes -p <assignee> chat -q <prompt>` (or the equivalent module form when the `hermes` shim isn't on `$PATH`) inside the task's pinned workspace, with these env vars set:
+For Thoth profile lanes, the dispatcher's `_default_spawn` runs `hermes -p <assignee> chat -q <prompt>` (or the equivalent module form when the `hermes` shim isn't on `$PATH`) inside the task's pinned workspace, with these env vars set:
 
 | Variable | Carries |
 |---|---|
@@ -44,12 +44,12 @@ For Hermes profile lanes, the dispatcher's `_default_spawn` runs `hermes -p <ass
 | `HERMES_PROFILE` | the worker's own profile name (for `kanban_comment` author attribution) |
 | `HERMES_TENANT` | tenant namespace, if the task has one |
 
-For non-Hermes lanes (registered via a plugin), the plugin supplies its own `spawn_fn` callable that gets `task`, `workspace`, and `board` and returns an optional pid for crash detection.
+For non-Thoth lanes (registered via a plugin), the plugin supplies its own `spawn_fn` callable that gets `task`, `workspace`, and `board` and returns an optional pid for crash detection.
 
 ### Descendant process scope
 
 A task assignment belongs to the dispatcher worker, not to every program it starts.
-Hermes subprocess helpers carry a non-owner fence into shells, execution kernels,
+Thoth subprocess helpers carry a non-owner fence into shells, execution kernels,
 cron deliveries, hooks, language servers, and ordinary stdio MCP servers. Later
 children remain fenced even when a script removes the inherited task ID: CLI and
 tool mutations are rejected, rather than treating that script as an orchestrator.
@@ -60,7 +60,7 @@ dispatcher-pinned `HERMES_KANBAN_DB`): a descendant that works against a differe
 home — a test or reproduction under a scratch `HERMES_HOME` — gets a normal read-write board.
 
 The dispatcher explicitly grants a newly assigned worker its own scope. The managed
-Hermes-tools MCP endpoint can likewise act for its supervising worker, while the
+Thoth-tools MCP endpoint can likewise act for its supervising worker, while the
 executor's ordinary shell children remain fenced. Workers may only perform lifecycle
 handoffs and attach files to their assigned task; `unblock` remains orchestrator-only.
 Cross-task comments and follow-up task creation retain their existing behavior.
@@ -106,7 +106,7 @@ The dashboard renders run history with summaries, metadata blocks, and exit-stat
 
 ## Existing lane shapes
 
-### Hermes profile lane (default)
+### Thoth profile lane (default)
 
 The shape every kanban worker takes today: the assignee is a profile name, the dispatcher spawns `hermes -p <profile>`, the worker gets the `KANBAN_GUIDANCE` system-prompt block injected automatically, and uses the `kanban_*` tools to terminate the run. No setup beyond defining the profile.
 
@@ -114,11 +114,11 @@ When you create profiles for your fleet, choose names that match the *role* you 
 
 ### Orchestrator profile lane
 
-A specialisation of the profile lane: an orchestrator is a Hermes profile whose toolset includes `kanban` but excludes `terminal` / `file` / `code` / `web` for implementation. Its job is decomposing a high-level goal into child tasks via `kanban_create` + `kanban_link` and stepping back. The orchestrator skill encodes the anti-temptation rules.
+A specialisation of the profile lane: an orchestrator is a Thoth profile whose toolset includes `kanban` but excludes `terminal` / `file` / `code` / `web` for implementation. Its job is decomposing a high-level goal into child tasks via `kanban_create` + `kanban_link` and stepping back. The orchestrator skill encodes the anti-temptation rules.
 
 ## Adding an external CLI worker lane
 
-Wiring a non-Hermes CLI tool (Codex CLI, Claude Code CLI, OpenCode CLI, a local coding-model runner, etc.) as a kanban worker lane is *not yet a paved path*. The dispatcher's spawn function is pluggable (`spawn_fn` is a parameter on `dispatch_once`), and a plugin could register its own `spawn_fn` for a non-Hermes assignee, but the surrounding integration work — wrapping the CLI's exit code into `kanban_complete` / `kanban_block` calls, mapping the CLI's workspace/sandbox conventions onto the dispatcher's `HERMES_KANBAN_WORKSPACE` env, handling auth and per-CLI policy — is still per-integration design work.
+Wiring a non-Thoth CLI tool (Codex CLI, Claude Code CLI, OpenCode CLI, a local coding-model runner, etc.) as a kanban worker lane is *not yet a paved path*. The dispatcher's spawn function is pluggable (`spawn_fn` is a parameter on `dispatch_once`), and a plugin could register its own `spawn_fn` for a non-Thoth assignee, but the surrounding integration work — wrapping the CLI's exit code into `kanban_complete` / `kanban_block` calls, mapping the CLI's workspace/sandbox conventions onto the dispatcher's `HERMES_KANBAN_WORKSPACE` env, handling auth and per-CLI policy — is still per-integration design work.
 
 If you're considering adding a CLI lane, open an issue describing the specific CLI and the workflow you're trying to enable. The contract above is the constraints any such lane must satisfy; the implementation shape (one plugin per CLI vs a generic CLI-runner plugin parameterised by config) is open.
 

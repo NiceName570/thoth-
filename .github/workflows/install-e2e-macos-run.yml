@@ -8,7 +8,7 @@
 #                           script/updater/hermes-desktop-app-update
 #                           updates.
 #   gui-e2e (desktop arm)   tests/install/macos-desktop-e2e.sh - the
-#                           published Hermes-Setup.dmg, mounted and run,
+#                           published Thoth-Setup.dmg, mounted and run,
 #                           then the app driven by Playwright for the
 #                           app-update methods.
 #
@@ -21,7 +21,7 @@ on:
   workflow_call:
     inputs:
       install-method:
-        description: 'How OLD gets installed. Supported: installer-script, installer-script+desktop (curl | bash one-liner, optionally with --include-desktop) and desktop-installer@latest (the published Hermes-Setup.dmg).'
+        description: 'How OLD gets installed. Supported: installer-script, installer-script+desktop (curl | bash one-liner, optionally with --include-desktop) and desktop-installer@latest (the published Thoth-Setup.dmg).'
         required: true
         type: string
       update-method:
@@ -99,7 +99,7 @@ jobs:
   gui-e2e:
     # Short static name on purpose: name expressions render UNEXPANDED on
     # skipped jobs.
-    name: Hermes-Setup.dmg
+    name: Thoth-Setup.dmg
     if: >-
       inputs.install-method == 'desktop-installer@latest' && inputs.tag-has-desktop
       && contains(fromJSON('["open-app-update", "hermes-desktop-app-update", "hermes-update", "installer-script", "installer-script+desktop"]'), inputs.update-method)
@@ -144,7 +144,7 @@ jobs:
         env:
           HERMES_E2E_LOG_DIR: ${{ runner.temp }}/e2e-logs
 
-      - name: Install ${{ inputs.install-ref }} via Hermes-Setup.dmg
+      - name: Install ${{ inputs.install-ref }} via Thoth-Setup.dmg
         run: |
           set -euo pipefail
           tests/install/macos-desktop-e2e.sh --phase install \

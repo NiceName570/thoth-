@@ -90,7 +90,7 @@ class TestOllamaNumCtxDiskL2:
         _clear_in_proc()
         MM._local_probe_disk_put("server_type", "http://127.0.0.1:11434", "ollama")
         MM._local_probe_disk_put(
-            "ollama_num_ctx", "http://127.0.0.1:11434|llama3", 131072
+            "ollama_num_ctx_capped", "http://127.0.0.1:11434|llama3", 131072
         )
         with patch("httpx.Client") as mock_client:
             ctx = MM.query_ollama_num_ctx("llama3", "http://127.0.0.1:11434/v1")
@@ -113,6 +113,6 @@ class TestOllamaNumCtxDiskL2:
             ctx = MM.query_ollama_num_ctx("llama3", "http://127.0.0.1:11434/v1")
         assert ctx == 8192
         assert (
-            MM._local_probe_disk_get("ollama_num_ctx", "http://127.0.0.1:11434|llama3")
+            MM._local_probe_disk_get("ollama_num_ctx_capped", "http://127.0.0.1:11434|llama3")
             == 8192
         )

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Hermes CLI - Main entry point.
+"""Thoth CLI - Main entry point.
 
 Usage:
     hermes                     # Interactive chat (default)
@@ -440,7 +440,7 @@ def _inside_mcp_add_args(argv: list, index: int) -> bool:
 
     ``mcp add --args`` is command-argv passthrough. Flags after that point
     belong to the child MCP command (for example Docker MCP Toolkit's
-    ``--profile``), not to Hermes' own profile selector.
+    ``--profile``), not to Thoth's own profile selector.
     """
     try:
         mcp_index = argv.index("mcp", 0, index)
@@ -1165,7 +1165,7 @@ def _has_any_provider_configured(*, strict_profile_scope: bool = False) -> bool:
         except Exception:
             pass
 
-    # Claude Code OAuth credentials count only once Hermes is explicitly
+    # Claude Code OAuth credentials count only once Thoth is explicitly
     # configured — having Claude Code installed isn't consent to use its tokens.
     if _has_hermes_config and not strict_profile_scope:
         try:
@@ -1665,7 +1665,7 @@ def _first_run_setup_guard(args) -> None:
     """No provider configured: offer `hermes setup` (TTY) or exit 1 with guidance."""
     print()
     print(
-        "It looks like Hermes isn't configured yet -- no API keys or providers found."
+        "It looks like Thoth isn't configured yet -- no API keys or providers found."
     )
     print()
     print("  Run:  hermes setup")
@@ -1870,7 +1870,7 @@ def _forward_command(name: str, module: str, attr: str, *, forward_return: bool 
 
 
 cmd_setup = _forward_command("cmd_setup", "hermes_cli.setup", "run_setup_wizard", doc='Interactive setup wizard.')
-cmd_login = _forward_command("cmd_login", "hermes_cli.auth", "login_command", doc='Authenticate Hermes CLI with a provider.')
+cmd_login = _forward_command("cmd_login", "hermes_cli.auth", "login_command", doc='Authenticate Thoth CLI with a provider.')
 cmd_logout = _forward_command("cmd_logout", "hermes_cli.auth", "logout_command", doc='Clear provider authentication.')
 cmd_auth = _forward_command("cmd_auth", "hermes_cli.auth_commands", "auth_command", doc='Manage pooled credentials.')
 cmd_status = _forward_command("cmd_status", "hermes_cli.status", "show_status", doc='Show status of all components.')
@@ -1883,7 +1883,7 @@ cmd_doctor = _forward_command("cmd_doctor", "hermes_cli.doctor", "run_doctor", f
 cmd_dump = _forward_command("cmd_dump", "hermes_cli.dump", "run_dump", doc='Dump setup summary for support/debugging.')
 cmd_debug = _forward_command("cmd_debug", "hermes_cli.debug", "run_debug", doc='Debug tools (share report, etc.).')
 cmd_skin = _forward_command("cmd_skin", "hermes_cli.skin_cmd", "skin_command", doc='Skin management (list / use / set).')
-cmd_import = _forward_command("cmd_import", "hermes_cli.backup", "run_import", forward_return=True, doc='Restore a Hermes backup from a zip file.')
+cmd_import = _forward_command("cmd_import", "hermes_cli.backup", "run_import", forward_return=True, doc='Restore a Thoth backup from a zip file.')
 cmd_dashboard_register = _forward_command("cmd_dashboard_register", "hermes_cli.dashboard_register", "cmd_dashboard_register", doc='Register a self-hosted dashboard OAuth client with Nous Portal.')
 cmd_gateway_enroll = _forward_command("cmd_gateway_enroll", "hermes_cli.gateway_enroll", "cmd_gateway_enroll", doc='Enroll a self-hosted gateway with a relay connector.')
 cmd_prompt_size = _forward_command("cmd_prompt_size", "hermes_cli.prompt_size", "cmd_prompt_size", doc='Show a byte/char breakdown of the system prompt + tool schemas.')
@@ -2230,7 +2230,7 @@ def cmd_config(args):
 
 
 def cmd_backup(args):
-    """Back up Hermes home directory to a zip file."""
+    """Back up Thoth home directory to a zip file."""
     from hermes_cli import backup
 
     if getattr(args, "quick", False):
@@ -2250,7 +2250,7 @@ def cmd_version(args):
 
 
 def cmd_uninstall(args):
-    """Uninstall Hermes Agent (or just the Chat GUI with --gui).
+    """Uninstall Thoth (or just the Chat GUI with --gui).
 
     ``--yes`` paths run from the desktop app's non-interactive cleanup scripts,
     so the TTY gate applies only when we actually need to prompt.
@@ -2330,7 +2330,7 @@ def _update_preflight_handled(args) -> bool:
     if handle_metadata_args(args, PROJECT_ROOT):
         sys.exit(0)
     if is_managed():
-        managed_error("update Hermes Agent")
+        managed_error("update Thoth")
         if not any(getattr(args, flag, False) for flag in ("plan", "check", "list_venv_holders")):
             _record_stop("managed_install", without_receipt="refused")  # an update attempt: a metrics row only
         return True
@@ -2339,7 +2339,7 @@ def _update_preflight_handled(args) -> bool:
     # docker/nix/apt refusal gates: on an image/package-managed install the
     # plan itself reports "not updatable in place" plus the right mechanism.
     if getattr(args, "plan", False):
-        # Read-only plan phase (#91277 Phase 2): inventory every running Hermes runtime across profiles, its
+        # Read-only plan phase (#91277 Phase 2): inventory every running Thoth runtime across profiles, its
         # supervisor, and its running code version — without mutating anything. Safe on a live fleet.
         from hermes_cli.update_inventory import (
             collect_runtime_inventory,
@@ -2396,7 +2396,7 @@ from hermes_cli.update_receipt import update_receipt_scope
 
 @update_receipt_scope()
 def cmd_update(args):
-    """Update Hermes Agent: hangup protection + update lock around ``_cmd_update_impl``."""
+    """Update Thoth: hangup protection + update lock around ``_cmd_update_impl``."""
     # Marks this frame as the CURRENT updater for
     # _old_updater.in_historical_update(); historical on-disk updaters do not
     # declare this local, so only they hand off through retired shims.
@@ -2629,7 +2629,7 @@ def _dashboard_prepare_runtime(args, headless_backend) -> bool:
     Returns ``start_mcp_discovery_after_bind`` for start_server.
     """
     # Attach gui.log early so dashboard startup/build failures are captured in
-    # the same logs directory as every other Hermes surface.
+    # the same logs directory as every other Thoth surface.
     try:
         from hermes_logging import setup_logging as _setup_logging_gui
         _setup_logging_gui(mode="gui")
@@ -2774,7 +2774,7 @@ def cmd_completion(args, parser=None):
 
 
 def cmd_logs(args):
-    """View and filter Hermes log files."""
+    """View and filter Thoth log files."""
     from hermes_cli.logs import tail_log, list_logs
 
     log_name = getattr(args, "log_name", "agent") or "agent"
@@ -2795,7 +2795,7 @@ def cmd_logs(args):
 
 
 def cmd_console(args):
-    """Open the safe Hermes command console."""
+    """Open the safe Thoth command console."""
     from hermes_cli.console_engine import run_console_repl
 
     return run_console_repl()
@@ -3300,11 +3300,11 @@ def _advertise_agent_env() -> None:
     ``AI_AGENT`` is the cross-agent standard (huggingface_hub reads it); the
     value must be our id in the public agent-harness registry
     (``hermes-agent``) — matching is exact. ``HERMES_AGENT`` is the
-    Hermes-specific marker. setdefault: never clobber an outer harness.
+    Thoth-specific marker. setdefault: never clobber an outer harness.
 
     ``AI_AGENT`` is the emerging cross-agent standard (huggingface_hub's agent detection reads it; pi and
     other agents set it — earendil-works/pi#7493) so generic tooling can attribute subprocesses to the
-    harness that spawned them. Hermes running inside another agent's terminal).
+    harness that spawned them. Thoth running inside another agent's terminal).
     """
     os.environ.setdefault("AI_AGENT", "hermes-agent")
     os.environ.setdefault("HERMES_AGENT", "true")
@@ -3464,7 +3464,7 @@ def _build_cli_parser():
         cmd_dashboard=cmd_dashboard,
         cmd_dashboard_register=cmd_dashboard_register,
     )
-    # "desktop" is canonical (Hermes-Setup.exe tells users to run it, so it
+    # "desktop" is canonical (Thoth-Setup.exe tells users to run it, so it
     # must be the name --help shows); "gui" is a deprecated alias.
     build_gui_parser(subparsers, cmd_gui=cmd_gui)
     build_logs_parser(subparsers, cmd_logs=cmd_logs)

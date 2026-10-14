@@ -87,23 +87,23 @@ def test_rename_cannot_overwrite_a_protected_destination(protected_home, tmp_pat
 def test_installed_desktop_app_can_be_read_but_never_changed(tmp_path, monkeypatch):
     from tests import conftest
 
-    app = tmp_path / "Applications" / "Hermes.app"
+    app = tmp_path / "Applications" / "Thoth.app"
     (app / "Contents").mkdir(parents=True)
     plist = app / "Contents" / "Info.plist"
     plist.write_text("unchanged", encoding="utf-8")
-    replacement = tmp_path / "Hermes.app.new"
+    replacement = tmp_path / "Thoth.app.new"
     replacement.mkdir()
     changes = [lambda: shutil.rmtree(app), plist.unlink, lambda: replacement.replace(app),
                lambda: plist.write_text("clobbered", encoding="utf-8")]
     try:  # Windows without Developer Mode cannot create symlinks
         (tmp_path / "linked").symlink_to(app.parent, target_is_directory=True)
-        changes.append(lambda: shutil.rmtree(tmp_path / "linked" / "Hermes.app"))
+        changes.append(lambda: shutil.rmtree(tmp_path / "linked" / "Thoth.app"))
     except OSError:
         pass
     monkeypatch.setattr(conftest, "_REAL_INSTALLED_GUI_APPS", [os.path.normcase(os.path.realpath(app))])
     assert plist.read_text(encoding="utf-8") == "unchanged"
     for change in changes:
-        with pytest.raises(pytest.fail.Exception, match="REAL installed Hermes desktop app"):
+        with pytest.raises(pytest.fail.Exception, match="REAL installed Thoth desktop app"):
             change()
     assert plist.read_text(encoding="utf-8") == "unchanged"
 
@@ -201,10 +201,10 @@ def test_checkout_inside_a_guarded_root_is_not_hermes_state():
 
 
 def test_hermes_exported_scratch_tmp_is_not_the_test_temp_root(tmp_path):
-    """A Hermes-launched shell hands pytest TMPDIR=<home>/cache/scratch (tagged by
+    """A Thoth-launched shell hands pytest TMPDIR=<home>/cache/scratch (tagged by
     HERMES_SCRATCH_DIR). With that home guarded, honoring it would put the session
     sandbox, basetemp and every tempfile default inside the guarded root; the
-    conftest must drop Hermes' own export before anything allocates temp space."""
+    conftest must drop Thoth's own export before anything allocates temp space."""
     home = tmp_path / "home"
     scratch = home / "cache" / "scratch"
     scratch.mkdir(parents=True)

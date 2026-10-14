@@ -205,7 +205,7 @@ def resolve_remote_target(raw_target: str, roster: list[dict]) -> Any:
 
 def _title_slug(row: dict) -> str:
     """The Bot Mode title's slug form (``"CoS Bot"`` → ``cos-bot``, what the picker inserts); "" when the
-    title is empty, reserved (a bot titled "Hermes") or not a valid handle."""
+    title is empty, reserved (a bot titled "Thoth") or not a valid handle."""
     title = str(row.get("title") or "")
     slug = re.sub(r"[^a-z0-9_-]+", "-", title.strip().lower()).strip("-")
     return slug if slug in alias_forms(title) else ""

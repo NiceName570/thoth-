@@ -5,7 +5,7 @@
  * tokens (`HERMES_BACKEND_READY` from a current backend, and the legacy
  * `HERMES_DASHBOARD_READY` from older ones). A stale artifact that matches
  * only one token boots a perfectly healthy backend and then kills it after
- * "Timed out waiting for Hermes backend port announcement" — invisible to
+ * "Timed out waiting for Thoth backend port announcement" — invisible to
  * every source-level test, because the packaged bundle is the only thing that
  * ships. afterPack runs for every packed build, so this turns that class of
  * skew into a build failure instead of a user-side boot loop.
@@ -35,7 +35,7 @@ function resolvePackagedAsarPath(context) {
     if (appOutDir.endsWith('.app')) {
       return path.join(appOutDir, 'Contents', 'Resources', 'app.asar')
     }
-    const productName = context.packager?.appInfo?.productFilename || 'Hermes'
+    const productName = context.packager?.appInfo?.productFilename || 'Thoth'
     return path.join(appOutDir, `${productName}.app`, 'Contents', 'Resources', 'app.asar')
   }
 

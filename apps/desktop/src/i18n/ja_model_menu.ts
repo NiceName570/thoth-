@@ -4,6 +4,10 @@ export const jaModelMenu = {
   editModels: 'モデルを編集…',
   followDefault: '設定のデフォルトを使用',
   refreshModels: 'モデルを更新',
+  ejectOllama: 'Ollama モデルをアンロード',
+  ejectedOllama: (count: number) =>
+    count === 0 ? '読み込まれた Ollama モデルはありません' : `Ollama モデル ${count} 件をメモリから解放しました`,
+  ejectOllamaFailed: 'Ollama モデルをアンロードできませんでした',
   favorites: 'お気に入り',
   addFavorite: 'お気に入りに追加',
   removeFavorite: 'お気に入りから削除',

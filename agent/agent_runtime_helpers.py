@@ -2079,7 +2079,7 @@ def create_openai_client(agent, client_kwargs: dict, *, reason: str, shared: boo
     # keeps SDK retries because it is NOT wrapped by the conversation loop.
     client_kwargs.setdefault("max_retries", 0)
     _ensure_copilot_headers(client_kwargs)
-    # All primary construction and recovery paths must identify Hermes to the official Codex
+    # All primary construction and recovery paths must identify Thoth to the official Codex
     # endpoint, including snapshots with custom header overrides.
     from agent.codex_headers import apply_required_codex_headers
     apply_required_codex_headers(
@@ -3144,7 +3144,7 @@ def _realign_tool_result_names(messages: list[dict[str, Any]]) -> list[dict[str,
     #   ``tool_name_by_call_id`` over the result name; requests that reach Gemini through the
     #   OpenAI-compatible path (OpenRouter, Vertex/LiteLLM proxies, any OpenAI-shaped gateway) skip that
     #   translation entirely and still send the internal name on the wire. Normalizing here rather than in
-    #   the OpenAI-compat serializer keeps it provider-agnostic: Gemini reaches Hermes under many model
+    #   the OpenAI-compat serializer keeps it provider-agnostic: Gemini reaches Thoth under many model
     #   strings and base URLs, so sniffing for "is this really Google?" is unreliable, and every other
     #   provider either ignores the field or agrees with the call name. Runs on the per-call copy, so the
     #   stored trajectory keeps the real tool name for the session DB and the UI — only the wire payload

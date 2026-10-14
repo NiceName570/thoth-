@@ -6,7 +6,7 @@ import { resolveDesktopHermesHome } from './data-paths'
 
 // macOS apps launched from Finder/Dock inherit only /usr/bin:/bin:/usr/sbin:/sbin,
 // which misses Homebrew and user-installed CLI tools (codex, git credential
-// helpers). Hermes' own managed tools need no PATH help — the backend composes
+// helpers). Thoth's own managed tools need no PATH help — the backend composes
 // their environment in-process via pm — but user tools on PATH do.
 const POSIX_SANE_PATH_ENTRIES = Object.freeze([
   '/opt/homebrew/bin',
@@ -186,7 +186,7 @@ function profileBackendParentEnv({
 /**
  * PATH with the entries under the PM store (HERMES_RUNTIME_DIR, else
  * <hermes home>/tools, as pm.environments.store_root resolves it) moved to the
- * front, every other entry kept in order. Hermes's own children must run the
+ * front, every other entry kept in order. Thoth's own children must run the
  * store's uv/node/npm, but shell-path.ts puts the user's login-shell entries
  * (nvm, Homebrew, ~/.local/bin) ahead of the inherited PATH, which is where
  * `hermes desktop` put the store dirs.

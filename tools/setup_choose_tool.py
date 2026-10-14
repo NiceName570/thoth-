@@ -21,7 +21,7 @@ _MACHINE_USE_ROWS = [
     {"id": "creative", "label": "Creative"},
     {"id": "mix", "label": "A bit of everything"},
 ]
-_NO_ANSWER = ("The card got no answer: it timed out, the turn was interrupted, or no Hermes desktop "
+_NO_ANSWER = ("The card got no answer: it timed out, the turn was interrupted, or no Thoth desktop "
               "window answered.")
 # From the fork on, each skipped card steps down this ladder, so setup ends in a handoff or a stop.
 _SKIP_LADDER = (
@@ -245,7 +245,7 @@ _CLOSED: dict[str, Callable[[], Optional[str]]] = {"connectors": _connectors_clo
 def setup_choose_tool(kind: str = "", question: str = "", options=None, multi_select=None,
                       callback: Optional[Callable] = None, session_id: Optional[str] = None) -> str:
     if callback is None:
-        return tool_error("setup_choose is only available in the Hermes desktop app.")
+        return tool_error("setup_choose is only available in the Thoth desktop app.")
     if kind not in KINDS:
         return tool_error(f"kind must be one of: {', '.join(KINDS)}.")
     text = str(question or "").strip()

@@ -526,7 +526,7 @@ export default function ChatPage({ isActive = true }: { isActive?: boolean }) {
       fontWeightBold: "700",
       macOptionIsMeta: true,
       // Hold Option (Alt on Linux/Windows) to force native text selection
-      // even when the inner Hermes TUI has enabled xterm mouse-events
+      // even when the inner Thoth TUI has enabled xterm mouse-events
       // mode (CSI ?1000h family). Without this, click-and-drag in the
       // chat canvas selects nothing and Cmd+C falls back to copying the
       // entire visible buffer, which is rarely what the user wants.
@@ -1477,7 +1477,7 @@ export default function ChatPage({ isActive = true }: { isActive?: boolean }) {
     //
     // For the browser embed we prefer input stability over terminal-style
     // mouse reporting, so we drop SGR mouse reports entirely instead of
-    // forwarding them into Hermes. Keyboard input, paste, and resize still
+    // forwarding them into Thoth. Keyboard input, paste, and resize still
     // behave normally.
     const forwardPtyData = (data: string, useMobileReplacement = true) => {
         // Mouse reports (scroll wheel etc.) are not typed input — swallow

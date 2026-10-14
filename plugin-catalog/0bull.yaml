@@ -13,7 +13,7 @@ description: >-
   anything typed on the phone (including passwords or codes you hand the agent) and your
   videos and captions go to 0bull.net; posts publish publicly to TikTok or YouTube; the
   server also exposes rental tools that spend money, which the skills tell the model never
-  to call but Hermes does not block.
+  to call but Thoth does not block.
 maintainer: 0bull
 tier: community
 category: tools

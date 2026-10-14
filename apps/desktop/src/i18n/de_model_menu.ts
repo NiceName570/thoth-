@@ -4,6 +4,10 @@ export const deModelMenu = {
   editModels: 'Modelle bearbeiten…',
   followDefault: 'Standard aus den Einstellungen verwenden',
   refreshModels: 'Modelle aktualisieren',
+  ejectOllama: 'Ollama-Modelle auswerfen',
+  ejectedOllama: (count: number) =>
+    count === 0 ? 'Keine Ollama-Modelle geladen' : `${count} Ollama-Modell(e) aus dem Speicher entfernt`,
+  ejectOllamaFailed: 'Ollama-Modelle konnten nicht ausgeworfen werden',
   favorites: 'Favoriten',
   addFavorite: 'Zu Favoriten hinzufügen',
   removeFavorite: 'Aus Favoriten entfernen',

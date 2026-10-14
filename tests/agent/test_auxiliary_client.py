@@ -2036,7 +2036,7 @@ class TestAuxiliaryFallbackLayering:
 
 
     def test_fallback_entry_openai_codex_uses_oauth_pool_without_inline_key(self):
-        """Configured Codex fallback resolves through Hermes auth / credential pool."""
+        """Configured Codex fallback resolves through Thoth auth / credential pool."""
         from agent.auxiliary_client import _resolve_fallback_entry
 
         pool_entry = MagicMock()
@@ -2436,7 +2436,7 @@ class TestTransientTransportRetry:
 
 class TestAuxClientNoSdkRetries:
     """Auxiliary OpenAI clients are constructed with SDK-internal retries
-    disabled so Hermes owns the retry/timeout budget (issue #54465). The SDK
+    disabled so Thoth owns the retry/timeout budget (issue #54465). The SDK
     default (max_retries=2 → 3 attempts) silently triples the effective wall
     time of every aux call against a slow/hung endpoint.
     """
@@ -2631,7 +2631,7 @@ class TestAuxiliaryTaskExtraBody:
 
     @pytest.mark.parametrize("task", ["session_search", "moa_reference", "moa_aggregator"])
     def test_generic_reasoning_fallback_clamps_ultra_for_auxiliary_and_moa_calls(self, task, monkeypatch):
-        """The OpenAI-compatible fallback must never put Hermes-only ``ultra`` on the wire."""
+        """The OpenAI-compatible fallback must never put Thoth-only ``ultra`` on the wire."""
         from agent.auxiliary_client import _ProfileProjection, _build_call_kwargs
 
         monkeypatch.setattr(
@@ -3095,9 +3095,9 @@ class TestAuxiliaryPoolRotationRetry:
 
 
 class TestAnthropicAuxiliaryReasoningTranslation:
-    """Native Anthropic aux adapters must receive normalized Hermes reasoning.
+    """Native Anthropic aux adapters must receive normalized Thoth reasoning.
 
-    MoA slot reasoning is carried through call_llm as a Hermes
+    MoA slot reasoning is carried through call_llm as a Thoth
     ``reasoning_config``. The native Anthropic Messages path cannot consume the
     generic OpenAI-style ``extra_body.reasoning`` fallback, so assert the final
     ``messages.create`` kwargs contain Anthropic's provider-aware wire shape.
@@ -4053,7 +4053,7 @@ class TestCodexAuxiliaryAdapterCompletedResponse:
 class TestCodexAuxiliaryAdapterReservedToolAliases:
     """The aux adapter emits the same tool schemas as the main Responses transport: shared
     converter (``strict: False``) plus provider-reserved-name aliasing (OpenCode, Perplexity),
-    reversed on the parsed tool_calls before Hermes dispatch (#114260)."""
+    reversed on the parsed tool_calls before Thoth dispatch (#114260)."""
 
     _TOOLS = [
         {"type": "function", "function": {"name": name, "description": name,
@@ -5432,7 +5432,7 @@ class TestFastModelTier:
         consulted ``_get_named_custom_provider`` — so a configured
         named provider was still downgraded to ``"custom"`` whenever the
         built-in catalog failed to load. The user's repro path
-        (Hermes desktop on Windows with a partial / early-startup
+        (Thoth desktop on Windows with a partial / early-startup
         catalog state) hits this branch.
         """
         import agent.auxiliary_client as ac

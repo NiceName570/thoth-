@@ -160,7 +160,7 @@ def _desktop_argv_tail(project_root: Optional[Path]) -> list[str]:
     packaged = any(
         (release / dist / name).exists()
         for dist in ("linux-unpacked", "linux-arm64-unpacked")
-        for name in ("hermes", "Hermes")
+        for name in ("hermes", "Thoth")
     )
     return ["desktop", "--skip-build"] if packaged else ["desktop"]
 
@@ -582,9 +582,9 @@ def render_desktop_entry(exec_command: str, icon: str) -> str:
     return (
         "[Desktop Entry]\n"
         "Type=Application\n"
-        "Name=Hermes\n"
-        "GenericName=Hermes Desktop\n"
-        "Comment=Launch Hermes Desktop\n"
+        "Name=Thoth\n"
+        "GenericName=Thoth\n"
+        "Comment=Launch Thoth\n"
         f"Exec={exec_command}\n"
         f"Icon={icon}\n"
         "Terminal=false\n"
@@ -772,7 +772,7 @@ def _alias_legacy_desktop_entry(applications_dir: Path, exec_command: str, icon:
 
     Shells resolve a taskbar pin by the entry file name it was pinned against: deleting the
     file makes GNOME drop the favourite and Plasma leave an inert item, and nothing can
-    re-pin for the user. The alias stays launchable for old pins without listing Hermes
+    re-pin for the user. The alias stays launchable for old pins without listing Thoth
     twice. Only a file that still names this app is converted; anything else at that path
     is left alone. True when the legacy file was (re)written.
     """
@@ -781,7 +781,7 @@ def _alias_legacy_desktop_entry(applications_dir: Path, exec_command: str, icon:
         text = legacy.read_text(encoding="utf-8-sig")
     except OSError:
         return False
-    if not any(line.strip() == "Name=Hermes" for line in text.splitlines()):
+    if not any(line.strip() == "Name=Thoth" for line in text.splitlines()):
         return False
     alias_contents = _render_legacy_alias_entry(exec_command, icon)
     if text == alias_contents:

@@ -186,7 +186,7 @@ class ComputerUseProvider(ProviderBase):
 
     @abstractmethod
     def create_backend(self, *, permission_mode: str) -> ComputerUseBackend:
-        """A fresh, unstarted backend for one Hermes session (the tool calls ``start()``/``stop()``).
+        """A fresh, unstarted backend for one Thoth session (the tool calls ``start()``/``stop()``).
         ``permission_mode`` is ``standard`` | ``bounded`` | ``unrestricted`` (approval bypass active)."""
 
     def is_available(self) -> bool:

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Prove a macOS user who installed OLD via the published desktop installer
-# (Hermes-Setup.dmg from the website) can reach HEAD.
+# (Thoth-Setup.dmg from the website) can reach HEAD.
 #
 # The macOS sibling of tests/install/windows-e2e.ps1's desktop-installer
 # arm, sharing the staging trick: every git process is pointed at a local
@@ -171,8 +171,8 @@ find_installed_app() {
   # Require this installation's app, never an unrelated /Applications copy.
   local cand
   for cand in \
-    "$INSTALL_DIR/apps/desktop/release/mac-arm64/Hermes.app" \
-    "$INSTALL_DIR/apps/desktop/release/mac/Hermes.app"; do
+    "$INSTALL_DIR/apps/desktop/release/mac-arm64/Thoth.app" \
+    "$INSTALL_DIR/apps/desktop/release/mac/Thoth.app"; do
     [ -d "$cand" ] && { printf '%s' "$cand"; return 0; }
   done
   return 1
@@ -182,7 +182,7 @@ phase_install() {
   # shellcheck disable=SC1090
   . "$STATE"
   arm_redirect
-  step "installing OLD ($OLD_REF) via the published Hermes-Setup.dmg"
+  step "installing OLD ($OLD_REF) via the published Thoth-Setup.dmg"
 
   # Pair both historical inputs. Today's downloaded install.sh can call helpers
   # absent from OLD (e.g. ensure-rolldown-binding.mjs). Use the published
@@ -218,17 +218,17 @@ phase_install() {
   # attach never works, and run bare it waits forever on its setup-choice
   # screen. Launch it in the background with our env (direct exec, not
   # `open`: launchd inherits NONE of the redirect env) and drive the
-  # "Install Hermes" button with native input.
+  # "Install Thoth" button with native input.
   local rc=0
   HERMES_SETUP_DEV_REPO_ROOT="$bootstrap_root" source_build_env bash "$ASSETS/drive-dmg-install.sh" \
     --app-bin "$app_bin" \
     --install-dir "$INSTALL_DIR" \
     --proof-dir "$LOG_DIR" 2>&1 \
     | ts_prefix > "$LOG_DIR/bootstrap-install.log" || rc=$?
-  log_group "Hermes-Setup (dmg bootstrap) transcript" "$LOG_DIR/bootstrap-install.log"
+  log_group "Thoth-Setup (dmg bootstrap) transcript" "$LOG_DIR/bootstrap-install.log"
   local bootstrap_log="$LOG_DIR/bootstrap-logs/bootstrap-installer.log"
   if [ -f "$bootstrap_log" ]; then
-    log_group "Hermes-Setup inner installer log" "$bootstrap_log"
+    log_group "Thoth-Setup inner installer log" "$bootstrap_log"
   fi
   hdiutil detach "$mount" >/dev/null 2>&1 || true
   [ "$rc" -eq 0 ] || fail "dmg bootstrap exited $rc; transcript above"
@@ -246,12 +246,12 @@ phase_install() {
     || fail "read-only verification failed after install"
   HERMES_DISABLE_LAZY_INSTALLS=1 PYTHONDONTWRITEBYTECODE=1 source_build_env "$hermes" --version 2>&1 | ts_prefix > "$LOG_DIR/version-old.log" || fail "hermes --version failed after install"
   ok "hermes --version works: $(head -c 120 "$LOG_DIR/version-old.log" | tr -d '\n')"
-  find_installed_app >/dev/null || fail "no installed Hermes.app after the dmg bootstrap"
+  find_installed_app >/dev/null || fail "no installed Thoth.app after the dmg bootstrap"
   ok "installed app: $(find_installed_app)"
   # The bootstrap can leave its launched app running. Preserve that handoff,
   # then request normal Quit of only this installed binary before smoke owns it.
   local installed_bin
-  installed_bin="$(find_installed_app)/Contents/MacOS/Hermes"
+  installed_bin="$(find_installed_app)/Contents/MacOS/Thoth"
   osascript -l JavaScript -e 'ObjC.import("AppKit"); function run(args) {
     const apps = $.NSWorkspace.sharedWorkspace.runningApplications;
     for (let i = 0; i < apps.count; i++) {
@@ -332,11 +332,11 @@ phase_update() {
       # The desktop stage is this leg's claim: the rebuilt app must exist.
       head_app=""
       for cand in \
-        "$INSTALL_DIR/apps/desktop/release/mac-arm64/Hermes.app" \
-        "$INSTALL_DIR/apps/desktop/release/mac/Hermes.app"; do
+        "$INSTALL_DIR/apps/desktop/release/mac-arm64/Thoth.app" \
+        "$INSTALL_DIR/apps/desktop/release/mac/Thoth.app"; do
         [ -d "$cand" ] && { head_app="$cand"; break; }
       done
-      [ -n "$head_app" ] || fail "no built Hermes.app under the checkout after the +desktop update"
+      [ -n "$head_app" ] || fail "no built Thoth.app under the checkout after the +desktop update"
       ok "rebuilt app present: $head_app"
       ;;
     open-app-update)
@@ -398,7 +398,7 @@ PYEOF
   local ildest="$LOG_DIR/install-logs"
   mkdir -p "$ildest"
   cp -R "$HOME_SANDBOX/.hermes/logs" "$ildest/hermes-logs" 2>/dev/null || true
-  local ud="$HOME_SANDBOX/Library/Application Support/Hermes"
+  local ud="$HOME_SANDBOX/Library/Application Support/Thoth"
   [ -d "$ud" ] && cp -R "$ud" "$ildest/desktop-userdata" 2>/dev/null || true
   cp "$HERMES_HOME/.hermes-update-result.json" "$ildest" 2>/dev/null || true
   ls -la "$HERMES_HOME" > "$ildest/hermes-home-ls.txt" 2>/dev/null || true

@@ -102,9 +102,9 @@ Platform plugins never mutate `os.environ`: YAML goes to `PlatformConfig.extra` 
 
 ## Plugin host boundary (`plugins.isolation: host`)
 
-`in_process` (default) imports user plugins into Hermes. `host` runs every non-bundled plugin in a
+`in_process` (default) imports user plugins into Thoth. `host` runs every non-bundled plugin in a
 per-profile host process (`hermes_cli/plugin_host.py` parent side, `plugin_host_child.py` child,
-`plugin_host_wire.py` framed JSON protocol). The child hands plugins a `RemotePluginContext`; Hermes
+`plugin_host_wire.py` framed JSON protocol). The child hands plugins a `RemotePluginContext`; Thoth
 registers proxies (tools, hooks, commands, provider objects as subclasses of the ABC it checks).
 Invariants:
 

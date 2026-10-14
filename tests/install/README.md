@@ -21,7 +21,7 @@ To declare a new method, edit the generator. To implement a method, flip the gat
 
 ## The isolation trick
 
-Source drivers redirect canonical Hermes Git URLs to a local bare clone at
+Source drivers redirect canonical Thoth Git URLs to a local bare clone at
 `serve.git`, using a driver-owned `GIT_CONFIG_GLOBAL` rewrite. This controls
 the source install/update boundary, not all network access: tool/dependency
 downloads and published bootstrap artifacts can still use the network.
@@ -57,7 +57,7 @@ Each leg with the script drivers has these phases:
 The cheap fixture checks are `tests/scripts/test_source_driver.py` and `tests-js/source-update-observer.test.mjs`. They do not run installers or prove native GUI relaunch. The native packaged-update drivers own automatic-relaunch acceptance. A later driver-owned launch checks chat only after the original update/relaunch assertions pass; it cannot repair a failed handoff. The observer does not change source files, products, dependency selections, or facts.
 
 The Windows `desktop-installer@latest` install downloads the published
-`Hermes-Setup.exe` and drives its GUI with AutoHotkey. The selected update
+`Thoth-Setup.exe` and drives its GUI with AutoHotkey. The selected update
 method is a separate axis. App-update methods click the running app's Update
 control; script and CLI methods use their corresponding entry points.
 
@@ -140,7 +140,7 @@ A leg can install a release from months back. The driver must not assume that th
   acceptance](BUNDLED_UPDATES.md) for the manifest and proof contracts.
 - `installer-script`: the platform's one-liner (`curl | bash` on linux and macos, `irm | iex` on windows).
 - `installer-script+desktop`: the same one-liner with its desktop stage opted in (`--include-desktop` / `-IncludeDesktop`). The stage builds the desktop app during the install. On windows it also registers Start Menu and Desktop shortcuts. On linux and macos it builds the app inside the checkout and registers no OS entry point.
-- `desktop-installer@latest`: the published GUI installer (`Hermes-Setup.exe` on windows, `Hermes-Setup.dmg` on macos), driven through the real user flow.
+- `desktop-installer@latest`: the published GUI installer (`Thoth-Setup.exe` on windows, `Thoth-Setup.dmg` on macos), driven through the real user flow.
 
 ## The two app-update variants
 
@@ -184,7 +184,7 @@ Per-leg timeouts and GitHub's matrix limits remain workflow constraints, not
 proof that every declared combination ran. Native package acceptance is separate
 from the deferred desktop Playwright application suite.
 
-Running the drivers locally: don't, except in a disposable VM. The windows driver kills every process named Hermes during teardown and the macos driver operates on `/Applications/Hermes.app`; on a machine with a real Hermes install they will interfere with it.
+Running the drivers locally: don't, except in a disposable VM. The windows driver kills every process named Thoth during teardown and the macos driver operates on `/Applications/Thoth.app`; on a machine with a real Thoth install they will interfere with it.
 
 ## Plugin upgrade preservation
 

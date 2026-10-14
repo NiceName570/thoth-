@@ -1,4 +1,4 @@
-"""Boot and lifecycle of the real Hermes processes on native Windows.
+"""Boot and lifecycle of the real Thoth processes on native Windows.
 
 * The source launcher ``hermes.exe`` reports checkout version and runs a
   one-shot chat turn: the reply is
@@ -59,7 +59,7 @@ def test_version_reports_checkout_identity(tmp_path: Path) -> None:
     assert res.returncode == 0, res.tail()
     version = get_version_info().derived_version
     assert version != "unknown", "the checkout must have a readable release or commit identity"
-    assert f"Hermes Agent v{version} (" in res.stdout, (
+    assert f"Thoth v{version} (" in res.stdout, (
         f"--version does not report this checkout's {version}:\n{res.tail()}")
 
 

@@ -20,7 +20,7 @@ def homes(tmp_path, monkeypatch):
     """Temp home/checkout/userData; every step that reaches outside tmp_path is stubbed.
 
     The full wipe otherwise boots out real launchd jobs, rmtrees real
-    ~/Library/Caches dirs and /Applications/Hermes.app, and (on Windows) edits
+    ~/Library/Caches dirs and /Applications/Thoth.app, and (on Windows) edits
     the registry — so stub those helpers and refuse any stray rmtree or
     subprocess instead of silently touching the developer's machine. Refusals
     are recorded in ``violations`` because the uninstall steps catch and log

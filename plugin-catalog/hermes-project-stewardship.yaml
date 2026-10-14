@@ -1,7 +1,7 @@
 name: hermes-project-stewardship
 repo: https://github.com/Sahil-SS9/hermes-project-stewardship
 sha: 4f733a81fa5f9da964e253e577b036b0b9608b85
-description: Durable project ownership and bounded initiative management for Hermes fleets.
+description: Durable project ownership and bounded initiative management for Thoth fleets.
 maintainer: Sahil-SS9
 tier: community
 category: automation

@@ -1,7 +1,7 @@
 """Tests for hermes_cli.agent_import — ``hermes import-agent``.
 
 Covers: source detection, Claude Code and Codex parsing, mapping into the
-real Hermes stores (memories/MEMORY.md, config.yaml command_allowlist /
+real Thoth stores (memories/MEMORY.md, config.yaml command_allowlist /
 approvals.deny / mcp_servers, skills/), dry-run write-nothing guarantees,
 malformed-input skip reports, and the never-import-secrets rule.
 
@@ -756,7 +756,7 @@ class TestSyncManifest:
         assert "Deploy v2." in (imports / "deploy-helper" / "SKILL.md").read_text(encoding="utf-8")
         assert (user_skill / "SKILL.md").read_text(encoding="utf-8") == "user content"
 
-        # An imported skill the user then EDITED locally is no longer Hermes-owned: the next sync
+        # An imported skill the user then EDITED locally is no longer Thoth-owned: the next sync
         # records a conflict for it instead of overwriting the edit (the docs promise this).
         (imports / "deploy-helper" / "SKILL.md").write_text("my local tweaks", encoding="utf-8")
         (claude_tree / "skills" / "deploy-helper" / "SKILL.md").write_text(

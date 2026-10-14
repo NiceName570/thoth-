@@ -1,13 +1,13 @@
-"""Guard: Hermes-owned subprocesses must not resolve managed runtimes by bare PATH.
+"""Guard: Thoth-owned subprocesses must not resolve managed runtimes by bare PATH.
 
-Hermes installs runtimes for itself — ``uv`` at ``$HERMES_HOME/bin/uv``, Node at
+Thoth installs runtimes for itself — ``uv`` at ``$HERMES_HOME/bin/uv``, Node at
 ``$HERMES_HOME/node``. Neither directory is on the ambient PATH of an arbitrary
-process, so ``shutil.which("uv")`` / ``shutil.which("node")`` in Hermes's own
+process, so ``shutil.which("uv")`` / ``shutil.which("node")`` in Thoth's own
 code has two failure modes:
 
 * the managed runtime is invisible, so the caller reports "not installed" or
   degrades to a slower tier on a machine that has exactly what it needed; and
-* when a system copy also exists, the one Hermes does not own wins — which is
+* when a system copy also exists, the one Thoth does not own wins — which is
   how a generated systemd unit or launchd plist can bake a system Node in and
   keep resolving it across reboots.
 
@@ -45,11 +45,11 @@ _KNOWN_PATH_FRAGMENTS = (
     "WinGet",
 )
 
-# Runtimes Hermes provisions into HERMES_HOME and must therefore resolve
+# Runtimes Thoth provisions into HERMES_HOME and must therefore resolve
 # through a managed-aware helper rather than PATH.
 _MANAGED_COMMANDS = frozenset({"uv", "node", "npm", "npx"})
 
-# Directories that are not Hermes-owned subprocess code: plugins ship their own
+# Directories that are not Thoth-owned subprocess code: plugins ship their own
 # resolution policy, tests assert against PATH deliberately, and skills/scripts/
 # evals run as standalone user-invoked programs.
 _EXEMPT_DIRS = (
@@ -100,7 +100,7 @@ _ALLOWED: dict[tuple[str, str], str] = {
     ),
     ("apps/desktop/electron/fixtures/source-backend.py", "uv"): (
         "Test fixture drives the real uv deliberately placed on the test "
-        "runner's PATH; it is not Hermes-owned subprocess resolution."
+        "runner's PATH; it is not Thoth-owned subprocess resolution."
     ),
 }
 
@@ -318,7 +318,7 @@ def test_no_unreviewed_bare_managed_runtime_lookups():
     ]
 
     assert not unexpected, (
-        "Bare PATH lookup for a Hermes-managed runtime.\n\n"
+        "Bare PATH lookup for a Thoth-managed runtime.\n\n"
         + "\n".join(f"  {rel}:{lineno}  which({cmd!r})" for rel, cmd, lineno in unexpected)
         + "\n\n$HERMES_HOME/bin (uv) and $HERMES_HOME/node are not on an "
         "arbitrary process's PATH, so this resolves a system copy — or nothing "

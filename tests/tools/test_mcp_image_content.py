@@ -24,7 +24,7 @@ from types import SimpleNamespace
 def _png_bytes():
     """Return a minimal valid PNG byte sequence.
 
-    Thoth' ``cache_image_from_bytes`` has a format-sniff guard that rejects
+    Thoth's ``cache_image_from_bytes`` has a format-sniff guard that rejects
     non-image payloads — use a real PNG signature so the test exercises the
     full pipeline instead of the reject path.
     """
@@ -62,7 +62,7 @@ class TestCacheMcpImageBlock:
         )
         tag = _cache_mcp_image_block(block)
         assert tag.startswith("MEDIA:"), f"expected MEDIA: tag, got {tag!r}"
-        # The cached file should be in Thoth' image cache dir
+        # The cached file should be in Thoth's image cache dir
         from gateway.platforms.base import get_image_cache_dir
         cache_dir = str(get_image_cache_dir().resolve())
         assert tag.startswith(f"MEDIA:{cache_dir}"), (

@@ -185,7 +185,7 @@ def apply(
         ok, ver = _check_binary_cached(codex_bin)
         if ok:
             msg_lines.append(f"codex CLI: {ver}")
-        # Migrate Thoth' MCP servers + Codex's curated plugins into ~/.codex/config.toml so the
+        # Migrate Thoth's MCP servers + Codex's curated plugins into ~/.codex/config.toml so the
         # spawned codex subprocess sees the same tool surface AND can call back into Thoth.
         msg_lines.extend(_migration_lines(config))
         msg_lines.append(

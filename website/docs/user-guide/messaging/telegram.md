@@ -179,7 +179,7 @@ platforms:
           - songsee          # skill commands work here too
 ```
 
-`priority_mode` controls how your list combines with Thoth' built-in priority list:
+`priority_mode` controls how your list combines with Thoth's built-in priority list:
 
 - `prepend`: put your commands first, then Thoth defaults
 - `append`: keep Thoth defaults first, then your commands

@@ -158,7 +158,7 @@ rm -f ~/.hermes/cache/scratch/link-card.json
 
 ## Optional: run as an MCP server instead
 
-`@stripe/link-cli --mcp` exposes the same commands as MCP tools over stdio. To register it with Thoth' native MCP:
+`@stripe/link-cli --mcp` exposes the same commands as MCP tools over stdio. To register it with Thoth's native MCP:
 
 ```
 hermes mcp add stripe-link --command "npx" --args "@stripe/link-cli --mcp"

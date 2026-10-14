@@ -12,7 +12,7 @@ Thoth integrates with Buzz three ways. Pick by where Thoth runs and what you wan
 
 | | ① Desktop runtime | ② Relay bridge (ACP) | ③ Native gateway platform |
 |---|---|---|---|
-| **What it is** | Buzz Desktop spawns Thoth locally as a managed harness | Buzz's `buzz-acp` bridges a channel to `hermes acp` over stdio | Thoth' gateway joins Buzz as a first-class messaging platform |
+| **What it is** | Buzz Desktop spawns Thoth locally as a managed harness | Buzz's `buzz-acp` bridges a channel to `hermes acp` over stdio | Thoth's gateway joins Buzz as a first-class messaging platform |
 | **Thoth runs** | On your desktop, launched by Buzz | On a server, launched by `buzz-acp` | In your own gateway, alongside Telegram/Discord/etc. |
 | **Best for** | Trying Thoth inside Buzz Desktop with zero config | A hosted agent identity when Buzz owns the transport | Full Thoth: memory, skills, approvals, cron, sessions |
 | **Inbound** | ACP stdio | ACP stdio (via relay WebSocket) | NIP-42-authenticated Nostr WebSocket (poll fallback) |
@@ -36,7 +36,7 @@ The spawned Thoth uses the same config, credentials, memory, and skills as `herm
 
 ## ③ Native gateway platform (recommended for full Thoth)
 
-The bundled `buzz` platform plugin makes Buzz a normal Thoth messaging platform — channels, DMs, mention gating, threaded replies, reactions, images, and cron delivery (`deliver=buzz`), with Thoth' own approvals, memory, and session management intact. Inbound arrives over a persistent NIP-42-authenticated Nostr WebSocket (dependency-free BIP-340 signing) with automatic fallback to CLI polling; outbound goes through the `buzz` CLI.
+The bundled `buzz` platform plugin makes Buzz a normal Thoth messaging platform — channels, DMs, mention gating, threaded replies, reactions, images, and cron delivery (`deliver=buzz`), with Thoth's own approvals, memory, and session management intact. Inbound arrives over a persistent NIP-42-authenticated Nostr WebSocket (dependency-free BIP-340 signing) with automatic fallback to CLI polling; outbound goes through the `buzz` CLI.
 
 ```bash
 hermes gateway setup   # pick Buzz

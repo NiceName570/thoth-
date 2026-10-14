@@ -42,7 +42,7 @@ When a user says "delegate is capped at N":
 # 1. What does the loaded config actually say?
 hermes config get delegation.max_concurrent_children
 
-# 2. Did Thoth' truncator or rejector actually fire?
+# 2. Did Thoth's truncator or rejector actually fire?
 grep -E "Truncated.*delegate_task|Too many tasks" ~/.hermes/logs/agent.log | tail
 # If neither line appears, neither cap path executed.
 

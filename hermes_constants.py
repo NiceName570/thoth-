@@ -719,7 +719,7 @@ def get_subprocess_home(env: dict[str, str] | None = None) -> str | None:
 
 
 def apply_subprocess_home_env(env: MutableMapping[str, str]) -> None:
-    """Apply Thoth' subprocess HOME contract to *env* in-place: ``HOME``/``HERMES_REAL_HOME``
+    """Apply Thoth's subprocess HOME contract to *env* in-place: ``HOME``/``HERMES_REAL_HOME``
     per the home mode, and the temp vars re-pointed at ``env["HERMES_HOME"]``'s scratch dir."""
     real_home = get_real_home(env)
     if real_home:
@@ -730,7 +730,7 @@ def apply_subprocess_home_env(env: MutableMapping[str, str]) -> None:
     apply_scratch_tmp_env(env)
 
 
-# --- Scratch dir: Thoth' own temp space, never the system /tmp ---
+# --- Scratch dir: Thoth's own temp space, never the system /tmp ---
 # System temp is tmpfs on most Linux distros and containers, so browser profiles, PTY probes,
 # download spools and every ``tempfile.mkdtemp()`` a Thoth-launched script performs eat RAM
 # and vanish on reboot. ``HERMES_HOME/cache/scratch`` is real storage with an IDLE retention:

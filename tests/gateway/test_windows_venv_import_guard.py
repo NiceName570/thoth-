@@ -47,7 +47,7 @@ def test_venv_import_setup_scopes_to_sys_path_not_global_environ(
     ``_ensure_windows_gateway_venv_imports`` patches the CURRENT process via
     ``sys.path``/``site.addsitedir`` only. Mutating ``os.environ["PYTHONPATH"]``
     there poisoned every child process spawned from the gateway session —
-    non-Thoth Python tools resolved Thoth' venv packages ahead of their own.
+    non-Thoth Python tools resolved Thoth's venv packages ahead of their own.
     """
     import gateway.run as gateway_run
 

@@ -132,7 +132,7 @@ gateway:
 
 With `require_mention: true`, group-chat messages are ignored unless
 they match a wake-word pattern. The defaults match `Thoth` and
-`@Hermes agent` variants. For a custom agent name, set regex patterns:
+`@Thoth agent` variants. For a custom agent name, set regex patterns:
 
 ```yaml
 gateway:

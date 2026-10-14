@@ -673,7 +673,7 @@ class TestChannelIdentity:
 
 
 class TestSnapshotIsCredentialStore:
-    """The copied Cookies/Login Data must live inside Thoth' secret lifecycle."""
+    """The copied Cookies/Login Data must live inside Thoth's secret lifecycle."""
 
     def test_excluded_from_backup(self):
         import hermes_cli.backup as bk

@@ -45,7 +45,7 @@ def build_auth_methods() -> list[Any]:
         ))
     methods.append(TerminalAuthMethod(
         id=TERMINAL_SETUP_AUTH_METHOD_ID, name="Configure Thoth provider", type="terminal", args=["--setup"],
-        description=("Open Thoth' interactive model/provider setup in a terminal. "
+        description=("Open Thoth's interactive model/provider setup in a terminal. "
                      "Use this when Thoth has not been configured on this machine yet."),
     ))
     return methods

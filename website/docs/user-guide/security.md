@@ -903,7 +903,7 @@ the OpenSSL system trust paths. If initialization fails, Thoth logs the
 failure and falls back to OpenSSL defaults.
 
 For a corporate TLS proxy, install its root through your organization's
-operating-system trust procedure. Thoth' provider resolver no longer selects
+operating-system trust procedure. Thoth's provider resolver no longer selects
 trust through `HERMES_CA_BUNDLE` or the old CA-environment-variable ladder.
 Sandboxed subprocesses can have their own separate CA configuration.
 

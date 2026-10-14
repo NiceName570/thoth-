@@ -743,7 +743,7 @@ async function startSocket() {
       });
       event.fromOwner = fromOwner;
 
-      // Ignore Thoth' own reply messages in self-chat mode to avoid loops.
+      // Ignore Thoth's own reply messages in self-chat mode to avoid loops.
       if (msg.key.fromMe && ((REPLY_PREFIX && event.body.startsWith(REPLY_PREFIX)) || recentlySentIds.has(msg.key.id))) {
         if (WHATSAPP_DEBUG) {
           emitDebugEvent({

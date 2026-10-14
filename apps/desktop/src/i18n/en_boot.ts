@@ -39,7 +39,7 @@ export const enBoot = {
       permission: "Thoth couldn't write to its data folder (permission problem).",
       diskFull: 'The disk is full, so Thoth could not start.',
       portInUse: 'Another program is using the network port Thoth needs.',
-      installMissing: "Part of Thoth' installation is missing. Choose Repair install to put it back."
+      installMissing: "Part of Thoth's installation is missing. Choose Repair install to put it back."
     },
     failure: {
       title: "Thoth couldn't start",
@@ -100,7 +100,7 @@ export const enBoot = {
       startAnyway: 'Start anyway…',
       confirmTitle: 'Start Thoth while the update still holds it?',
       confirmBody:
-        "The leftover update process may still be changing Thoth' files. Starting now can load a half-updated install, which may not work until you run the update again. Thoth records this choice in its log and leaves the update marker in place.",
+        "The leftover update process may still be changing Thoth's files. Starting now can load a half-updated install, which may not work until you run the update again. Thoth records this choice in its log and leaves the update marker in place.",
       confirmKeepWaiting: 'Keep waiting',
       confirmStart: 'Start anyway',
       startAnywayRefused: 'What holds the install changed before Thoth could start. Review it and try again.'

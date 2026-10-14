@@ -10,7 +10,7 @@ from typing import Any, List, Mapping, MutableMapping, Optional, TypeVar
 from agent.conversation_compression_archive import MERGED_DURABLE_ROWS, RETIRED_DURABLE_ROWS, UNNAMED_DURABLE_ROWS
 
 
-# These fields describe Thoth' durable record and timeline display, not
+# These fields describe Thoth's durable record and timeline display, not
 # provider-visible message content. The request builder strips them from every
 # outgoing copy and the token estimator ignores them: one set, so an estimate
 # never prices bytes the provider never receives (an edit's inline_diff in

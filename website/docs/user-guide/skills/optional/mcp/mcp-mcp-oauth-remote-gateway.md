@@ -41,7 +41,7 @@ messaging bot), because the user's browser resolves `127.0.0.1` to the user's ow
 laptop, not the remote container — so the authorization code never reaches Thoth.
 
 This skill does the OAuth dance by hand and writes the resulting tokens into the
-exact files Thoth' token storage expects, so a subsequent `/reload-mcp` finds
+exact files Thoth's token storage expects, so a subsequent `/reload-mcp` finds
 cached tokens and skips the browser flow entirely.
 
 ## When to Use
@@ -151,7 +151,7 @@ echo "$DISPLAY $WAYLAND_DISPLAY $SSH_CLIENT"
 ```
 
 No display + a remote indicator = remote gateway. `tools/mcp_oauth.py::_can_open_browser()`
-uses these same env vars, so if Thoth' own auto-detect says "headless", the
+uses these same env vars, so if Thoth's own auto-detect says "headless", the
 built-in flow won't work.
 
 ### 2. Find HERMES_HOME and the config path
@@ -258,7 +258,7 @@ When the user pastes the callback URL:
    - `resource=<mcp_server_url>` (if the AS required it in step 5, include here too)
 4. Response contains `access_token`, `refresh_token`, `token_type`, `expires_in`, `scope`.
 
-### 8. Write tokens in Thoth' exact schema
+### 8. Write tokens in Thoth's exact schema
 
 `tools/mcp_oauth.py::HermesTokenStorage` expects two files under
 `$HERMES_HOME/mcp-tokens/` (create dir with `0o700`, files with `0o600`):
@@ -386,4 +386,4 @@ tools. Refresh happens automatically before `expires_in` elapses.
 ## Related
 
 - `native-mcp` — general guide to configuring MCP in Thoth. Authoritative config reference lives there.
-- `mcporter` — the external CLI bridge, for ad-hoc MCP calls outside of Thoth' config.
+- `mcporter` — the external CLI bridge, for ad-hoc MCP calls outside of Thoth's config.

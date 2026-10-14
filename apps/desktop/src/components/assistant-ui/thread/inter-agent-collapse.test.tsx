@@ -111,7 +111,7 @@ describe('inter-agent collapse gate', () => {
       <Harness
         messages={[
           user('u1', 'ask hermes for the list'),
-          dispatch('a0', '@Hermes'),
+          dispatch('a0', '@Thoth'),
           user('u2', DELIVERY),
           assistant('a1', 'here is the list hermes sent', false)
         ]}
@@ -140,7 +140,7 @@ describe('inter-agent collapse gate', () => {
       <Harness
         messages={[
           user('u1', 'ask hermes for the list'),
-          dispatch('a0', '@Hermes'),
+          dispatch('a0', '@Thoth'),
           user('u2', DELIVERY),
           assistant('a1', 'here is the list hermes sent', false),
           user('u3', 'ok thanks'),

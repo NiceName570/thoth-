@@ -244,7 +244,7 @@ suppresses those incomplete-turn warnings from the thread and keeps the diagnost
 After starting the gateway, you need to **invite the bot** to any channel where you want it to respond:
 
 ```
-/invite @Hermes Agent
+/invite @Thoth
 ```
 
 The bot will **not** automatically join channels. You must invite it to each channel individually.
@@ -320,7 +320,7 @@ thread.
 
 Only the first token is checked against the known command list, so
 casual messages like `!nice work` pass through to the agent unchanged.
-The bang form also works behind a mention (`@Hermes !stop`) and with
+The bang form also works behind a mention (`@Thoth !stop`) and with
 leading whitespace — both dispatch as commands in threads.
 
 Approval prompts (dangerous command / `execute_code` approval) normally
@@ -338,7 +338,7 @@ flow at 5 posts, so extremely long output is closed with an explicit
 truncation notice rather than silently dropped. If the primary ephemeral path
 fails, Thoth retries via a second ephemeral API path — a slash reply is never
 posted publicly to the channel as a fallback. (Commands typed as regular
-messages — `!cmd` in threads, `@Hermes /cmd` — reply as normal visible
+messages — `!cmd` in threads, `@Thoth /cmd` — reply as normal visible
 messages instead.)
 
 ### Clarify prompts (one-tap buttons)
@@ -378,7 +378,7 @@ Understanding how Thoth behaves in different contexts:
 | Context | Behavior |
 |---------|----------|
 | **DMs** | Bot responds to every message — no @mention needed |
-| **Channels** | Bot **only responds when @mentioned** (e.g., `@Hermes Agent what time is it?`). In channels, Thoth replies in a thread attached to that message. |
+| **Channels** | Bot **only responds when @mentioned** (e.g., `@Thoth what time is it?`). In channels, Thoth replies in a thread attached to that message. |
 | **Threads** | If you @mention Thoth inside an existing thread, it replies in that same thread. Once the bot has an active session in a thread, **subsequent replies in that thread do not require @mention** — the bot follows the conversation naturally. |
 
 :::tip
@@ -926,7 +926,7 @@ cron job results, and other proactive notifications. To find a channel ID:
 SLACK_HOME_CHANNEL=C01234567890
 ```
 
-Make sure the bot has been **invited to the channel** (`/invite @Hermes Agent`).
+Make sure the bot has been **invited to the channel** (`/invite @Thoth`).
 
 ### Cron delivery targeting
 
@@ -1059,13 +1059,13 @@ Notes:
 | Problem | Solution |
 |---------|----------|
 | Bot doesn't respond to DMs | Verify `message.im` is in your event subscriptions and the app is reinstalled |
-| Bot works in DMs but not in channels | **Most common issue.** Add `message.channels` and `message.groups` to event subscriptions, reinstall the app, and invite the bot to the channel with `/invite @Hermes Agent` |
+| Bot works in DMs but not in channels | **Most common issue.** Add `message.channels` and `message.groups` to event subscriptions, reinstall the app, and invite the bot to the channel with `/invite @Thoth` |
 | Bot doesn't respond to @mentions in channels | 1) Check `message.channels` event is subscribed. 2) Bot must be invited to the channel. 3) Ensure `channels:history` scope is added. 4) Reinstall the app after scope/event changes |
 | Bot ignores messages in private channels | Add both the `message.groups` event subscription and `groups:history` scope, then reinstall the app and `/invite` the bot |
 | Bot doesn't respond in group DMs (multi-person DMs) | Add the `message.mpim` event subscription and the `mpim:history` scope (plus `mpim:read`), then **reinstall** the app. Without `message.mpim`, Slack never delivers group-DM messages to the bot — even though 1:1 DMs work. |
 | "Sending messages to this app has been turned off" in DMs | Enable the **Messages Tab** in App Home settings (see Step 5) |
 | "not_authed" or "invalid_auth" errors | Regenerate your Bot Token and App Token, update `.env` |
-| Bot responds but can't post in a channel | Invite the bot to the channel with `/invite @Hermes Agent` |
+| Bot responds but can't post in a channel | Invite the bot to the channel with `/invite @Thoth` |
 | Bot can chat but can't read uploaded images/files | Add `files:read`, then **reinstall** the app. Thoth now surfaces attachment access diagnostics in-chat when Slack returns scope/auth/permission failures. |
 | `missing_scope` error | Add the required scope in OAuth & Permissions, then **reinstall** the app |
 | Socket disconnects frequently | Check your network; Bolt auto-reconnects but unstable connections cause lag |
@@ -1081,7 +1081,7 @@ If the bot isn't working in channels, verify **all** of the following:
 4. ✅ `channels:history` scope is added (for public channels)
 5. ✅ `groups:history` scope is added (for private channels)
 6. ✅ App was **reinstalled** after adding scopes/events
-7. ✅ Bot was **invited** to the channel (`/invite @Hermes Agent`)
+7. ✅ Bot was **invited** to the channel (`/invite @Thoth`)
 8. ✅ You are **@mentioning** the bot in your message
 
 ---

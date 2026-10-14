@@ -440,7 +440,7 @@ def _inside_mcp_add_args(argv: list, index: int) -> bool:
 
     ``mcp add --args`` is command-argv passthrough. Flags after that point
     belong to the child MCP command (for example Docker MCP Toolkit's
-    ``--profile``), not to Thoth' own profile selector.
+    ``--profile``), not to Thoth's own profile selector.
     """
     try:
         mcp_index = argv.index("mcp", 0, index)

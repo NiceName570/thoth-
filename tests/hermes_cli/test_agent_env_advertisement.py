@@ -4,7 +4,7 @@ Port of earendil-works/pi#7493: entry points advertise the agent harness to
 child processes via the cross-agent ``AI_AGENT`` standard plus a
 Thoth-specific marker, without clobbering an outer harness.
 
-The AI_AGENT value must equal Thoth' id in the public agent-harness
+The AI_AGENT value must equal Thoth's id in the public agent-harness
 registry (``hermes-agent`` in huggingface.js ``agent-harnesses.ts``) —
 standard-var matching there is exact, so any other value is attributed to
 "unknown".

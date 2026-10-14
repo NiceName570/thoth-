@@ -387,7 +387,7 @@ def load_yaml_file(path: Path) -> dict[str, Any]:
         ) from exc
     try:
         reader = yaml.YAML(typ="safe")
-        reader.version = (1, 1)  # Match Thoth' existing config scalar semantics.
+        reader.version = (1, 1)  # Match Thoth's existing config scalar semantics.
         data = reader.load(raw)
     except yaml.YAMLError as exc:
         raise ConfigReadError(

@@ -1,4 +1,4 @@
-"""Regression tests for Thoth' Spectrum mixed text+attachment workaround."""
+"""Regression tests for Thoth's Spectrum mixed text+attachment workaround."""
 
 from __future__ import annotations
 

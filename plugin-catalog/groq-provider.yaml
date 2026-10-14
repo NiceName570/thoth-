@@ -9,7 +9,7 @@ description: >-
   leaves out Groq's speech-to-text, text-to-speech, prompt-guard and 4K-context models that Thoth
   cannot run. Not affiliated with Groq. Disclosure — registers one model provider at import and
   nothing else (no tools, hooks, commands or threads); chat requests and the model list go to
-  https://api.groq.com/openai/v1 (or the configured model.base_url) through Thoth' own client with
+  https://api.groq.com/openai/v1 (or the configured model.base_url) through Thoth's own client with
   GROQ_API_KEY, which Thoth reads; the plugin itself opens no connections, reads and writes no
   files and starts no processes.
 maintainer: AhmetArif0

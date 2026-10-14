@@ -6,7 +6,7 @@ description: "How the ACP adapter works: lifecycle, sessions, event bridge, appr
 
 # ACP Internals
 
-The ACP adapter wraps Thoth' synchronous `AIAgent` in an async JSON-RPC stdio server.
+The ACP adapter wraps Thoth's synchronous `AIAgent` in an async JSON-RPC stdio server.
 
 Key implementation files:
 
@@ -157,12 +157,12 @@ repair is session rotation, not another row.
 
 ACP does not implement its own auth store.
 
-Instead it reuses Thoth' runtime resolver:
+Instead it reuses Thoth's runtime resolver:
 
 - `acp_adapter/auth.py`
 - `hermes_cli/runtime_provider.py`
 
-So ACP advertises and uses the currently configured Thoth provider/credentials. It also always advertises a terminal setup auth method (`hermes-setup`, args `--setup`) so first-run ACP clients can open Thoth' interactive model/provider configuration before starting a normal ACP session.
+So ACP advertises and uses the currently configured Thoth provider/credentials. It also always advertises a terminal setup auth method (`hermes-setup`, args `--setup`) so first-run ACP clients can open Thoth's interactive model/provider configuration before starting a normal ACP session.
 
 ## Working directory binding
 

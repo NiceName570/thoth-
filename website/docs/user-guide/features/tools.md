@@ -184,7 +184,7 @@ VERCEL_OIDC_TOKEN="$(vc project token)" hermes chat
 
 With `container_persistent: true`, Thoth uses Vercel snapshots to preserve filesystem state across sandbox recreation for the same task. This can include Thoth-synced credentials, skills, and cache files inside the sandbox. Snapshots do not preserve live processes, PID space, or the same live sandbox identity.
 
-Background terminal commands use Thoth' generic non-local process flow: spawn, poll, wait, log, and kill work through the normal process tool while the sandbox is alive, but Thoth does not provide native Vercel detached-process recovery after cleanup or restart.
+Background terminal commands use Thoth's generic non-local process flow: spawn, poll, wait, log, and kill work through the normal process tool while the sandbox is alive, but Thoth does not provide native Vercel detached-process recovery after cleanup or restart.
 
 Leave `container_disk` unset or at the shared default `51200`; custom disk sizing is unsupported for Vercel Sandbox and will fail diagnostics/backend creation.
 

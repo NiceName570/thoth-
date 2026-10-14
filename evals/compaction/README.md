@@ -107,7 +107,7 @@ python evals/compaction/scripts/jev_cycles.py /path/lineage.json 160000 60 > cyc
 python evals/compaction/scripts/jev_cycles_report.py cycles-*.json      # markdown table
 ```
 
-Threshold 500000 ≈ Thoth' 1M-window posture; 160000 ≈ a 200K-window host.
+Threshold 500000 ≈ Thoth's 1M-window posture; 160000 ≈ a 200K-window host.
 Each cycle costs 1–8 Jev requests (< 1¢); a 40-cycle run is ~$0.20. The
 2026-09-19 runs are committed under `results/jev-cycles-2026-09-19/` (counts
 only, no transcript content) and summarised in `SCORECARD-2026-09-19-jev.md`:

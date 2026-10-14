@@ -951,7 +951,7 @@ def test_is_managed_scratch_path_rejects_kanban_metadata_subtrees(kanban_home):
     ``workspace_path`` was mis-set to the kanban home, the logs dir, or a
     board's metadata dir (i.e. the board root itself, not its ``workspaces/``
     child) must be refused. Without this, the containment check would happily
-    ``shutil.rmtree`` Thoth' DB/metadata/logs on task completion.
+    ``shutil.rmtree`` Thoth's DB/metadata/logs on task completion.
     """
     kanban_root = kanban_home / "kanban"
     kanban_root.mkdir(parents=True, exist_ok=True)

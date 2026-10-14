@@ -10,7 +10,7 @@ description: >-
   execution share one board: a motion is a sub-task of a per-project team channel task,
   speech and votes are `[agora:msg]` comments, the conclusion is written to task.result,
   and an adopted conclusion becomes execution tasks parented to the motion so context
-  reaches workers through Thoth' own parent handoff. Ships 20 tools, 3 kanban lifecycle
+  reaches workers through Thoth's own parent handoff. Ships 20 tools, 3 kanban lifecycle
   hooks, a dashboard tab and an `hermes agora` CLI; installing writes nothing — the three
   bundled skills are deployed by an explicit `hermes agora setup`. Disclosure — creates a
   Thoth profile per worker, copying the global config.yaml and .env into it (a private

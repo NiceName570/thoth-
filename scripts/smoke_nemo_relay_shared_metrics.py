@@ -303,7 +303,7 @@ def _validate_failure_rows(rows: dict[str, list[dict[str, Any]]]) -> None:
 
 # One interactive turn (2 model calls, 1 read_file) on the canary custom model: the v5 per-turn,
 # per-conversation rows it must produce, identical in SQLite and in the export. The agent-created
-# skill is Thoth' own work, so it records no feature_adoption row (the exact name sets assert that).
+# skill is Thoth's own work, so it records no feature_adoption row (the exact name sets assert that).
 V5_EXPECTED_DIMENSIONS = {
     "hermes.task_cost.count": {
         "api_calls_bucket": "2", "model": "custom", "outcome": "completed", "provider": "custom",

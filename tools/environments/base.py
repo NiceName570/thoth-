@@ -514,7 +514,7 @@ class BaseEnvironment(ABC):
                     rendered = output.render(suffix=f"\n[Command timed out after {timeout}s]")
                     if output.total_chars == 0:
                         rendered = rendered.lstrip()
-                    # The flag tells Thoth' own deadline apart from a command's own ``exit 124``.
+                    # The flag tells Thoth's own deadline apart from a command's own ``exit 124``.
                     return {**self._finalize_wait_result(output, rendered, 124), "hermes_timed_out": True}
                 touch_activity_if_due(_activity_state, "terminal command running")
                 trace.heartbeat()

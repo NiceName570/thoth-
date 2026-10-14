@@ -41,7 +41,7 @@ Gmail, Calendar, Drive, Contacts, Sheets, and Docs — through Thoth-managed OAu
 ## Scripts
 
 - `scripts/setup.py` — OAuth2 setup (run once to authorize)
-- `scripts/google_api.py` — compatibility wrapper CLI. It prefers `gws` for operations when available, while preserving Thoth' existing JSON output contract.
+- `scripts/google_api.py` — compatibility wrapper CLI. It prefers `gws` for operations when available, while preserving Thoth's existing JSON output contract.
 
 ## First-Time Setup
 
@@ -49,7 +49,7 @@ The setup is fully non-interactive — you drive it step by step so it works
 on CLI, Telegram, Discord, or any platform.
 
 Run the setup script with Python from the Thoth environment, not an unrelated
-system Python. `--install-deps` syncs Thoth' declared Google extra through PM;
+system Python. `--install-deps` syncs Thoth's declared Google extra through PM;
 after syncing, restart Thoth and rerun the OAuth command. If Thoth is not
 importable, use `hermes setup` first rather than installing packages with pip.
 

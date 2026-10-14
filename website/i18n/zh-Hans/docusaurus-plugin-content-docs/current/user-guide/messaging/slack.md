@@ -205,7 +205,7 @@ sudo hermes gateway install --system   # 仅 Linux：开机启动系统服务
 启动 gateway 后，你需要**邀请机器人**加入希望它响应的频道：
 
 ```
-/invite @Hermes Agent
+/invite @Thoth
 ```
 
 机器人**不会**自动加入频道。你必须逐个频道邀请它。
@@ -264,7 +264,7 @@ hermes slack manifest --slashes-only > /tmp/slashes.json
 | 场景 | 行为 |
 |---------|----------|
 | **私信** | 机器人响应每条消息——无需 @ 提及 |
-| **频道** | 机器人**仅在被 @ 提及时响应**（例如 `@Hermes Agent what time is it?`）。在频道中，Thoth 在该消息附带的话题中回复。 |
+| **频道** | 机器人**仅在被 @ 提及时响应**（例如 `@Thoth what time is it?`）。在频道中，Thoth 在该消息附带的话题中回复。 |
 | **话题** | 如果你在现有话题中 @ 提及 Thoth，它会在同一话题中回复。一旦机器人在话题中有活跃会话，**该话题中的后续回复无需 @ 提及**——机器人会自然跟进对话。 |
 
 :::tip
@@ -458,7 +458,7 @@ platforms:
 SLACK_HOME_CHANNEL=C01234567890
 ```
 
-确保机器人已被**邀请到该频道**（`/invite @Hermes Agent`）。
+确保机器人已被**邀请到该频道**（`/invite @Thoth`）。
 
 ---
 
@@ -575,13 +575,13 @@ slack:
 | 问题 | 解决方案 |
 |---------|----------|
 | 机器人不响应私信 | 验证 `message.im` 在事件订阅中，且应用已重新安装 |
-| 机器人在私信中正常但在频道中不响应 | **最常见问题。** 将 `message.channels` 和 `message.groups` 添加到事件订阅，重新安装应用，并用 `/invite @Hermes Agent` 邀请机器人加入频道 |
+| 机器人在私信中正常但在频道中不响应 | **最常见问题。** 将 `message.channels` 和 `message.groups` 添加到事件订阅，重新安装应用，并用 `/invite @Thoth` 邀请机器人加入频道 |
 | 机器人不响应频道中的 @mention | 1) 检查 `message.channels` 事件是否已订阅。2) 机器人必须被邀请到频道。3) 确保已添加 `channels:history` 权限范围。4) 更改权限范围/事件后重新安装应用 |
 | 机器人忽略私有频道中的消息 | 添加 `message.groups` 事件订阅和 `groups:history` 权限范围，然后重新安装应用并 `/invite` 机器人 |
 | 机器人不响应群组私信（多人私信） | 添加 `message.mpim` 事件订阅和 `mpim:history` 权限范围（以及 `mpim:read`），然后**重新安装**应用。没有 `message.mpim`，即使 1:1 私信正常，Slack 也永远不会向机器人投递群组私信消息。 |
 | 私信中出现"向此应用发送消息已被关闭" | 在 App Home 设置中启用 **Messages Tab**（见第五步） |
 | "not_authed" 或 "invalid_auth" 错误 | 重新生成 Bot Token 和 App Token，更新 `.env` |
-| 机器人响应但无法在频道中发帖 | 用 `/invite @Hermes Agent` 邀请机器人加入频道 |
+| 机器人响应但无法在频道中发帖 | 用 `/invite @Thoth` 邀请机器人加入频道 |
 | 机器人可以聊天但无法读取上传的图片/文件 | 添加 `files:read`，然后**重新安装**应用。当 Slack 返回权限范围/认证/权限失败时，Thoth 现在会在聊天中显示附件访问诊断信息。 |
 | `missing_scope` 错误 | 在 OAuth & Permissions 中添加所需权限范围，然后**重新安装**应用 |
 | Socket 频繁断开 | 检查你的网络；Bolt 会自动重连，但不稳定的连接会导致延迟 |
@@ -597,7 +597,7 @@ slack:
 4. ✅ 已添加 `channels:history` 权限范围（公开频道）
 5. ✅ 已添加 `groups:history` 权限范围（私有频道）
 6. ✅ 添加权限范围/事件后已**重新安装**应用
-7. ✅ 已**邀请**机器人加入频道（`/invite @Hermes Agent`）
+7. ✅ 已**邀请**机器人加入频道（`/invite @Thoth`）
 8. ✅ 你在消息中**@mention** 了机器人
 
 ---

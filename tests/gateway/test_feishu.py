@@ -1807,7 +1807,7 @@ class TestFeishuStripLeadingSelf(unittest.TestCase):
         from plugins.platforms.feishu.adapter import _strip_edge_self_mentions
 
         result = _strip_edge_self_mentions(
-            "@Hermes @Alice make a group", self._make_refs(other_name="Alice")
+            "@Thoth @Alice make a group", self._make_refs(other_name="Alice")
         )
         self.assertEqual(result, "@Alice make a group")
 
@@ -1815,7 +1815,7 @@ class TestFeishuStripLeadingSelf(unittest.TestCase):
         from plugins.platforms.feishu.adapter import _strip_edge_self_mentions
 
         # Terminal punct after the mention — strip the mention, keep the punct.
-        result = _strip_edge_self_mentions("look up docs @Hermes.", self._make_refs())
+        result = _strip_edge_self_mentions("look up docs @Thoth.", self._make_refs())
         self.assertEqual(result, "look up docs.")
 
     def test_preserves_trailing_self_before_non_terminal_char(self):
@@ -1823,9 +1823,9 @@ class TestFeishuStripLeadingSelf(unittest.TestCase):
 
         # Non-terminal char (here a Chinese particle) follows — preserve.
         result = _strip_edge_self_mentions(
-            "please don't @Hermes anymore", self._make_refs()
+            "please don't @Thoth anymore", self._make_refs()
         )
-        self.assertEqual(result, "please don't @Hermes anymore")
+        self.assertEqual(result, "please don't @Thoth anymore")
 
     def test_returns_input_when_no_self_refs(self):
         from plugins.platforms.feishu.adapter import _strip_edge_self_mentions, FeishuMentionRef
@@ -1841,7 +1841,7 @@ class TestFeishuNormalizeText(unittest.TestCase):
         refs = {"@_user_1": FeishuMentionRef(name="Thoth", open_id="ou_bot", is_self=True)}
         self.assertEqual(
             _normalize_feishu_text("stop pinging @_user_1 please", refs),
-            "stop pinging @Hermes please",
+            "stop pinging @Thoth please",
         )
 
     def test_at_all_rendered_as_english_literal(self):
@@ -2245,7 +2245,7 @@ class TestFeishuFetchMessageText(unittest.TestCase):
 
         # The rendered text should still have the bot name substituted.
         result = asyncio.run(adapter._fetch_message_text("m_parent"))
-        self.assertEqual(result, "@Hermes hi")
+        self.assertEqual(result, "@Thoth hi")
 
 class TestFeishuMentionEndToEnd(unittest.TestCase):
     """High-level scenarios from the design spec — verify the full pipeline."""
@@ -2344,9 +2344,9 @@ class TestFeishuMentionEndToEnd(unittest.TestCase):
         # Hint surfaces Alice; bot excluded because is_self=True.
         self.assertIn("[Mentioned: Alice (open_id=ou_alice)]", event.text)
         self.assertNotIn("Thoth (open_id=", event.text)
-        # Body: leading @Hermes stripped, Alice preserved, trailing text intact.
+        # Body: leading @Thoth stripped, Alice preserved, trailing text intact.
         self.assertIn("@Alice review the spec with Alice", event.text)
-        self.assertNotIn("@Hermes @Alice", event.text)
+        self.assertNotIn("@Thoth @Alice", event.text)
 
 
 # ---------------------------------------------------------------------------

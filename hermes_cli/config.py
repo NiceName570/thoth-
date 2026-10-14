@@ -1265,7 +1265,7 @@ def _persist_migration(config: dict[str, Any]) -> None:
     persist values that DIFFER from the schema default, plus explicit removals/renames of user
     data. Every migration step MUST write through here (``save_config`` with default-stripping
     ON, no ``merge_existing``) so the invariant cannot regress one migration at a time. A migration
-    is Thoth' own write, never a user turning a feature off."""
+    is Thoth's own write, never a user turning a feature off."""
     from hermes_cli.observability.shared_metrics_disabled import hermes_applied_write
 
     with hermes_applied_write():

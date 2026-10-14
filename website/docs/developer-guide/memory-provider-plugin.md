@@ -296,7 +296,7 @@ own directory, so a provider installed from the plugin catalog keeps all of them
 | Desktop → Capabilities → Tools → Memory (config panel) | `config_schema.py` (below) |
 | `hermes memory setup` wizard | `get_config_schema()` declares the fields the wizard prompts for, `save_config(config, hermes_home)` persists them, `post_setup(hermes_home, config)` runs afterwards for anything interactive (OAuth, first sync); `get_status_config()` feeds `hermes memory status` |
 | `hermes <provider> …` subcommands | `cli.py` with `register_cli(subparser)` ([Adding CLI Commands](#adding-cli-commands)) |
-| Python dependencies | `pyproject.toml` `[project] dependencies` (or `python_dependencies` in `plugin.yaml`); installed under Thoth' own pins at install time and re-applied across `hermes update` |
+| Python dependencies | `pyproject.toml` `[project] dependencies` (or `python_dependencies` in `plugin.yaml`); installed under Thoth's own pins at install time and re-applied across `hermes update` |
 
 Your provider's name, `memory.<name>` config section, data directory and tool names are the
 contract with existing users. A provider that moves out of core keeps all four; Thoth then

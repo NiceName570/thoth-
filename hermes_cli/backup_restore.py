@@ -422,7 +422,7 @@ def _extract_member_atomically(
         # Carrying the elevated bits across would let archive-controlled bytes
         # take over an existing setuid/setgid file, so ``hermes import`` would
         # hand whoever produced the zip the identity that file runs as.  Nothing
-        # constrains that to Thoth' own state either: the ``_external/`` branch
+        # constrains that to Thoth's own state either: the ``_external/`` branch
         # of ``run_import`` publishes members anywhere under ``$HOME``.  The
         # sticky bit is kept — it is inert on a regular file.
         mode &= ~(stat.S_ISUID | stat.S_ISGID)

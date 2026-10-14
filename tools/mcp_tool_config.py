@@ -262,7 +262,7 @@ def _managed_launcher(command: str) -> Optional[tuple[str, list[str]]]:
 
 
 def _is_hermes_managed_bin_dir(directory: str) -> bool:
-    """True for the bin dirs Thoth' bootstrap prepends to this process's PATH: anything
+    """True for the bin dirs Thoth's bootstrap prepends to this process's PATH: anything
     under the active hermes home (the sealed payload's venv, ``<home>/bin``, PM store
     runtimes) plus the running interpreter's own bin dir (a repo checkout's venv)."""
     try:
@@ -354,7 +354,7 @@ def _resolve_stdio_command(command: str, env: dict) -> tuple[str, dict]:
             which_hit = _which_with_config_pathext(resolved_command, path_arg, resolved_env)
         # A bare command keeps the USER's PATH semantics: bootstrap prepends the managed
         # runtime's bin dir to this process's PATH, so the first hit for a bare ``python3``
-        # is Thoth' bundled interpreter, which lacks the user's packages and dies on import
+        # is Thoth's bundled interpreter, which lacks the user's packages and dies on import
         # (#125300). Step past managed dirs to the user's own hit; the explicit launcher
         # family keeps the managed-first resolution (that is the point of
         # ``_launcher_fallback``), and a managed-only PATH keeps the managed hit.

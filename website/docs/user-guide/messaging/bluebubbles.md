@@ -50,7 +50,7 @@ platforms:
       require_mention: true
 ```
 
-With `require_mention: true`, DMs still work normally, but group-chat messages are ignored unless they match a mention pattern. If you do not configure custom patterns, Thoth uses conservative defaults for `Thoth` and `@Hermes agent` variants.
+With `require_mention: true`, DMs still work normally, but group-chat messages are ignored unless they match a mention pattern. If you do not configure custom patterns, Thoth uses conservative defaults for `Thoth` and `@Thoth agent` variants.
 
 For a custom agent name, set regex patterns:
 

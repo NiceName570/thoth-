@@ -23,7 +23,7 @@ from hermes_cli.update_cmd_common import _record_stop
 logger = logging.getLogger("hermes_cli.update_cmd")
 
 _ZIP_STAGING_ARTIFACT_SUFFIXES = ".hermes-update-staging", ".hermes-update-old"
-# Thoth' own root breadcrumbs: the swap journal + its owner lock, and the update/refresh markers.
+# Thoth's own root breadcrumbs: the swap journal + its owner lock, and the update/refresh markers.
 # They are never user work, so the dirty-tree guard must not refuse (and wedge) on them.
 _ZIP_HERMES_ROOT_ARTIFACTS = frozenset({
     ".hermes-update-zip-swap", ".hermes-update-zip-swap.lock", ".update-incomplete", ".lazy-refresh-incomplete"})
@@ -319,7 +319,7 @@ def _is_zip_preserved_entry_status_line(line: str, shipped: Optional[Collection[
 
 
 def _is_zip_staging_artifact_status_line(line: str, staged: Collection[str] = ()) -> bool:
-    """True when a porcelain status line is Thoth' own: a root breadcrumb, or the staging copy of an
+    """True when a porcelain status line is Thoth's own: a root breadcrumb, or the staging copy of an
     entry this run staged. Any other ``*.hermes-update-staging``/``-old`` may be a user's file (a manual
     ``cp -r tools tools.hermes-update-old``) that staging would delete, so it blocks."""
     top = _status_top_level(line[3:] if len(line) >= 3 else line)

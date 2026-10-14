@@ -1613,7 +1613,7 @@ slash:
   voice:
     description: "开关语音模式"
   wake:
-    description: "开关 'Hey Thoth' 唤醒词监听"
+    description: "开关 'Hey Thoth's 唤醒词监听"
   busy:
     description: "控制 Thoth 工作期间收到消息时的处理方式"
   tools:

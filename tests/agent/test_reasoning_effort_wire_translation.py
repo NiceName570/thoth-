@@ -1,4 +1,4 @@
-"""Wire translation for Thoth' extended reasoning-effort vocabulary (#89503).
+"""Wire translation for Thoth's extended reasoning-effort vocabulary (#89503).
 
 Thoth' internal effort set extends the wire vocabulary with ``ultra`` (the
 /reasoning command documents none..xhigh|max|ultra). OpenAI-compatible wires —

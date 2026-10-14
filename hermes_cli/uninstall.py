@@ -130,7 +130,7 @@ def remove_path_from_shell_configs():
             
             for line in content.split('\n'):
                 # Skip the "# Thoth" comment and following line
-                if '# Thoth' in line or '# hermes-agent' in line:
+                if '# Thoth's in line or '# hermes-agent' in line:
                     skip_next = True
                     continue
                 if skip_next and ('hermes' in line.lower() and 'PATH' in line):

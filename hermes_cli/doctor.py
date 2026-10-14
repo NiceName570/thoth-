@@ -74,7 +74,7 @@ def _check_auth_providers(should_fix: bool, f: Finding) -> None:
     with warn_on_error("Auth provider status", "(could not check: {e})"):
         from hermes_cli.auth import get_nous_auth_status_local, get_codex_auth_status, get_minimax_oauth_auth_status
         _login_row("Nous Portal auth", get_nous_auth_status_local())
-        # Native OAuth is Thoth' own device-code flow; the Codex CLI only imports existing ~/.codex/auth.json
+        # Native OAuth is Thoth's own device-code flow; the Codex CLI only imports existing ~/.codex/auth.json
         # tokens, so the hint sits under the Codex row (not as another provider's remedy).
         if not _login_row("OpenAI Codex auth", get_codex_auth_status(), show_error=True) and not _safe_which("codex"):
             check_info("codex CLI not installed (optional — only required to import tokens from an existing Codex CLI login)")

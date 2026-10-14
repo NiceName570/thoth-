@@ -142,7 +142,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         stream=sys.stderr,  # MCP uses stdio for protocol — logs MUST go to stderr
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
-    # Keep Thoth' own banners off stdout (the MCP wire).
+    # Keep Thoth's own banners off stdout (the MCP wire).
     os.environ.setdefault("HERMES_QUIET", "1")
     os.environ.setdefault("HERMES_REDACT_SECRETS", "true")
 

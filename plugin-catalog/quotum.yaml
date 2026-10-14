@@ -10,7 +10,7 @@ requires_hermes: ">=0.21.5"
 docs_url: https://github.com/qvotvm/hermes-quotum#readme
 known_issues:
   - The optional QUOTUM_X_SEARCH mode supplies its own client through create_client, so it works with plugins.isolation in_process (the default) only; under host isolation leave it off.
-  - Thoth' bundled Achievements page has no hook for outside achievements, so the seat's seals live in the plugin's own Seals tab.
+  - Thoth's bundled Achievements page has no hook for outside achievements, so the seat's seals live in the plugin's own Seals tab.
 capabilities:
   provides_tools: []
   provides_hooks: []

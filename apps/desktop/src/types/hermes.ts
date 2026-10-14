@@ -220,6 +220,8 @@ export interface EnvVarInfo {
   redacted_value: null | string
   tools: string[]
   url: null | string
+  /** Plain saved value, sent only for non-secret endpoint overrides (absent on older backends). */
+  value?: null | string
 }
 
 export interface EnvProviderProfile {

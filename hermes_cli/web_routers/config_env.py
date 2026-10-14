@@ -30,6 +30,8 @@ from hermes_cli.web_models import ConfigUpdate, EnvVarUpdate, EnvVarDelete, EnvV
 from typing import Any, Dict, List, Optional, Tuple
 
 _log = logging.getLogger("hermes_cli.web_server")
+# Non-secret endpoint overrides whose plain value rides in the /api/env listing.
+_PLAIN_ENV_SUFFIX = re.compile(r"_(?:BASE_URL|API_URL|URL|ENDPOINT)$")
 config_router = APIRouter()
 router = APIRouter()
 
@@ -272,15 +274,22 @@ def _get_env_vars_sync(profile: Optional[str] = None):
     def _row(var_name: str, info: dict, *, custom: bool = False) -> dict:
         value = env_on_disk.get(var_name)
         cat_meta = catalog_meta.get(var_name) or {}
+        # A custom key could hold anything, so it is a secret before any value is derived from it.
+        is_password = True if custom else info.get("password", cat_meta.get("is_password", False))
+        # A URL carrying userinfo (user:pass@host) holds a credential even on a non-secret key.
+        plain = bool(value) and not is_password and _PLAIN_ENV_SUFFIX.search(var_name) and "@" not in value
         # Hand OPTIONAL_ENV_VARS prose wins where present; the catalog fills any
         # gaps (description/url) and always supplies provider grouping hints.
         return {
             "is_set": bool(value),
             "redacted_value": redacted_credential_preview(value),
+            # Plain saved value for non-secret endpoint overrides (*_BASE_URL etc.)
+            # so Desktop can show and edit them in place instead of blanking them.
+            "value": value if plain else None,
             "description": info.get("description") or cat_meta.get("description", ""),
             "url": info.get("url") if info.get("url") is not None else cat_meta.get("url"),
             "category": info.get("category") or cat_meta.get("category", ""),
-            "is_password": info.get("password", cat_meta.get("is_password", False)),
+            "is_password": is_password,
             "tools": info.get("tools", []),
             "advanced": info.get("advanced", cat_meta.get("advanced", False)),
             # Messaging-platform credential owned by a Channels page card; the
@@ -320,7 +329,6 @@ def _get_env_vars_sync(profile: Optional[str] = None):
             continue
         row = _row(var_name, {}, custom=True)
         row["category"] = "custom"
-        row["is_password"] = True
         result[var_name] = row
     return result
 

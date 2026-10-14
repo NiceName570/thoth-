@@ -1,0 +1,6 @@
+name: jev-observer
+version: "0.1.0"
+description: "Passive Jev observer: after each completed exchange, scores the assistant reply on 21 observable conversational signals (typesafe/jev-1.13 via DefAPI) and stores probabilities and per-turn deltas locally. Never alters prompts, replies or memory. Sends reply text to api.defapi.org; needs DEFAPI_API_KEY."
+author: "Thoth fork"
+provides_hooks:
+  - post_llm_call

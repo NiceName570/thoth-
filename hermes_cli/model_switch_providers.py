@@ -828,7 +828,7 @@ def _lap_lmstudio_row(b: _PickerBuild, user_providers: dict) -> None:
     if isinstance(configured, dict) and _entry_base_url(configured, ("base_url", "api", "url")):
         return
     is_current = b.current_provider_norm == "lmstudio"
-    if not (is_current or isinstance(configured, dict)):
+    if not (is_current or isinstance(configured, dict) or b.curated.get("lmstudio")):
         return
     from hermes_cli.model_switch import _declared_model_ids
     configured_models = _declared_model_ids(configured.get("models")) if isinstance(configured, dict) else []
@@ -1178,6 +1178,27 @@ def _lap_custom_provider_rows(b: _PickerBuild, custom_providers: list) -> None:
         section4_slugs.add(slug.lower())
 
 
+_LMSTUDIO_AUTODETECT_TTL_SECONDS = 60.0
+_lmstudio_autodetect: dict[str, Any] = {}
+
+
+def _autodetected_lmstudio_models() -> list[str]:
+    """Models of an LM Studio server running on its default port, so it shows up in the picker
+    without any setup. One short probe per TTL window: a closed port on Windows takes about a
+    second to refuse, which every picker open must not pay."""
+    now = time.monotonic()
+    if now - _lmstudio_autodetect.get("at", float("-inf")) < _LMSTUDIO_AUTODETECT_TTL_SECONDS:
+        return list(_lmstudio_autodetect.get("models", []))
+    from hermes_cli.models_local import fetch_lmstudio_models
+    from hermes_cli.auth import AuthError
+    try:
+        models = fetch_lmstudio_models(api_key="", base_url="http://127.0.0.1:1234/v1", timeout=0.5)
+    except AuthError:
+        models = []
+    _lmstudio_autodetect.update(at=now, models=list(models))
+    return list(models)
+
+
 def _build_curated_lists(current_provider: str, current_base_url: str, current_model: str,
                         non_blocking: bool = False) -> dict[str, list[str]]:
     """Curated model lists keyed by hermes provider id, plus the dynamic ones (nous manifest,
@@ -1204,7 +1225,10 @@ def _build_curated_lists(current_provider: str, current_base_url: str, current_m
     # Left live even on the non-blocking path: it is a loopback endpoint with a 1.5s timeout, so it
     # cannot be the degraded remote provider this path must never wait on.
     is_current_lmstudio = current_provider.strip().lower() == "lmstudio"
-    if "lmstudio" not in curated and (os.environ.get("LM_API_KEY") or os.environ.get("LM_BASE_URL") or is_current_lmstudio):
+    if "lmstudio" not in curated and not (
+            os.environ.get("LM_API_KEY") or os.environ.get("LM_BASE_URL") or is_current_lmstudio):
+        curated["lmstudio"] = _autodetected_lmstudio_models()
+    if "lmstudio" not in curated:
         from hermes_cli.models_local import fetch_lmstudio_models
         from hermes_cli.auth import AuthError
         lm_base = (

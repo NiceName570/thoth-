@@ -1386,32 +1386,6 @@ def test_lmstudio_picker_lm_base_url_env_wins_over_active_config(monkeypatch):
     assert captured["base_url"] == "http://override.local:9999/v1"
 
 
-def test_lmstudio_picker_skips_probe_when_not_configured(monkeypatch):
-    """If the user has never configured LM Studio (no LM_API_KEY / LM_BASE_URL
-    and not on lmstudio), the picker must not pay the localhost probe cost
-    just to discover LM Studio is unavailable.
-    """
-    monkeypatch.setattr("agent.models_dev.fetch_models_dev", dict)
-    monkeypatch.setattr(providers_mod, "HERMES_OVERLAYS", {})
-    monkeypatch.delenv("LM_BASE_URL", raising=False)
-    monkeypatch.delenv("LM_API_KEY", raising=False)
-
-    captured: dict = {}
-
-    def _fake_fetch(api_key=None, base_url=None, timeout=5.0):
-        captured["base_url"] = base_url
-        return []
-
-    monkeypatch.setattr("hermes_cli.models_local.fetch_lmstudio_models", _fake_fetch)
-
-    list_authenticated_providers(
-        current_provider="openrouter",
-        current_base_url="https://openrouter.ai/api/v1",
-    )
-
-    assert "base_url" not in captured
-
-
 def test_lmstudio_bare_providers_block_does_not_hide_live_catalog(monkeypatch):
     """A `providers.lmstudio:` block that only tunes transport (e.g.
     request_timeout_seconds, no base_url/models) must not shadow the live

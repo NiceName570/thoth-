@@ -15,6 +15,7 @@ from argparse import Namespace
 
 PLUGIN_DIR = Path(__file__).resolve().parents[2] / "plugins" / "jev-observer"
 FAKE_KEY = "test-key-not-real-0000"
+FAKE_PROVIDER = {"name": "typesafe", "key": "TYPESAFE_API_KEY", "endpoint": "https://example.invalid", "model": "jev-1.13.0"}
 
 
 @pytest.fixture(autouse=True)
@@ -48,8 +49,8 @@ class FakeObserver:
         self.fail_times = fail_times
         self.error = error or RuntimeError("DefAPI returned HTTP 503")
 
-    def __call__(self, reply, turn_id, api_key):
-        self.calls.append((reply, turn_id, api_key))
+    def __call__(self, reply, turn_id, provider, api_key):
+        self.calls.append((reply, turn_id, provider["name"], api_key))
         if len(self.calls) <= self.fail_times:
             raise self.error
         from hermes_plugins.jev_observer.jev_adapter import ALLOWED_STATES
@@ -63,7 +64,7 @@ def plugin(monkeypatch):
     mod = _load_plugin()
     observer = FakeObserver()
     monkeypatch.setattr(mod.worker, "_observe", lambda *a: observer(*a))
-    monkeypatch.setattr(mod.worker, "_api_key", lambda: FAKE_KEY)
+    monkeypatch.setattr(mod.worker, "_resolve", lambda: (FAKE_PROVIDER, FAKE_KEY))
     monkeypatch.setattr(mod.worker, "_sleep", lambda s: None)
     spawned = []
 
@@ -94,7 +95,7 @@ def test_capture_is_pending_until_background_worker_runs(monkeypatch):
     mod = _load_plugin()
     observer = FakeObserver()
     monkeypatch.setattr(mod.worker, "_observe", observer)
-    monkeypatch.setattr(mod.worker, "_api_key", lambda: FAKE_KEY)
+    monkeypatch.setattr(mod.worker, "_resolve", lambda: (FAKE_PROVIDER, FAKE_KEY))
     queued = []
     monkeypatch.setattr(mod.worker, "spawn", lambda target, *args: queued.append((target, args)))
 
@@ -197,10 +198,30 @@ def test_retries_exhausted_writes_redacted_error(plugin):
 
 
 def test_missing_key_is_error_without_call(plugin, monkeypatch):
-    monkeypatch.setattr(plugin.worker, "_api_key", lambda: None)
+    monkeypatch.setattr(plugin.worker, "_resolve", lambda: (None, None))
     _fire(plugin, "s1", "turn-1", "a", "reply")
     (row,) = _rows(plugin)
-    assert row["status"] == "error" and "DEFAPI_API_KEY" in row["error"] and plugin.observer.calls == []
+    assert row["status"] == "error" and "Settings > Keys" in row["error"] and plugin.observer.calls == []
+
+
+@pytest.mark.parametrize("env, expected", [
+    ({"TYPESAFE_API_KEY": "ts-key", "DEFAPI_API_KEY": "da-key"}, ("typesafe", "ts-key")),
+    ({"DEFAPI_API_KEY": "da-key"}, ("defapi", "da-key")),
+    ({}, (None, None)),
+])
+def test_provider_prefers_typesafe_key_then_defapi(monkeypatch, env, expected):
+    mod = _load_plugin()
+    for name in ("TYPESAFE_API_KEY", "DEFAPI_API_KEY"):
+        monkeypatch.delenv(name, raising=False)
+    for name, value in env.items():
+        monkeypatch.setenv(name, value)
+    provider, key = mod.worker._resolve()
+    assert ((provider or {}).get("name"), key) == expected
+
+
+def test_recorded_model_names_the_provider_that_answered(plugin):
+    _fire(plugin, "s1", "turn-1", "a", "reply")
+    assert _rows(plugin)[0]["jev_model"] == "typesafe:jev-1.13.0"
 
 
 def test_hook_never_raises(plugin, monkeypatch):
@@ -213,14 +234,14 @@ def test_hook_never_raises(plugin, monkeypatch):
 def test_restart_resumes_pending_rows(monkeypatch):
     mod = _load_plugin()
     monkeypatch.setattr(mod.worker, "spawn", lambda target, *args: None)  # process "dies" before observing
-    monkeypatch.setattr(mod.worker, "_api_key", lambda: FAKE_KEY)
+    monkeypatch.setattr(mod.worker, "_resolve", lambda: (FAKE_PROVIDER, FAKE_KEY))
     _fire(mod, "s1", "turn-1", "a", "12345")
     assert _rows(mod)[0]["status"] == "pending"
 
     fresh = _load_plugin()  # restart
     observer = FakeObserver()
     monkeypatch.setattr(fresh.worker, "_observe", observer)
-    monkeypatch.setattr(fresh.worker, "_api_key", lambda: FAKE_KEY)
+    monkeypatch.setattr(fresh.worker, "_resolve", lambda: (FAKE_PROVIDER, FAKE_KEY))
     monkeypatch.setattr(fresh.worker, "spawn", lambda target, *args: target(*args))
     _fire(fresh, "s1", "turn-2", "b", "1234567")
     r1, r2 = _rows(fresh)

@@ -18,7 +18,7 @@ from typing import Any, Optional
 
 PLUGIN_NAME = "jev-observer"
 OBSERVER_VERSION = "jev-reply-v1"  # 21-dimension, reply-only baseline
-JEV_MODEL = "typesafe/jev-1.13"
+JEV_MODEL = "typesafe/jev-1.13"  # placeholder until a provider answers; see finish_ok
 # Desktop backend, gateway and CLI can share one home; a lease keeps one process per conversation
 # queue. Longer than a worst-case row (3 x 40 s timeouts + backoff) so a live worker is never robbed.
 LEASE_SECONDS = 300
@@ -171,7 +171,7 @@ def _latest_ok_per_exchange(conn, session_id: str, observer_version: str, *, bef
     return sorted(latest.values(), key=lambda r: r["id"])
 
 
-def finish_ok(row: sqlite3.Row, probabilities: dict[str, float]) -> None:
+def finish_ok(row: sqlite3.Row, probabilities: dict[str, float], jev_model: str) -> None:
     """Settle a row as observed. Deltas compare against the latest OK observation of the previous
     exchange in the same conversation and observer version; null when there is none."""
     conn = connect()
@@ -184,9 +184,9 @@ def finish_ok(row: sqlite3.Row, probabilities: dict[str, float]) -> None:
             prev = json.loads(basis["probabilities"])
             deltas = {k: (round(v - prev[k], 6) if k in prev else None) for k, v in sorted(probabilities.items())}
         conn.execute(
-            "UPDATE observations SET status='ok', probabilities=?, deltas=?, delta_basis_id=?, error=NULL, "
+            "UPDATE observations SET status='ok', jev_model=?, probabilities=?, deltas=?, delta_basis_id=?, error=NULL, "
             "observed_at=? WHERE id=? AND status='pending' AND lease_owner=?",
-            (json.dumps(probabilities, sort_keys=True), json.dumps(deltas) if deltas is not None else None,
+            (jev_model, json.dumps(probabilities, sort_keys=True), json.dumps(deltas) if deltas is not None else None,
              basis["id"] if basis is not None else None, now(), row["id"], PROCESS_OWNER))
         conn.commit()
     finally:

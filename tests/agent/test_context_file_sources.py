@@ -69,7 +69,7 @@ def test_truncated_and_suppressed_statuses_follow_the_builder(project, monkeypat
     assert entry["status"] == "truncated" and entry["loaded"] is True
     assert "[...truncated AGENTS.md" in build_context_files_prompt(cwd=str(project), home_override=home)
 
-    # Install-tree guard: a fallback cwd (cwd=None) inside the Hermes tree lists the file but never loads it.
+    # Install-tree guard: a fallback cwd (cwd=None) inside the Thoth tree lists the file but never loads it.
     monkeypatch.setattr("agent.runtime_cwd._is_install_tree", lambda _p: True)
     monkeypatch.chdir(project)
     entry = _by_label(list_context_file_sources(cwd=None, home_override=home))["AGENTS.md"]

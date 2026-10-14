@@ -48,7 +48,7 @@ def node_store(tmp_path, monkeypatch):
     # The fixture hashes its input. Never read the developer's live PM store to
     # fabricate a temporary one; CI's external Node still exercises this path.
     if Path(node).absolute().is_relative_to(_REAL_HERMES_HOME):
-        pytest.skip("requires a Node binary outside the real Hermes home")
+        pytest.skip("requires a Node binary outside the real Thoth home")
     monkeypatch.setenv("PATH", str(Path(node).parent))
     home = tmp_path / "home"
     home.mkdir()
@@ -115,7 +115,7 @@ def test_passive_discovery_never_installs_or_repairs_a_legacy_tree(tmp_path, mon
     assert {p.relative_to(home): p.read_bytes() for p in home.rglob("*") if p.is_file()} == before
     assert not (home / "tools").exists()
 
-    # A user-owned PATH toolchain is never selected: Hermes runs only PM's copy.
+    # A user-owned PATH toolchain is never selected: Thoth runs only PM's copy.
     external = tmp_path / "external"
     external.mkdir()
     npm = external / "npm"

@@ -188,7 +188,7 @@ dependencies = [
   # Windows log rotation. Stdlib ``RotatingFileHandler.doRollover()`` uses
   # ``os.rename()`` which fails with ``PermissionError [WinError 32]`` on
   # Windows whenever any other process holds an append-mode handle on
-  # ``agent.log`` (always the case in Hermes — TUI, gateway, ``hy_memory``
+  # ``agent.log`` (always the case in Thoth — TUI, gateway, ``hy_memory``
   # server, MCP servers, and on-demand CLI commands all log from separate
   # processes), pinning ``agent.log`` at the 5 MiB threshold and spamming
   # stderr on every emit (see #44873). ``concurrent-log-handler`` wraps the
@@ -389,7 +389,7 @@ pty = []
 # from `httpx` to `httpx2`. httpx2 arrives transitively, but tools/mcp_tool.py
 # and tools/mcp_oauth_manager.py import it by name to build the client objects
 # they hand to the SDK, so it is pinned here explicitly rather than left to
-# resolution. Hermes' own `httpx[socks]==0.28.1` in [dependencies] is
+# resolution. Thoth' own `httpx[socks]==0.28.1` in [dependencies] is
 # unaffected — the two distributions install side by side under different
 # module names.
 mcp = [
@@ -844,7 +844,7 @@ markers = [
   "real_concurrent_gate: opt out of the autouse stub that disables _detect_concurrent_hermes_instances",
   "real_agent_prewarm: opt out of the autouse stub that disables the tui_gateway deferred agent pre-warm timer",
   "real_retry_backoff: opt out of the tests/agent autouse stub that zeroes jittered_backoff",
-  "requires_wal: needs the runtime to actually enable SQLite WAL mode (skipped where Hermes falls back to journal_mode=DELETE)",
+  "requires_wal: needs the runtime to actually enable SQLite WAL mode (skipped where Thoth falls back to journal_mode=DELETE)",
   "no_isolate: opt out of per-file subprocess isolation (tests share mutable module-level state)",
   "ssh: marks tests requiring a reachable SSH server (skipped in normal CI)",
   "platforms(*specs, arch=None, arch_negate=False): run only on hosts matching at least one spec — linux/macos/windows/posix/any, 'not X' negation, optional arch filter",

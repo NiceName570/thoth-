@@ -265,7 +265,7 @@ _CACHE_DIRS: list[tuple[str, str]] = [
     # Mount it so the agent's file tools can read dropped binaries (zip/pdf/...) from inside sandbox
     # containers instead of dangling host paths (#76577).
     ("attachments", "attachments"),
-    # Desktop stages a large plain-text paste as a `.txt` under this Hermes-managed dir
+    # Desktop stages a large plain-text paste as a `.txt` under this Thoth-managed dir
     # (apps/desktop/electron/composer-paste.ts; `COMPOSER_PASTES_DIRNAME` in
     # agent/context_references.py) and attaches it as `@file:`. Without a mount/sync
     # entry, remote execution backends (ssh/daytona/vercel_sandbox) never received the

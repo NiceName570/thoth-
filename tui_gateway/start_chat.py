@@ -44,7 +44,7 @@ def start_chat(args: dict, caller_id: str | None = None) -> str:
 
     caller = server._sessions.get(get_session_env("HERMES_UI_SESSION_ID", "") if caller_id is None else caller_id)
     if caller is None:
-        return _rejected("start_chat works only from a chat in the Hermes desktop app.")
+        return _rejected("start_chat works only from a chat in the Thoth desktop app.")
     caller_home = Path(caller.get("profile_home") or server._hermes_home)
     message = str(args.get("message") or "").strip()
     if not message:

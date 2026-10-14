@@ -360,7 +360,7 @@ class TestTurnTraceIsolation:
 # "placeholder", "test-key", or "your-langfuse-key", the SDK accepts the
 # credentials at construction time (it does no server-side validation
 # eagerly) but drops every trace at flush time, with no signal in the
-# Hermes logs.  The fix in `_get_langfuse()` validates the documented
+# Thoth logs.  The fix in `_get_langfuse()` validates the documented
 # `pk-lf-` / `sk-lf-` prefix Langfuse always issues, surfaces a one-shot
 # warning naming the offending env var(s), and short-circuits via the
 # same `_INIT_FAILED` path used for missing credentials so subsequent
@@ -1654,7 +1654,7 @@ class TestAtexitFinalization(TestTurnTraceIsolation):
 class TestSystemPromptInGenerationInput:
     """The generation input must carry the system prompt even for providers
     that move it out of ``messages``: Anthropic Messages (``system`` kwarg)
-    and the Responses/Codex API (``instructions``).  Hermes forwards it to
+    and the Responses/Codex API (``instructions``).  Thoth forwards it to
     hooks as ``system_prompt``; the plugin prepends a ``role: system`` entry.
 
     Regression for the trace gap discussed in PR #32175 (Anthropic) and its
@@ -1744,7 +1744,7 @@ class TestSystemPromptCrossesHookBoundary:
     the regression coverage PR #32175's review asked for: verify the
     provider-specific request shape (Anthropic ``system`` kwarg, Codex
     ``instructions``) actually reaches the Langfuse generation input, with
-    no Hermes internals mocked (only the Langfuse client is faked)."""
+    no Thoth internals mocked (only the Langfuse client is faked)."""
 
     def _make_mod(self):
         sys.modules.pop("plugins.observability.langfuse", None)

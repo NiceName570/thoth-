@@ -1,6 +1,6 @@
 """Plugin activation with REAL MCP servers (Agent Plugins v1 portable packages).
 
-Every test drives a real Hermes process against the recording fake LLM and the real ``mcp``
+Every test drives a real Thoth process against the recording fake LLM and the real ``mcp``
 fixture server, launched from a portable package under ``<HERMES_HOME>/plugins/<dir>/``:
 
 * live activation: a plugin enabled over the Plugins Hub RPC (``plugins.manage toggle``) while a
@@ -331,7 +331,7 @@ def test_same_name_plugin_collision_is_reported(name_collision: dict[str, Any], 
 
 @pytest.mark.parametrize("trust", ["untrusted", None])
 def test_portable_package_trust_request_gates_write_tools_before_the_rpc(tmp_path: Path, trust: str | None) -> None:
-    """A package that marks its server ``trust: untrusted`` (plugin.json Hermes extension) gets the same gate as a
+    """A package that marks its server ``trust: untrusted`` (plugin.json Thoth extension) gets the same gate as a
     config.yaml server: a destructive tool is refused BEFORE the RPC in an unattended ``chat -q`` turn, while a
     read-only one still runs. Without the request the destructive call reaches the server (default trust)."""
     servers_ext = {"com.nousresearch.hermes": {"servers": {"pkg": {"trust": trust}}}} if trust else None

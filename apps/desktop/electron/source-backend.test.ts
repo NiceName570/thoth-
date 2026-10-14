@@ -190,7 +190,7 @@ test.skipIf(process.platform === 'win32')(
               encoding: 'utf8',
               timeout: 15_000
             }),
-            /Hermes/
+            /Thoth/
           )
           assert.equal(fs.existsSync(poison), false)
         }

@@ -547,7 +547,7 @@ def _(rid, params: dict) -> dict:
     if hint:
         return _ok(rid, {"blocked": True, "hint": hint, "code": -1, "output": ""})
     # Same-interpreter re-exec: ambient PYTHONPATH must survive the env factory's
-    # Hermes-owned strip (no-boot-through-venv).
+    # Thoth-owned strip (no-boot-through-venv).
     _compat = _tools_mod("hermes_cli._subprocess_compat")
     return _captured_exec(
         rid, [sys.executable, "-m", "hermes_cli.main", *argv], min(int(params.get("timeout", 240)), 600),

@@ -1,8 +1,8 @@
 """Shared harness for the OpenAI-dialect provider wire-conformance suite.
 
-Every test drives REAL Hermes processes (``hermes -z`` oneshot, ``--resume``, the
+Every test drives REAL Thoth processes (``hermes -z`` oneshot, ``--resume``, the
 ``tui_gateway`` stdio server) against a loopback fake of the vendor HTTP API
-(``tests/fakes/providers``) and asserts on the next wire request Hermes sends, the
+(``tests/fakes/providers``) and asserts on the next wire request Thoth sends, the
 user-visible answer, and persisted ``state.db`` rows. Homes are hermetic: a fake HOME
 whose ``.hermes`` is the HERMES_HOME, an allowlisted env with no credentials.
 """
@@ -92,7 +92,7 @@ def write_sitecustomize_shim(shim_dir: Path, body: str) -> Path:
     return shim_dir
 
 
-# One tool Hermes always offers on the CLI toolset and that has an observable,
+# One tool Thoth always offers on the CLI toolset and that has an observable,
 # side-effect-free result: the model reads a file the fixture wrote.
 READ_TOOL = "read_file"
 
@@ -118,7 +118,7 @@ class Home:
         return self.hermes_home / "state.db"
 
     def env(self, extra: dict[str, str] | None = None) -> dict[str, str]:
-        """Allowlisted env: the runner may itself be a Hermes process whose HERMES_* or
+        """Allowlisted env: the runner may itself be a Thoth process whose HERMES_* or
         credential env would silently reroute the child."""
         import pwd  # the suite is Linux-gated
 

@@ -7,7 +7,7 @@
  * connection → backend targetProfile "default") lost its name the moment the
  * hosted session activated, because the row that came back was keyed
  * (cloud-abc, default) — a different identity than the alias meta. It read as
- * the raw Cloud hostname, or as generic "Hermes" when Cloud was the only
+ * the raw Cloud hostname, or as generic "Thoth" when Cloud was the only
  * source.
  *
  * Drives the real `routing` + `labels` modules; only the SDK `host` is mocked.
@@ -86,7 +86,7 @@ describe('alias identity survives the hosted handoff (#89131)', () => {
     expect(displayName(hostedRow, botRosterMeta(hostedRow, metaV1))).toBe('Moxie ✨')
   })
 
-  it('renders the sole Cloud-only default as the alias, not "Hermes"', () => {
+  it('renders the sole Cloud-only default as the alias, not "Thoth"', () => {
     // Global route is Cloud: the active gateway IS the Cloud connection and
     // profiles.list returns one unannotated rich `default` row.
     hostMock.state.connectionId.get.mockReturnValue('cloud-abc')

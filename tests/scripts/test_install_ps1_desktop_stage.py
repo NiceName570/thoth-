@@ -55,7 +55,7 @@ public static class FakePy {
                 Environment.GetEnvironmentVariable("FAKE_INSTALL_DIR"),
                 "apps", "desktop", "release", "win-unpacked");
             Directory.CreateDirectory(dir);
-            File.WriteAllText(Path.Combine(dir, "Hermes.exe"), "fake");
+            File.WriteAllText(Path.Combine(dir, "Thoth.exe"), "fake");
         }
         return 0;
     }
@@ -277,7 +277,7 @@ def test_desktop_stage_uses_pm_sync_and_product_cli(tmp_path: Path) -> None:
     assert len(completion) == 1 and "--desktop" in completion[0], calls
     assert not any(c[-2:] == ["desktop", "--build-only"] or "sync_venv" in " ".join(c) for c in calls), calls
     # 3. the stage probed the artifact the fake build produced.
-    exe = install_dir / "apps" / "desktop" / "release" / "win-unpacked" / "Hermes.exe"
+    exe = install_dir / "apps" / "desktop" / "release" / "win-unpacked" / "Thoth.exe"
     assert exe.is_file(), calls
     # 4. ACL grant hit the intercepted icacls with the produced exe's dir.
     icacls_lines = icacls_log.read_text().splitlines()

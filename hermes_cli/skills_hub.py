@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Skills Hub CLI — Unified interface for the Hermes Skills Hub."""
+"""Skills Hub CLI — Unified interface for the Thoth Skills Hub."""
 
 import json
 import logging
@@ -546,7 +546,7 @@ def _scan_block_message(result, identifier: str) -> str:
     n = len(result.findings)
     findings = f"{n} high-risk pattern(s)" if n else "high-risk patterns"
     hard_block = result.verdict == "dangerous" and result.trust_level in ("community", "trusted")
-    policy = ("Hermes never installs unverified skills with high-risk findings, even with --force."
+    policy = ("Thoth never installs unverified skills with high-risk findings, even with --force."
               if hard_block else "Re-run with --force to install anyway.")
     return (f"the security scan found {findings} in '{identifier}' (listed above). "
             f"{policy} Review the findings or ask the author to fix them; to read the skill without "
@@ -725,7 +725,7 @@ _SKILL_METRIC_SOURCES = {"official": "catalog", "url": "url", "bundled": "bundle
 
 
 def _install_bundled(c: Console, name: str, invalidate_cache: bool) -> tuple:
-    """``_install_skill`` for a name Hermes ships: point at the active copy, or restore it from the
+    """``_install_skill`` for a name Thoth ships: point at the active copy, or restore it from the
     bundled source. The hub copy of a built-in is either a stranger's same-named skill or this
     repo's files rescanned as community content and refused, so neither is fetched."""
     from types import SimpleNamespace
@@ -1434,8 +1434,8 @@ def _github_publish(skill_path: Path, skill_name: str, target_repo: str, auth) -
     try:
         resp = call("post", f"{target_repo}/pulls", json={
             "title": f"Add skill: {skill_name}",
-            "body": f"Submitting the `{skill_name}` skill via Hermes Skills Hub.\n\n"
-                    f"This skill was scanned by the Hermes Skills Guard before submission.",
+            "body": f"Submitting the `{skill_name}` skill via Thoth Skills Hub.\n\n"
+                    f"This skill was scanned by the Thoth Skills Guard before submission.",
             "head": f"{fork_repo.split('/')[0]}:{branch_name}", "base": default_branch})
         if resp.status_code == 201:
             return True, f"PR created: {resp.json().get('html_url', '')}"

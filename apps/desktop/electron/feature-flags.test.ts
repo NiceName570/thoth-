@@ -9,7 +9,7 @@ import { isCanaryTag, resolveFeatureFlags } from './feature-flags'
 
 test('local models stay off on every channel, with or without --local', () => {
   for (const canary of [false, true]) {
-    for (const argv of [[], ['Hermes.exe'], ['Hermes.exe', '--local']]) {
+    for (const argv of [[], ['Thoth.exe'], ['Thoth.exe', '--local']]) {
       assert.deepEqual(resolveFeatureFlags({ argv, canary }), { localModels: false })
     }
   }

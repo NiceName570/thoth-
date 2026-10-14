@@ -335,7 +335,7 @@ def _print_nous_401_diagnostics(agent: Any, api_error: Exception) -> None:
         if is_anonymous_agent(agent):
             # The free tier has no credits, no agent key and no auth.json to inspect: its session
             # ended and could not be replaced. The two doors are a sign-in or another provider.
-            _plines(agent, "   Your session ended and Hermes couldn't start a new one.",
+            _plines(agent, "   Your session ended and Thoth couldn't start a new one.",
                     "   Sign in with a Nous account (it's free), or switch providers with /model.")
             return
     except Exception:
@@ -378,11 +378,11 @@ def _print_anthropic_401_diagnostics(agent: Any, key: Any) -> None:
     _plines(
         agent,
         "   Troubleshooting:",
-        f"     • Check ANTHROPIC_TOKEN in {_dhh}/.env for Hermes-managed OAuth/setup tokens",
+        f"     • Check ANTHROPIC_TOKEN in {_dhh}/.env for Thoth-managed OAuth/setup tokens",
         f"     • Check ANTHROPIC_API_KEY in {_dhh}/.env for API keys or legacy token values",
         "     • For API keys: verify at https://platform.claude.com/settings/keys",
-        "     • Hermes login (OAuth): run 'hermes auth add anthropic' to sign in again, then retry",
-        "     • Inspect what Hermes holds: hermes auth list anthropic",
+        "     • Thoth login (OAuth): run 'hermes auth add anthropic' to sign in again, then retry",
+        "     • Inspect what Thoth holds: hermes auth list anthropic",
         "     • Legacy cleanup: hermes config set ANTHROPIC_TOKEN \"\"",
         "     • Clear stale keys: hermes config set ANTHROPIC_API_KEY \"\"",
     )
@@ -902,7 +902,7 @@ def _print_nonretryable_auth_guidance(
             _vlines(
                 agent,
                 "   💡 Codex OAuth token was rejected (HTTP 401). Your token may have been",
-                "      refreshed by another client (Codex CLI, VS Code) or another Hermes profile.",
+                "      refreshed by another client (Codex CLI, VS Code) or another Thoth profile.",
                 f"      Sign this profile in again: `{oauth_relogin_command(provider)}`",
             )
         elif provider == "xai-oauth":
@@ -1094,7 +1094,7 @@ def nonretryable_client_error_result(
     if classified.reason == FailoverReason.ssl_cert_verification:
         _vlines(
             agent,
-            "   💡 Hermes couldn't verify the provider's security certificate. This fails the same",
+            "   💡 Thoth couldn't verify the provider's security certificate. This fails the same",
             "      way on every retry — fix the environment, then try again:",
             "      • Corporate TLS-inspecting proxy? Ask your administrator to install",
             "        its root certificate in the operating system trust store.",

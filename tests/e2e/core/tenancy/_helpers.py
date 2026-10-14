@@ -7,7 +7,7 @@ text, SOUL text, terminal cwd and a cron prompt. Each tenant also owns its own l
 WHO sent it. The invariant shared by every scenario is ``leaks(...) == []``: no tenant's canary may
 appear in another tenant's provider request, tool-subprocess env snapshot, or on-disk file.
 
-Hermes runs for real in child processes with HOME=<tmp>/home and HERMES_HOME=<tmp>/home/.hermes
+Thoth runs for real in child processes with HOME=<tmp>/home and HERMES_HOME=<tmp>/home/.hermes
 (profiles resolve under $HOME, never the real install), every credential env var stripped.
 """
 

@@ -1,8 +1,8 @@
-"""``auth.adopt_external_logins: false`` keeps Hermes off the Claude Code login (#113023).
+"""``auth.adopt_external_logins: false`` keeps Thoth off the Claude Code login (#113023).
 
-Claude Code's OAuth refresh token is single-use: once Hermes borrows and refreshes it, Hermes and
+Claude Code's OAuth refresh token is single-use: once Thoth borrows and refreshes it, Thoth and
 Claude Code hold one token family and whichever refreshes first logs the other out. With the opt-out
-set, Hermes must neither read nor refresh ``~/.claude/.credentials.json``, must drop the pool row an
+set, Thoth must neither read nor refresh ``~/.claude/.credentials.json``, must drop the pool row an
 earlier adopting process persisted, and must say so in ``hermes auth list``.
 """
 from __future__ import annotations

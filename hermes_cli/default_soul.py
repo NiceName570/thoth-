@@ -26,11 +26,11 @@ DEFAULT_SOUL_MD = _THOTH_V1_SOUL_MD + (
 )
 
 _HERMES_DEFAULT_SOUL_MD = _THOTH_V1_SOUL_MD.replace("You are Thoth, a personal AI agent.",
-                                                  "You are Hermes Agent, built by Nous Research.", 1)
+                                                  "You are Thoth, built by Nous Research.", 1)
 
 _SCAFFOLD_HEAD = (
-    "# Hermes Agent Persona\n\n<!--\nThis file defines the agent's personality and tone.\n"
-    "The agent will embody whatever you write here.\nEdit this to customize how Hermes communicates with you.\n\n"
+    "# Thoth Persona\n\n<!--\nThis file defines the agent's personality and tone.\n"
+    "The agent will embody whatever you write here.\nEdit this to customize how Thoth communicates with you.\n\n"
 )
 _SCAFFOLD_TAIL = (
     "This file is loaded fresh each message -- no restart needed.\n"
@@ -53,14 +53,14 @@ _LEGACY_TEMPLATE_SOULS = (
     _SCAFFOLD_HEAD + _SCAFFOLD_TAIL,
     # The previous generation of DEFAULT_SOUL_MD (same auto-seed mechanism, older string).
     (
-        "You are Hermes Agent, an intelligent AI assistant created by Nous Research. You are helpful, "
+        "You are Thoth, an intelligent AI assistant created by Nous Research. You are helpful, "
         "knowledgeable, and direct. You assist users with a wide range of tasks including answering questions, "
         "writing and editing code, analyzing information, creative work, and executing actions via your tools. "
         "You communicate clearly, admit uncertainty when appropriate, and prioritize being genuinely useful over "
         "being verbose unless otherwise directed below. Be targeted and efficient in your exploration and "
         "investigations."
     ),
-    # Upstream Hermes Agent's default, seeded before the Thoth rename (plus its ASCII-dashed twin).
+    # Upstream Thoth's default, seeded before the Thoth rename (plus its ASCII-dashed twin).
     _HERMES_DEFAULT_SOUL_MD,
     _HERMES_DEFAULT_SOUL_MD.replace("\u2014", "--"),
     # The first Thoth default, seeded before the finish-the-job paragraph (plus its ASCII-dashed twin).

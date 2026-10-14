@@ -41,7 +41,7 @@ with tempfile.TemporaryDirectory(prefix="hermes-desktop-backend-") as temporary:
         f"#!{sys.executable}\n"
         "import sys\n"
         "if '--version' in sys.argv:\n"
-        "    print('Hermes legacy fixture')\n"
+        "    print('Thoth legacy fixture')\n"
         "    sys.exit(0)\n"
         "print('WRONG_BACKEND_SELECTED', flush=True)\n"
         "sys.exit(73)\n"
@@ -80,7 +80,7 @@ with tempfile.TemporaryDirectory(prefix="hermes-desktop-backend-") as temporary:
                 assert "WRONG_BACKEND_SELECTED" not in output, output
                 assert child.poll() is None, output
                 if "HERMES_BACKEND_READY port=" in output:
-                    assert f"existing Hermes CLI at {expected}" in output, output
+                    assert f"existing Thoth CLI at {expected}" in output, output
                     print("PASS: packaged desktop selected its pinned backend over the mutable install")
                     break
                 time.sleep(0.1)

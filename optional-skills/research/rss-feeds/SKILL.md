@@ -2,7 +2,7 @@
 name: rss-feeds
 description: "Read RSS, Atom, JSON feeds; discover feeds behind a page."
 version: 1.0.0
-author: Teknium (teknium1), Hermes Agent
+author: Teknium (teknium1), Thoth
 license: MIT
 platforms: [linux, macos, windows]
 metadata:

@@ -230,7 +230,7 @@ class TestMigrate:
 
     def test_preserves_user_mcp_server_outside_managed_block(self, tmp_path):
         """Quirk #6: when a user adds their own MCP server entry directly
-        to ~/.codex/config.toml outside Hermes' managed block, re-running
+        to ~/.codex/config.toml outside Thoth' managed block, re-running
         migration must preserve it. Tested both above and below the
         managed block."""
         target = tmp_path / "config.toml"
@@ -414,7 +414,7 @@ class TestHermesHomeLeakGuard:
 
 
 class TestSameNameUserMcpTable:
-    """Issue #79023: a Hermes server whose name the user already declares outside the managed
+    """Issue #79023: a Thoth server whose name the user already declares outside the managed
     block must not be emitted twice (duplicate table header = TOML codex refuses to load)."""
 
     def test_user_table_wins_and_output_stays_valid_toml(self, tmp_path):

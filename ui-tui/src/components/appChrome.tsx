@@ -474,7 +474,7 @@ function IdleSince({ endedAt }: { endedAt: number }) {
 }
 
 // `wire` is the level the route actually sends (session.info.reasoning_effort_wire):
-// a clamped Hermes step such as `ultra` reads `ultra→max`, like the CLI's
+// a clamped Thoth step such as `ultra` reads `ultra→max`, like the CLI's
 // "ultra (sends max on this route)", never as a distinct wire level (#61634).
 const effortLabel = (effort?: string, wire?: string) => {
   const value = String(effort ?? '')

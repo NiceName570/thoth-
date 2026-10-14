@@ -29,7 +29,7 @@ def _tree(tmp_path):
 def test_current_packaged_launch_does_not_require_npm(tmp_path, monkeypatch):
     root, app, _ = _tree(tmp_path)
     monkeypatch.setattr(cli_main, "PROJECT_ROOT", root)
-    executable = app / "Hermes.exe"
+    executable = app / "Thoth.exe"
     args = argparse.Namespace(source=False, skip_build=False, force_build=False, build_only=False)
     with patch.object(desktop, "_desktop_launch_env", return_value=({}, [])), \
          patch.object(desktop, "_desktop_packaged_executable", return_value=executable), \

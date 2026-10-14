@@ -140,7 +140,7 @@ class RelayAdapter(BasePlatformAdapter):
         # platforms on one WS and a reply must egress through the platform the
         # inbound came from. Empty for a single-platform gateway (connector default).
         self._platform_by_chat: dict[str, str] = {}
-        # chat_id -> Hermes profile the connector routed the inbound to (multiplex mode). Echoed
+        # chat_id -> Thoth profile the connector routed the inbound to (multiplex mode). Echoed
         # on every outbound frame's metadata so the connector can stamp the SAME profile on the
         # next passthrough_forward for that chat; empty on a single-profile gateway.
         self._profile_by_chat: dict[str, str] = {}
@@ -719,7 +719,7 @@ class RelayAdapter(BasePlatformAdapter):
         chat_id: str,
         tasks: list,
         *,
-        title: str = "Hermes is working",
+        title: str = "Thoth is working",
         reply_to: Optional[str] = None,
         metadata: Optional[dict[str, Any]] = None,
         fallback_text: Optional[str] = None,
@@ -1199,7 +1199,7 @@ class RelayAdapter(BasePlatformAdapter):
         )
         event = MessageEvent(text=text, message_type=message_type, source=source)
         if itype == 3:
-            # A component press whose custom_id is a Hermes prompt token
+            # A component press whose custom_id is a Thoth prompt token
             # (hp1:<prompt_id>:<option_id>) becomes a STRUCTURED prompt answer;
             # foreign custom_ids keep the best-effort TEXT shape.
             decoded = self._decode_prompt_token(text)

@@ -1,7 +1,7 @@
 """Uninstall must not leave a dangling ``hermes`` command on Windows.
 
 Every uninstall mode deletes the code checkout, but the launcher copies
-staged onto PATH in the managed binary dir (the default Hermes root's
+staged onto PATH in the managed binary dir (the default Thoth root's
 ``bin``) live outside it. A surviving launcher makes ``hermes`` in a new
 terminal resolve and then error on its missing venv target — worse than
 command-not-found. The dir is wholly hermes-owned (pm keeps uv in its own

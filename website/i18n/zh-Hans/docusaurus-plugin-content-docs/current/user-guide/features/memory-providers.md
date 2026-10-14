@@ -6,7 +6,7 @@ description: "外部记忆提供者插件 — Honcho、OpenViking、Mem0、Hinds
 
 # Memory Providers
 
-Hermes Agent 内置 8 个外部记忆提供者插件，为 Agent 提供跨会话的持久化知识，超越内置的 MEMORY.md 和 USER.md。同一时间只能激活**一个**外部提供者——内置记忆始终与其并行工作。
+Thoth 内置 8 个外部记忆提供者插件，为 Agent 提供跨会话的持久化知识，超越内置的 MEMORY.md 和 USER.md。同一时间只能激活**一个**外部提供者——内置记忆始终与其并行工作。
 
 ## 快速开始
 
@@ -27,7 +27,7 @@ memory:
 
 ## 工作原理
 
-当记忆提供者激活时，Hermes 会自动：
+当记忆提供者激活时，Thoth 会自动：
 
 1. **注入提供者上下文**到系统 prompt（提示词）中（提供者已知的内容）
 2. **在每轮对话前预取相关记忆**（后台非阻塞）
@@ -43,7 +43,7 @@ memory:
 ### Honcho
 
 :::info 插件目录
-Honcho 由 [Plastic Labs](https://github.com/plastic-labs/honcho/tree/main/hermes-plugin-honcho) 维护，从[插件目录](./plugins.md)安装，不再随 Hermes 内置。它就是之前内置的同一个提供者：工具、配置文件和 `hermes honcho` 命令都没有变化。
+Honcho 由 [Plastic Labs](https://github.com/plastic-labs/honcho/tree/main/hermes-plugin-honcho) 维护，从[插件目录](./plugins.md)安装，不再随 Thoth 内置。它就是之前内置的同一个提供者：工具、配置文件和 `hermes honcho` 命令都没有变化。
 :::
 
 AI 原生的跨会话用户建模，具备辩证推理、会话范围上下文注入、语义搜索和持久化结论。基础上下文现在包含会话摘要以及用户表示和 peer card，使 Agent 能感知已讨论的内容。
@@ -146,15 +146,15 @@ hermes memory setup        # 选择 "honcho" — 运行 Honcho 专属的安装�
 
 **多 peer 配置：**
 
-Honcho 将对话建模为 peer 之间的消息交换——每个 Hermes profile 对应一个用户 peer 加一个 AI peer，共享同一个 workspace。workspace 是共享环境：用户 peer 在各 profile 间全局共享，每个 AI peer 拥有独立身份。每个 AI peer 从自身的观察中独立构建表示/card，因此 `coder` profile 保持代码导向，而 `writer` profile 针对同一用户保持编辑导向。
+Honcho 将对话建模为 peer 之间的消息交换——每个 Thoth profile 对应一个用户 peer 加一个 AI peer，共享同一个 workspace。workspace 是共享环境：用户 peer 在各 profile 间全局共享，每个 AI peer 拥有独立身份。每个 AI peer 从自身的观察中独立构建表示/card，因此 `coder` profile 保持代码导向，而 `writer` profile 针对同一用户保持编辑导向。
 
 映射关系：
 
 | 概念 | 含义 |
 |---------|-----------|
-| **Workspace** | 共享环境。同一 workspace 下的所有 Hermes profile 共享同一用户身份。 |
+| **Workspace** | 共享环境。同一 workspace 下的所有 Thoth profile 共享同一用户身份。 |
 | **用户 peer**（`peerName`） | 人类用户。在 workspace 内跨 profile 共享。 |
-| **AI peer**（`aiPeer`） | 每个 Hermes profile 一个。host key `hermes` → 默认；其他 profile 使用 `hermes.<profile>`。 |
+| **AI peer**（`aiPeer`） | 每个 Thoth profile 一个。host key `hermes` → 默认；其他 profile 使用 `hermes.<profile>`。 |
 | **Observation** | 每个 peer 的开关，控制 Honcho 从哪些消息中建模。`directional`（默认，全部开启）或 `unified`（单一观察者池）。 |
 
 ### 新建 profile，创建新 Honcho peer
@@ -171,7 +171,7 @@ hermes profile create coder --clone
 hermes honcho sync
 ```
 
-扫描所有 Hermes profile，为没有 host 块的 profile 创建 host 块，从默认 `hermes` 块继承设置，并提前创建新的 AI peer。幂等操作——跳过已有 host 块的 profile。
+扫描所有 Thoth profile，为没有 host 块的 profile 创建 host 块，从默认 `hermes` 块继承设置，并提前创建新的 AI peer。幂等操作——跳过已有 host 块的 profile。
 
 ### 每个 profile 的 observation 配置
 
@@ -263,7 +263,7 @@ hermes honcho sync
 
 #### 从内置 Honcho 升级
 
-早期 Hermes 版本内置了 Honcho。如果某个 profile 仍配置 `memory.provider: honcho`，Hermes 会在下次启动或运行 `hermes update` 时自动安装插件目录中的插件——你的 `~/.honcho/config.json`（或 `$HERMES_HOME/honcho.json`）、host 块、peer 和会话映射都按原样读取，记忆不会丢失。如需手动安装，或启动时机器无法联网，请运行 `hermes plugins install honcho`。
+早期 Thoth 版本内置了 Honcho。如果某个 profile 仍配置 `memory.provider: honcho`，Thoth 会在下次启动或运行 `hermes update` 时自动安装插件目录中的插件——你的 `~/.honcho/config.json`（或 `$HERMES_HOME/honcho.json`）、host 块、peer 和会话映射都按原样读取，记忆不会丢失。如需手动安装，或启动时机器无法联网，请运行 `hermes plugins install honcho`。
 
 
 ---
@@ -275,7 +275,7 @@ hermes honcho sync
 | | |
 |---|---|
 | **适合场景** | 具有结构化浏览功能的自托管知识管理 |
-| **依赖** | 独立部署的 OpenViking 服务器；通过 `hermes memory setup` 准备 Hermes 端依赖 |
+| **依赖** | 独立部署的 OpenViking 服务器；通过 `hermes memory setup` 准备 Thoth 端依赖 |
 | **数据存储** | 自托管（本地或云端） |
 | **费用** | 免费（开源，AGPL-3.0） |
 
@@ -283,19 +283,19 @@ hermes honcho sync
 
 **安装：**
 ```bash
-# 使用独立部署的 OpenViking 服务器，不要安装到 Hermes 的依赖环境
+# 使用独立部署的 OpenViking 服务器，不要安装到 Thoth 的依赖环境
 openviking-server init
 openviking-server doctor
 openviking-server
 
-# 然后配置 Hermes
+# 然后配置 Thoth
 hermes memory setup    # 选择 "openviking"
 # 或手动配置：
 hermes config set memory.provider openviking
 echo "OPENVIKING_ENDPOINT=http://localhost:1933" >> ~/.hermes/.env
 ```
 
-当端点为本地地址且没有进程在监听时，Hermes 会在后台启动 `openviking-server`。该服务器会获得你的模型提供商密钥（供其嵌入和 VLM 模型使用）、你的 `HOME` 与 `OPENVIKING_CONFIG_FILE`，但绝不会获得机器人、网关或中继令牌，也不会获得 Hermes 的 `PYTHONPATH`。服务器需要的其他设置请写入 `ov.conf`。
+当端点为本地地址且没有进程在监听时，Thoth 会在后台启动 `openviking-server`。该服务器会获得你的模型提供商密钥（供其嵌入和 VLM 模型使用）、你的 `HOME` 与 `OPENVIKING_CONFIG_FILE`，但绝不会获得机器人、网关或中继令牌，也不会获得 Thoth 的 `PYTHONPATH`。服务器需要的其他设置请写入 `ov.conf`。
 
 **主要特性：**
 - 分层上下文加载：L0（约 100 tokens）→ L1（约 2k）→ L2（完整）
@@ -370,7 +370,7 @@ echo "HINDSIGHT_API_KEY=your-key" >> ~/.hermes/.env
 | `auto_retain` | `true` | 自动保留对话轮次 |
 | `auto_recall` | `true` | 每轮对话前自动召回记忆 |
 | `retain_async` | `true` | 在服务器上异步处理保留操作 |
-| `retain_context` | `conversation between Hermes Agent and the User` | 保留记忆的上下文标签 |
+| `retain_context` | `conversation between Thoth and the User` | 保留记忆的上下文标签 |
 | `retain_tags` | — | 应用于保留记忆的默认标签；与每次工具调用的标签合并 |
 | `retain_source` | — | 附加到保留记忆的可选 `metadata.source` |
 | `retain_user_prefix` | `User` | 自动保留的对话记录中用户轮次前的标签 |
@@ -458,7 +458,7 @@ echo "RETAINDB_API_KEY=your-key" >> ~/.hermes/.env
 # 先安装 CLI
 curl -fsSL https://byterover.dev/install.sh | sh
 
-# 然后配置 Hermes
+# 然后配置 Thoth
 hermes memory setup    # 选择 "byterover"
 # 或手动配置：
 hermes config set memory.provider byterover
@@ -533,7 +533,7 @@ Base URL 优先级为 `supermemory.json` → `SUPERMEMORY_BASE_URL` → `https:/
 - 失败的轮次写入会重试（至少一次语义）：下一轮、会话结束、`/reset` 或关闭时
 - 端到端自托管路由——SDK 和探测请求使用同一配置端点
 - 在第一轮及可配置间隔注入 profile 事实
-- **Profile 范围容器**——在 `container_tag` 中使用 `{identity}`（例如 `hermes-{identity}` → `hermes-coder`），按 Hermes profile 隔离记忆
+- **Profile 范围容器**——在 `container_tag` 中使用 `{identity}`（例如 `hermes-{identity}` → `hermes-coder`），按 Thoth profile 隔离记忆
 - **多容器模式**——启用 `enable_custom_container_tags` 并配置 `custom_containers` 列表，让 Agent 跨命名容器读写。自动操作（同步、预取）保持在主容器上。
 
 <details>

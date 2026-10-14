@@ -186,10 +186,10 @@ export function createMinimizeToTray(options: Options) {
         tray.setToolTip('Thoth')
         tray.setContextMenu(
           Menu.buildFromTemplate([
-            { label: 'Show Hermes', click: restore },
+            { label: 'Show Thoth', click: restore },
             { type: 'separator' },
             // Do not bypass the ordinary active-work confirmation or teardown.
-            { label: 'Quit Hermes', click: () => app.quit() }
+            { label: 'Quit Thoth', click: () => app.quit() }
           ])
         )
 

@@ -71,7 +71,7 @@ jobs:
           prune-python-cache: true
 
       - name: Check SQLite runs WAL
-        # Hermes picks DELETE journal mode on a SQLite with the WAL-reset
+        # Thoth picks DELETE journal mode on a SQLite with the WAL-reset
         # bug. If the PM-pinned interpreter links one, every WAL test silently
         # runs DELETE (or skips), so fail loudly instead. Tests that need DELETE
         # select it explicitly (journal_mode config, a pinned vulnerable
@@ -292,7 +292,7 @@ jobs:
           # a transient fetch failure fails the whole job (2026-07-28 slice-5
           # incident). Pinned, the binary downloads directly; no manifest hop.
           # Newer than the unit job's pin on purpose: 0.9.28 only knows CPython
-          # 3.11.14, whose bundled SQLite has the WAL-reset bug, so Hermes runs
+          # 3.11.14, whose bundled SQLite has the WAL-reset bug, so Thoth runs
           # state.db in DELETE mode and the WAL torture chamber would skip.
           version: "0.12.13"
           # Persist uv's download/wheel cache (~/.cache/uv) across runs.

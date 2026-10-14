@@ -5,7 +5,7 @@ process that finalizes it (``update_receipt.finalize_update_receipt``): the rece
 the outcome, the stage marks with timestamps, the admission refusal and the fleet matrix, so no
 stage is instrumented for metrics. A pre-pull interpreter must never import pulled code, so when
 it is the finalizer it parks the receipt under the store dir (stdlib-only code in update_receipt)
-and :func:`report_pending_updates` records it on the next Hermes start.
+and :func:`report_pending_updates` records it on the next Thoth start.
 
 Desktop's packaged updaters (electron-updater, App Installer, Store) never run ``hermes update``;
 Desktop reports their outcome through the ``shared_metrics.update_run`` RPC instead. Desktop's
@@ -52,7 +52,7 @@ _DESKTOP_APPLY_MODES = {
 # a run that ended on an exception (main.cmd_update, update_completion._finish). Only the leading
 # type name is read, never the message; other stop reasons ("sys.exit(1)", "completion exited 1",
 # "Windows gateway recovery failed: ...") do not start with a bare CamelCase name and a colon
-# (the fixed prefixes Hermes writes are matched by _STOP_REASON_PREFIX_CLASSES).
+# (the fixed prefixes Thoth writes are matched by _STOP_REASON_PREFIX_CLASSES).
 _EXCEPTION_STOP_REASON = re.compile(r"([A-Z][A-Za-z0-9_]*):(?: |$)")
 # pm's own failure types (pm/package.py, pm/environment.py, pm/downloader.py, pm/lock.py, ...).
 _PM_ERROR_TYPES = frozenset({
@@ -69,7 +69,7 @@ _EXCEPTION_TYPE_CLASSES = (
     (frozenset({"PermissionError"}), "permission_denied"), (_PM_ERROR_TYPES, "deps_failed"),
     (_OS_ERROR_TYPES, "os_error"), (_SUBPROCESS_ERROR_TYPES, "subprocess_failed"),
 )
-# Fixed stop-reason prefixes Hermes itself writes (only the prefix is read, never what follows):
+# Fixed stop-reason prefixes Thoth itself writes (only the prefix is read, never what follows):
 # _update_takeover's preparation failure and update_completion's Windows gateway resume failure.
 _STOP_REASON_PREFIX_CLASSES = (
     ("historical takeover preparation failed", "deps_failed"), ("Windows gateway recovery failed", "restart_failed"),

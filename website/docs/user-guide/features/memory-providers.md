@@ -6,7 +6,7 @@ description: "External memory provider plugins — Honcho, OpenViking, Mem0, Hin
 
 # Memory Providers
 
-Hermes Agent ships with 5 external memory provider plugins that give the agent persistent, cross-session knowledge beyond the built-in MEMORY.md and USER.md, and more (such as Honcho, Hindsight and Supermemory) are available from the [plugin catalog](./plugins.md). Only **one** external provider can be active at a time — the built-in memory is always active alongside it.
+Thoth ships with 5 external memory provider plugins that give the agent persistent, cross-session knowledge beyond the built-in MEMORY.md and USER.md, and more (such as Honcho, Hindsight and Supermemory) are available from the [plugin catalog](./plugins.md). Only **one** external provider can be active at a time — the built-in memory is always active alongside it.
 
 ## Quick Start
 
@@ -29,7 +29,7 @@ memory:
 
 ## How It Works
 
-When a memory provider is active, Hermes automatically:
+When a memory provider is active, Thoth automatically:
 
 1. **Injects provider context** into the system prompt (what the provider knows)
 2. **Prefetches relevant memories** before each turn (background, non-blocking)
@@ -40,14 +40,14 @@ When a memory provider is active, Hermes automatically:
 
 The built-in memory (MEMORY.md / USER.md) continues to work exactly as before. The external provider is additive.
 
-Everything Hermes hands a provider (turns, the transcript including tool output, recall queries, session-end and pre-compression transcripts, mirrored memory writes, delegation results and the arguments of the provider's own tools) passes through the same secret scrub as chat-platform and cron delivery first, so a key echoed into tool output is masked before the provider can store it. Like that delivery scrub it applies even with `security.redact_secrets: false`. Credentials with no recognisable shape (an arbitrary password, an opaque token outside a `key=value` or `Bearer` context) are not detected; your local transcript keeps the original text.
+Everything Thoth hands a provider (turns, the transcript including tool output, recall queries, session-end and pre-compression transcripts, mirrored memory writes, delegation results and the arguments of the provider's own tools) passes through the same secret scrub as chat-platform and cron delivery first, so a key echoed into tool output is masked before the provider can store it. Like that delivery scrub it applies even with `security.redact_secrets: false`. Credentials with no recognisable shape (an arbitrary password, an opaque token outside a `key=value` or `Bearer` context) are not detected; your local transcript keeps the original text.
 
 ## Available Providers
 
 ### Honcho
 
 :::info Plugin catalog
-Honcho is maintained by [Plastic Labs](https://github.com/plastic-labs/honcho/tree/main/hermes-plugin-honcho) and installed from the [plugin catalog](./plugins.md) rather than bundled with Hermes. It is the same provider that used to ship in-tree: tools, config files and the `hermes honcho` commands are unchanged.
+Honcho is maintained by [Plastic Labs](https://github.com/plastic-labs/honcho/tree/main/hermes-plugin-honcho) and installed from the [plugin catalog](./plugins.md) rather than bundled with Thoth. It is the same provider that used to ship in-tree: tools, config files and the `hermes honcho` commands are unchanged.
 :::
 
 AI-native cross-session user modeling with dialectic reasoning, session-scoped context injection, semantic search, and persistent conclusions. Base context now includes the session summary alongside user representation and peer cards, giving the agent awareness of what has already been discussed.
@@ -158,15 +158,15 @@ If you previously used `hermes honcho setup`, your config and all server-side da
 
 **Multi-peer setup:**
 
-Honcho models conversations as peers exchanging messages — one user peer plus one AI peer per Hermes profile, all sharing a workspace. The workspace is the shared environment: the user peer is global across profiles, each AI peer is its own identity. Every AI peer builds an independent representation / card from its own observations, so a `coder` profile stays code-oriented while a `writer` profile stays editorial against the same user.
+Honcho models conversations as peers exchanging messages — one user peer plus one AI peer per Thoth profile, all sharing a workspace. The workspace is the shared environment: the user peer is global across profiles, each AI peer is its own identity. Every AI peer builds an independent representation / card from its own observations, so a `coder` profile stays code-oriented while a `writer` profile stays editorial against the same user.
 
 The mapping:
 
 | Concept | What it is |
 |---------|-----------|
-| **Workspace** | Shared environment. All Hermes profiles under one workspace see the same user identity. |
+| **Workspace** | Shared environment. All Thoth profiles under one workspace see the same user identity. |
 | **User peer** (`peerName`) | The human. Shared across profiles in the workspace. |
-| **AI peer** (`aiPeer`) | One per Hermes profile. Host key `hermes` → default; `hermes.<profile>` for others. |
+| **AI peer** (`aiPeer`) | One per Thoth profile. Host key `hermes` → default; `hermes.<profile>` for others. |
 | **Observation** | Per-peer toggles controlling what Honcho models from whose messages. `directional` (default, all four on) or `unified` (single-observer pool). |
 
 ### New profile, fresh Honcho peer
@@ -183,7 +183,7 @@ hermes profile create coder --clone
 hermes honcho sync
 ```
 
-Scans every Hermes profile, creates host blocks for any profile without one, inherits settings from the default `hermes` block, and creates the new AI peers eagerly. Idempotent — skips profiles that already have a host block.
+Scans every Thoth profile, creates host blocks for any profile without one, inherits settings from the default `hermes` block, and creates the new AI peers eagerly. Idempotent — skips profiles that already have a host block.
 
 ### Per-profile observation
 
@@ -287,7 +287,7 @@ See the [plugin README](https://github.com/plastic-labs/honcho/tree/main/hermes-
 
 #### Upgrading from the bundled Honcho
 
-Earlier Hermes releases shipped Honcho in-tree. If a profile still has `memory.provider: honcho`, Hermes installs the catalog plugin automatically the next time it starts or runs `hermes update` — your `~/.honcho/config.json` (or `$HERMES_HOME/honcho.json`), host blocks, peers and session mappings are read exactly as before, so no memory is lost. To do it by hand, or on a machine without network access at startup, run `hermes plugins install honcho`.
+Earlier Thoth releases shipped Honcho in-tree. If a profile still has `memory.provider: honcho`, Thoth installs the catalog plugin automatically the next time it starts or runs `hermes update` — your `~/.honcho/config.json` (or `$HERMES_HOME/honcho.json`), host blocks, peers and session mappings are read exactly as before, so no memory is lost. To do it by hand, or on a machine without network access at startup, run `hermes plugins install honcho`.
 
 
 ---
@@ -295,7 +295,7 @@ Earlier Hermes releases shipped Honcho in-tree. If a profile still has `memory.p
 ### OpenViking
 
 :::info Plugin catalog
-OpenViking is maintained by Volcengine and installed from the [plugin catalog](./plugins.md) rather than bundled with Hermes. Source: [volcengine/OpenViking — examples/hermes-plugin](https://github.com/volcengine/OpenViking/tree/main/examples/hermes-plugin). Existing setups are migrated automatically — see [Migrating from bundled OpenViking](#migrating-from-bundled-openviking).
+OpenViking is maintained by Volcengine and installed from the [plugin catalog](./plugins.md) rather than bundled with Thoth. Source: [volcengine/OpenViking — examples/hermes-plugin](https://github.com/volcengine/OpenViking/tree/main/examples/hermes-plugin). Existing setups are migrated automatically — see [Migrating from bundled OpenViking](#migrating-from-bundled-openviking).
 :::
 
 Context database by Volcengine (ByteDance) with filesystem-style knowledge hierarchy, tiered retrieval, and automatic memory extraction into 6 categories.
@@ -316,7 +316,7 @@ openviking-server init
 openviking-server doctor
 openviking-server
 
-# Then install and configure the Hermes plugin
+# Then install and configure the Thoth plugin
 hermes plugins install openviking
 hermes memory setup    # select "openviking"
 # Or manually:
@@ -342,9 +342,9 @@ live in `ovcli.conf` (`OPENVIKING_CLI_CONFIG_FILE` or
 
 When the endpoint is local and nothing is listening, the plugin starts
 `openviking-server` in the background. At the cataloged version that server
-inherits the full Hermes process environment (minus `PYTHONPATH`), including
+inherits the full Thoth process environment (minus `PYTHONPATH`), including
 any bot, gateway or relay tokens set there. If that matters to you, start
-`openviking-server` yourself before Hermes so the plugin never spawns it.
+`openviking-server` yourself before Thoth so the plugin never spawns it.
 The fix is tracked upstream in
 [volcengine/OpenViking#5553](https://github.com/volcengine/OpenViking/pull/5553).
 
@@ -354,7 +354,7 @@ The fix is tracked upstream in
 - `viking://` URI scheme for hierarchical knowledge browsing
 
 `OPENVIKING_ACCOUNT` and `OPENVIKING_USER` are used for local/trusted mode.
-Peer identity is optional. By default, Hermes sends no peer ID and writes
+Peer identity is optional. By default, Thoth sends no peer ID and writes
 explicit memories to `viking://user/<user>/memories/...`. Setup does not ask
 for a peer ID. For separate assistant context, set
 `memory.openviking.agent: work-assistant` in `config.yaml`.
@@ -369,16 +369,16 @@ Set `memory.openviking.agent: hermes` to restore the old peer-scoped writes.
 Memories written at user scope before this change stay there and remain
 searchable. The setting changes future writes, not existing memory locations.
 
-Hermes sends `User-Agent: openviking-memory-hermes/<version>` on OpenViking
+Thoth sends `User-Agent: openviking-memory-hermes/<version>` on OpenViking
 requests. This standard harness identifier contains no per-user identifier and
 does not add a separate request.
 
 ### Migrating from bundled OpenViking
 
-OpenViking used to ship inside the Hermes tree. If your `config.yaml` already has `memory.provider: openviking`, there is nothing to do for most users:
+OpenViking used to ship inside the Thoth tree. If your `config.yaml` already has `memory.provider: openviking`, there is nothing to do for most users:
 
 - `hermes update` installs the catalog plugin into every profile home that names the provider.
-- If the plugin is still missing on the first agent start (`hermes chat`, the gateway, Desktop), Hermes installs it and tells you it did.
+- If the plugin is still missing on the first agent start (`hermes chat`, the gateway, Desktop), Thoth installs it and tells you it did.
 - With `security.allow_lazy_installs: false` the agent-start path does not install anything; it prints the exact `hermes plugins install openviking` command instead.
 
 `memory.provider`, `memory.openviking.*`, the `OPENVIKING_*` keys in `.env`, `~/.openviking/` and the memories on your OpenViking server are untouched. Verify with `hermes memory status` and `hermes plugins list`.
@@ -388,7 +388,7 @@ OpenViking used to ship inside the Hermes tree. If your `config.yaml` already ha
 ### Mem0
 
 :::info Plugin catalog
-Mem0 is maintained by Mem0 and installed from the [plugin catalog](./plugins.md) rather than bundled with Hermes. Source: [mem0ai/mem0 — integrations/hermes-plugin-mem0](https://github.com/mem0ai/mem0/tree/main/integrations/hermes-plugin-mem0). Existing setups are migrated automatically — see [Migrating from bundled Mem0](#migrating-from-bundled-mem0).
+Mem0 is maintained by Mem0 and installed from the [plugin catalog](./plugins.md) rather than bundled with Thoth. Source: [mem0ai/mem0 — integrations/hermes-plugin-mem0](https://github.com/mem0ai/mem0/tree/main/integrations/hermes-plugin-mem0). Existing setups are migrated automatically — see [Migrating from bundled Mem0](#migrating-from-bundled-mem0).
 :::
 
 Server-side LLM fact extraction with semantic search, reranking, and automatic deduplication. Three connection modes: **Platform** (Mem0 Cloud), **self-hosted dashboard** (a Mem0 server you run via Docker), and **OSS** (Mem0 in-process with your own LLM + vector store).
@@ -472,10 +472,10 @@ The plugin authenticates with `X-API-Key` and uses the server's `/search` / `/me
 
 ### Migrating from bundled Mem0
 
-Mem0 used to ship inside the Hermes tree (and as the `hermes-agent[mem0]` pip extra). If your `config.yaml` already has `memory.provider: mem0`, there is nothing to do for most users:
+Mem0 used to ship inside the Thoth tree (and as the `hermes-agent[mem0]` pip extra). If your `config.yaml` already has `memory.provider: mem0`, there is nothing to do for most users:
 
 - `hermes update` installs the catalog plugin into every profile home that names the provider.
-- If the plugin is still missing on the first agent start (`hermes chat`, the gateway, Desktop), Hermes installs it and tells you it did.
+- If the plugin is still missing on the first agent start (`hermes chat`, the gateway, Desktop), Thoth installs it and tells you it did.
 - With `security.allow_lazy_installs: false` the agent-start path does not install anything; it prints the exact `hermes plugins install mem0` command instead.
 
 `memory.provider`, `$HERMES_HOME/mem0.json`, the `MEM0_*` keys in `.env` and the memories stored in Mem0 Cloud, your Mem0 server or the local OSS store are untouched. Verify with `hermes memory status` and `hermes plugins list`.
@@ -485,7 +485,7 @@ Mem0 used to ship inside the Hermes tree (and as the `hermes-agent[mem0]` pip ex
 ### Hindsight
 
 :::info Plugin catalog
-Hindsight is maintained by [vectorize-io](https://github.com/vectorize-io/hindsight) and installed from the [plugin catalog](./plugins.md) rather than bundled with Hermes. Setup details live in the upstream docs: [hindsight.vectorize.io/sdks/integrations/hermes](https://hindsight.vectorize.io/sdks/integrations/hermes).
+Hindsight is maintained by [vectorize-io](https://github.com/vectorize-io/hindsight) and installed from the [plugin catalog](./plugins.md) rather than bundled with Thoth. Setup details live in the upstream docs: [hindsight.vectorize.io/sdks/integrations/hermes](https://hindsight.vectorize.io/sdks/integrations/hermes).
 :::
 
 Long-term memory with knowledge graph, entity resolution, and multi-strategy retrieval. The `hindsight_reflect` tool provides cross-memory synthesis that no other provider offers. Automatically retains full conversation turns (including tool calls) with session-level document tracking.
@@ -508,7 +508,7 @@ hermes config set memory.provider hindsight
 echo "HINDSIGHT_API_KEY=your-key" >> ~/.hermes/.env
 ```
 
-The plugin lands in `~/.hermes/plugins/hindsight/` (per profile home). A memory provider is activated by `memory.provider` in `config.yaml`, not `plugins.enabled`: accepting the install prompt (or passing `--enable`) sets it, and declining leaves it unchanged so `hermes memory setup` can pick it later. `hermes plugins enable hindsight` does not activate a memory provider. `hermes memory setup`, `hermes memory status`, `hermes plugins list` and the dashboard Memory settings all work with the catalog-installed plugin. In local embedded mode the plugin installs `hindsight-all` on first use through Hermes' lazy-install path, which honours `security.allow_lazy_installs`.
+The plugin lands in `~/.hermes/plugins/hindsight/` (per profile home). A memory provider is activated by `memory.provider` in `config.yaml`, not `plugins.enabled`: accepting the install prompt (or passing `--enable`) sets it, and declining leaves it unchanged so `hermes memory setup` can pick it later. `hermes plugins enable hindsight` does not activate a memory provider. `hermes memory setup`, `hermes memory status`, `hermes plugins list` and the dashboard Memory settings all work with the catalog-installed plugin. In local embedded mode the plugin installs `hindsight-all` on first use through Thoth' lazy-install path, which honours `security.allow_lazy_installs`.
 
 **Local mode UI:** `hindsight-embed -p hermes ui start`
 
@@ -523,23 +523,23 @@ The plugin lands in `~/.hermes/plugins/hindsight/` (per profile home). A memory 
 | `auto_retain` | `true` | Automatically retain conversation turns |
 | `auto_recall` | `true` | Automatically recall memories before each turn |
 | `retain_async` | `true` | Process retain asynchronously on the server |
-| `retain_context` | `conversation between Hermes Agent and the User` | Context label for retained memories |
+| `retain_context` | `conversation between Thoth and the User` | Context label for retained memories |
 | `retain_tags` | — | Default tags applied to retained memories; merged with per-call tool tags |
 | `retain_source` | — | Optional `metadata.source` attached to retained memories |
 | `retain_user_prefix` | `User` | Label used before user turns in auto-retained transcripts |
 | `retain_assistant_prefix` | `Assistant` | Label used before assistant turns in auto-retained transcripts |
 | `recall_tags` | — | Tags to filter on recall |
 
-See the [upstream Hermes integration docs](https://hindsight.vectorize.io/sdks/integrations/hermes) for the full configuration reference.
+See the [upstream Thoth integration docs](https://hindsight.vectorize.io/sdks/integrations/hermes) for the full configuration reference.
 
 #### Migrating from bundled Hindsight
 
-Hindsight used to ship inside the Hermes tree (and as the `hermes-agent[hindsight]` pip extra). If your `config.yaml` already has `memory.provider: hindsight`, there is nothing to do for most users:
+Hindsight used to ship inside the Thoth tree (and as the `hermes-agent[hindsight]` pip extra). If your `config.yaml` already has `memory.provider: hindsight`, there is nothing to do for most users:
 
 - `hermes update` installs the catalog plugin into every profile home that names the provider. Each line names the profile it is about. In a terminal it asks before preparing the plugin's Python dependencies; when several profiles use the provider, the questions are asked once and the answers apply to all of them. Without a terminal (the Desktop app, a script, a service) nobody can answer, so each profile prepares them unattended when its `security.allow_lazy_installs` is on (the default); a profile with it off gets the exact `hermes -p <profile> plugins install hindsight` command instead, and the other profiles still migrate.
-- If the plugin is still missing on the first agent start (`hermes chat`, Desktop, the gateway, …), Hermes installs it, dependencies included, and shows ``✓ Memory provider 'hindsight' moved out of core — installed its plugin from the catalog (memory.provider and your stored memories are unchanged; check its settings with `hermes memory status`).`` Messaging platforms get the line with the first reply.
+- If the plugin is still missing on the first agent start (`hermes chat`, Desktop, the gateway, …), Thoth installs it, dependencies included, and shows ``✓ Memory provider 'hindsight' moved out of core — installed its plugin from the catalog (memory.provider and your stored memories are unchanged; check its settings with `hermes memory status`).`` Messaging platforms get the line with the first reply.
 - When the agent-start install cannot happen, you see why instead of silently running without external memory: with `security.allow_lazy_installs: false` the warning names the install command for that profile; offline or declined installs show the error and the same command. After a failed attempt, agent starts in the next hour skip the install and only repeat the command; `hermes update` always retries.
-- Agent start never asks a question (the chat prompt owns the terminal). A catalog provider that never shipped with Hermes (for example `mnemosyne`) is therefore not installed on agent start: the warning names `hermes plugins install <name>` for that profile, or install it from the dashboard/Desktop Plugins page.
+- Agent start never asks a question (the chat prompt owns the terminal). A catalog provider that never shipped with Thoth (for example `mnemosyne`) is therefore not installed on agent start: the warning names `hermes plugins install <name>` for that profile, or install it from the dashboard/Desktop Plugins page.
 
 What changes on disk: the plugin appears in `~/.hermes/plugins/hindsight/` and `config.yaml` gains `plugins.enabled: [hindsight]`. `memory.provider`, `$HERMES_HOME/hindsight/config.json`, `HINDSIGHT_API_KEY` in `.env` and your memory bank data are untouched. Verify with `hermes memory status` (provider active) and `hermes plugins list` (plugin installed and enabled).
 
@@ -626,7 +626,7 @@ Persistent memory via the `brv` CLI — hierarchical knowledge tree with tiered 
 # Install the CLI first
 curl -fsSL https://byterover.dev/install.sh | sh
 
-# Then configure Hermes
+# Then configure Thoth
 hermes memory setup    # select "byterover"
 # Or manually:
 hermes config set memory.provider byterover
@@ -642,7 +642,7 @@ hermes config set memory.provider byterover
 ### Supermemory
 
 :::info Plugin catalog
-Supermemory is maintained by Supermemory and installed from the [plugin catalog](./plugins.md) rather than bundled with Hermes. Source and full configuration reference: [supermemoryai/hermes-supermemory](https://github.com/supermemoryai/hermes-supermemory). Existing setups are migrated automatically — see [Migrating from bundled Supermemory](#migrating-from-bundled-supermemory).
+Supermemory is maintained by Supermemory and installed from the [plugin catalog](./plugins.md) rather than bundled with Thoth. Source and full configuration reference: [supermemoryai/hermes-supermemory](https://github.com/supermemoryai/hermes-supermemory). Existing setups are migrated automatically — see [Migrating from bundled Supermemory](#migrating-from-bundled-supermemory).
 :::
 
 Semantic long-term memory with profile recall, semantic search, explicit memory tools, and per-turn conversation capture (one document per session per 4-hour window).
@@ -708,7 +708,7 @@ Base URL precedence is `supermemory.json` → `SUPERMEMORY_BASE_URL` → `https:
 - Failed turn writes are retried (at-least-once) on the next turn, session end, `/reset`, or shutdown
 - End-to-end self-hosted routing — SDK and probe requests use the same configured endpoint
 - Profile facts injected on first turn and at configurable intervals
-- **Profile-scoped containers** — use `{identity}` in `container_tag` (e.g. `hermes-{identity}` → `hermes-coder`) to isolate memories per Hermes profile
+- **Profile-scoped containers** — use `{identity}` in `container_tag` (e.g. `hermes-{identity}` → `hermes-coder`) to isolate memories per Thoth profile
 - **Multi-container mode** — enable `enable_custom_container_tags` with a `custom_containers` list to let the agent read/write across named containers. Automatic operations stay on the primary container.
 
 <details>
@@ -729,10 +729,10 @@ Base URL precedence is `supermemory.json` → `SUPERMEMORY_BASE_URL` → `https:
 
 ### Migrating from bundled Supermemory
 
-Supermemory used to ship inside the Hermes tree (and as the `hermes-agent[supermemory]` pip extra). If your `config.yaml` already has `memory.provider: supermemory`, there is nothing to do for most users:
+Supermemory used to ship inside the Thoth tree (and as the `hermes-agent[supermemory]` pip extra). If your `config.yaml` already has `memory.provider: supermemory`, there is nothing to do for most users:
 
 - `hermes update` installs the catalog plugin into every profile home that names the provider (this runs even when `security.allow_lazy_installs` is `false`).
-- If the plugin is still missing on the first agent start (`hermes chat`, the gateway, …), Hermes installs it and prints `✓ Memory provider 'supermemory' moved out of core — installed its plugin from the catalog (your memory.supermemory settings and data are unchanged).`
+- If the plugin is still missing on the first agent start (`hermes chat`, the gateway, …), Thoth installs it and prints `✓ Memory provider 'supermemory' moved out of core — installed its plugin from the catalog (your memory.supermemory settings and data are unchanged).`
 - With `security.allow_lazy_installs: false`, the agent-start path instead logs one line — ``Memory provider 'supermemory' is not installed; security.allow_lazy_installs is off — run `hermes plugins install supermemory`.`` — and you run `hermes plugins install supermemory` yourself.
 
 What changes on disk: the plugin appears in `~/.hermes/plugins/supermemory/` and `config.yaml` gains `plugins.enabled: [supermemory]`. The Supermemory SDK is installed from the plugin's own package metadata, so the `hermes-agent[supermemory]` extra is no longer needed. `memory.provider`, `$HERMES_HOME/supermemory.json`, the `SUPERMEMORY_*` keys in `.env` and the memories stored in your Supermemory account are untouched. Verify with `hermes memory status` (provider active) and `hermes plugins list` (plugin installed and enabled).
@@ -754,10 +754,10 @@ Structured long-term memory using Memori Cloud, with background completed-turn c
 
 `hermes-memori` is an external integration, not a managed PM tool name. Follow
 its publisher's instructions to install the CLI in an independent environment.
-Before running its installer, confirm that it targets the intended Hermes home
+Before running its installer, confirm that it targets the intended Thoth home
 and supplies a provider with declared Python dependencies. Do not let an external
-installer pip-install into Hermes's selected environment. CLI availability alone
-does not make the Python provider available inside Hermes; an entry-point-only
+installer pip-install into Thoth's selected environment. CLI availability alone
+does not make the Python provider available inside Thoth; an entry-point-only
 distribution needs an owner-managed build that includes it.
 
 ```bash
@@ -769,7 +769,7 @@ hermes memory setup
 
 If the installer does not support PM-managed directory-provider admission, ask
 the publisher for that integration rather than inventing a `hermes pm install`
-package command. Restart Hermes after successful dependency preparation.
+package command. Restart Thoth after successful dependency preparation.
 
 ---
 
@@ -798,7 +798,7 @@ Each provider's data is isolated per [profile](../profiles.md):
 
 ## Providers Moving to the Plugin Catalog
 
-Memory providers are moving out of the Hermes tree into their maintainers' own repositories,
+Memory providers are moving out of the Thoth tree into their maintainers' own repositories,
 published through the [plugin catalog](./plugins.md). Hindsight moved first (see
 [Migrating from bundled Hindsight](#migrating-from-bundled-hindsight)), then Honcho (see
 [Upgrading from the bundled Honcho](#upgrading-from-the-bundled-honcho)), Supermemory (see
@@ -808,7 +808,7 @@ published through the [plugin catalog](./plugins.md). Hindsight moved first (see
 and ByteRover leave core on October 15, 2026; their standalone repositories are unmaintained
 and open for a new maintainer. Nothing changes for you: the
 provider name, the settings it reads, its data directory and its tools stay the same.
-When a provider you have configured stops shipping with Hermes, `hermes update` installs its
+When a provider you have configured stops shipping with Thoth, `hermes update` installs its
 catalog plugin for every profile that names it; if you update through the Desktop app, the
 agent does the same the first time it starts. Every outcome is shown to you — in the terminal,
 in Desktop, or with the first reply on a messaging platform. If the install cannot happen

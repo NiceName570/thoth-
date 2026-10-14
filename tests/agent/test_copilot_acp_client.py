@@ -200,7 +200,7 @@ def test_run_prompt_preserves_real_home_when_profile_home_available(monkeypatch,
 
     monkeypatch.setenv("HOME", str(real_home))
     monkeypatch.setenv("HERMES_HOME", str(hermes_home))
-    # Hermeticity: an ambient HERMES_REAL_HOME (exported by Hermes' own
+    # Hermeticity: an ambient HERMES_REAL_HOME (exported by Thoth' own
     # terminal contract on dev boxes) outranks HOME in the candidate ladder,
     # and an ambient TERMINAL_HOME_MODE would change the policy under test.
     monkeypatch.delenv("HERMES_REAL_HOME", raising=False)
@@ -310,7 +310,7 @@ def test_probe_skipped_for_custom_args_without_acp():
 #
 # `copilot --acp` validates but IGNORES the `--model` spawn flag; the ACP
 # session runs the CLI's own default unless the client issues the ACP-native
-# `session/set_model` call. Without it, picking gpt-5.6-terra in Hermes
+# `session/set_model` call. Without it, picking gpt-5.6-terra in Thoth
 # visibly answers as the CLI's default model.
 
 

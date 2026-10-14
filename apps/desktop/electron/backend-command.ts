@@ -1,4 +1,4 @@
-// Backend subcommand routing for the desktop-managed Hermes process.
+// Backend subcommand routing for the desktop-managed Thoth process.
 //
 // The desktop app launches its own headless backend via `hermes serve` — it
 // must NEVER depend on or launch the browser `dashboard`. But `serve` is a
@@ -15,7 +15,7 @@ import { backendProfileArg } from './profile-id-guard'
 
 /**
  * Build the canonical headless backend argv (always `serve`).
- * @param {string} [profile] optional Hermes profile to pin via `--profile`.
+ * @param {string} [profile] optional Thoth profile to pin via `--profile`.
  */
 export function serveBackendArgs(profile?: string) {
   // A non-slug value (numeric roster id, display label) must never cross into

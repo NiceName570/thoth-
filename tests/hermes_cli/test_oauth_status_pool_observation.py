@@ -153,7 +153,7 @@ def _singleton_tokens(home) -> dict:
 
 
 def test_status_snapshot_never_adopts_codex_cli_tokens(tmp_path, monkeypatch):
-    """#68004: a Hermes store missing its refresh_token is recovery-eligible on the runtime path, but
+    """#68004: a Thoth store missing its refresh_token is recovery-eligible on the runtime path, but
     ``hermes status`` / ``hermes doctor`` must not import the Codex CLI's single-use token family."""
     from hermes_cli.auth import resolve_codex_runtime_credentials
 

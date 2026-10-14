@@ -1,4 +1,4 @@
-"""Plugin catalog — curated, Nous-approved Hermes plugins shipped with the repo.
+"""Plugin catalog — curated, Nous-approved Thoth plugins shipped with the repo.
 
 Mirrors the ``optional-mcps/`` MCP-catalog pattern: one YAML file per entry under the in-tree
 ``plugin-catalog/`` directory, pinned to an exact 40-character commit SHA. Presence in the directory IS
@@ -8,7 +8,7 @@ the human-merged approval gate; SHA bumps are new, re-reviewed PRs; ``removed.ya
 
 Live refresh: the docs build publishes the same data as ONE JSON document
 (``website/scripts/extract-plugins.py`` → ``/docs/api/plugin-catalog.json``, like the skills index), so
-an installed Hermes sees new entries and removals without updating. A fetch failure reuses the last valid
+an installed Thoth sees new entries and removals without updating. A fetch failure reuses the last valid
 cached copy regardless of age, then falls back to the in-tree copy when no valid cache exists.
 """
 
@@ -524,7 +524,7 @@ def entry_capability_summary(entry: PluginCatalogEntry) -> str:
     if entry.platforms:
         bits.append(f"Platforms: {', '.join(entry.platforms)}.")
     if entry.requires_hermes:
-        bits.append(f"Requires Hermes {entry.requires_hermes}.")
+        bits.append(f"Requires Thoth {entry.requires_hermes}.")
     if entry.known_issues:
         # #124058: informational — the catalog documents traps (unsupported
         # install-method/mode combinations); surface them at install prompts

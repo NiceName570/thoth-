@@ -1,4 +1,4 @@
-"""Pydantic request/response models for the Hermes dashboard web server."""
+"""Pydantic request/response models for the Thoth dashboard web server."""
 
 from __future__ import annotations
 

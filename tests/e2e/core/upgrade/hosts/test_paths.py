@@ -1,6 +1,6 @@
 """Install, update, gateway and a turn in a home whose path has spaces and non-ASCII bytes.
 
-Failure class: path handling. Users run Hermes from homes like ``/home/José Müller`` or a
+Failure class: path handling. Users run Thoth from homes like ``/home/José Müller`` or a
 CJK-named directory. Every path the installer and updater write (clone target, uv/python/node
 store, PM generation, the ``~/.local/bin/hermes`` launcher, the rc-file PATH line, sys.path) must
 survive a space and non-ASCII bytes.

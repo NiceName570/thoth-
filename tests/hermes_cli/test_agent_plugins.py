@@ -158,7 +158,7 @@ def _remote_package(root: Path, trust: object | None = None) -> None:
 def test_package_can_ask_for_its_server_to_be_gated_but_never_widened(
     tmp_path: Path, declared: object, expected: object
 ) -> None:
-    # A trading/payments package can make Hermes ask before every write-capable call; "full" is the default, so
+    # A trading/payments package can make Thoth ask before every write-capable call; "full" is the default, so
     # declaring it grants nothing a config.yaml entry would not already have.
     _remote_package(tmp_path, declared)
     package = load_agent_plugin(tmp_path, tmp_path / "data")

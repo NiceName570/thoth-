@@ -1,6 +1,6 @@
 """Interpreter hygiene after an update (PM lifecycle, failure class 4).
 
-A PM install runs every Hermes process on PM's bundled interpreter with the selected
+A PM install runs every Thoth process on PM's bundled interpreter with the selected
 generation's site-packages. Two kinds of stray environment sit next to that on real machines:
 
 * the pre-PM in-tree ``venv/`` a main-era install leaves behind after migrating (#123965), and
@@ -13,7 +13,7 @@ dependency-changing ``hermes update``:
 
 * the gateway (``hermes gateway run``) boots, and no process in its tree ever loaded, mapped or
   put either stray venv on its path;
-* the workers a Hermes process spawns after the update use the PM interpreter and import their
+* the workers a Thoth process spawns after the update use the PM interpreter and import their
   deps: ``execute_code`` (#124049) and a Kanban worker spawned by ``hermes kanban dispatch``
   (#124542, #122500), each proven by what reaches the loopback provider.
 """

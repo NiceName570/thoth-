@@ -62,7 +62,7 @@ from tests.compat.old_updater_support import (
         ("_insert_python_pin", (["uv", "pip", "install", "-e", "."],), {}),
         ("_interpreter_scripts_dir", (), {}),
         ("_load_installable_optional_extras", (), {"group": "termux-all"}),
-        ("_parse_pe_machine", (Path("Hermes.exe"),), {}),
+        ("_parse_pe_machine", (Path("Thoth.exe"),), {}),
         ("_quarantine_running_hermes_exe", (Path("venv"),), {"max_attempts": 1, "failed_out": []}),
         ("_repair_broken_lazy_refresh_imports", (["uv", "pip"], ["certifi"]), {"env": {"VIRTUAL_ENV": "venv"}}),
         ("_run_install_with_heartbeat", (["uv", "pip", "install", "-e", "."],),

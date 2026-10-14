@@ -1,5 +1,5 @@
 """Solstice sign-in: browser PKCE with a loopback redirect, token exchange and refresh brokered by the
-Nous portal (NAS), which holds the confidential client secret. Hermes keeps its own PKCE verifier and
+Nous portal (NAS), which holds the confidential client secret. Thoth keeps its own PKCE verifier and
 the user's tokens; NAS never sees a prompt.
 
 The generic ``hermes_cli.auth_oauth_pkce_plugin`` flow runs the browser leg, the credential-pool row

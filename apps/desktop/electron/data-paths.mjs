@@ -43,7 +43,7 @@ export function resolveDesktopHermesHome({ home, env = process.env, platform = p
   if (env.HERMES_HOME) {
     return normalizeHermesHomeRoot(env.HERMES_HOME, paths)
   }
-  // Fresh-install rehearsals must not touch the real Hermes home.
+  // Fresh-install rehearsals must not touch the real Thoth home.
   if (env.HERMES_DESKTOP_USER_DATA_DIR) {
     return paths.join(paths.resolve(env.HERMES_DESKTOP_USER_DATA_DIR), 'hermes-home')
   }

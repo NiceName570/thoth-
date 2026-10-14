@@ -1,9 +1,9 @@
-"""The ``bot_mode_dm.py`` runner entry boots Hermes' dependency environment itself.
+"""The ``bot_mode_dm.py`` runner entry boots Thoth' dependency environment itself.
 
 ``message_agent`` spawns ``<sys.executable> tools/bot_mode_dm.py --run-delivery …`` and the relay
 spawns ``… --wait-reply …`` (``bot_relay.waiter_command``). Under a PM-managed install
 ``sys.executable`` is the bare store interpreter: dependencies are activated in-process at boot,
-and the terminal backend strips the Hermes-owned ``PYTHONPATH``, so a runner that does not boot
+and the terminal backend strips the Thoth-owned ``PYTHONPATH``, so a runner that does not boot
 like every other entry point dies on its first third-party import. Live, every local Bot Chat DM
 came back ``Live admission outcome unknown: No module named 'ruamel'. Do not resend.``
 
@@ -76,7 +76,7 @@ def _run(argv, env):
 
 
 def test_delivery_runner_admits_through_dependencies_it_activates(tmp_path, committed_home):
-    """Live admission (``_admit_live_dm``) imports Hermes' third-party graph. Launched bare, the
+    """Live admission (``_admit_live_dm``) imports Thoth' third-party graph. Launched bare, the
     runner must activate the committed environment, find no live owner, and hand the DM to the
     transport, which consumes the file — never report an ``ambiguous`` import failure."""
     _home, env = committed_home

@@ -1,4 +1,4 @@
-"""Hermes CLI - Unified command-line interface for Hermes Agent."""
+"""Thoth CLI - Unified command-line interface for Thoth."""
 
 import sys
 

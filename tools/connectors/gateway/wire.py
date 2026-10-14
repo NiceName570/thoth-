@@ -23,7 +23,7 @@ ConnectionStatus = Literal["pending", "active", "failed", "expired", "revoked", 
 # Where the vendor's done page sends the browser after consent; the dev desktop registers hermes-dev://.
 ConnectorReturnTarget = Literal["hermes-desktop", "hermes-desktop-dev", "portal"]
 
-# Hermes dispatch caps batches lower, so client-side chunking is deliberately absent.
+# Thoth dispatch caps batches lower, so client-side chunking is deliberately absent.
 WIRE_BATCH_MAX = 25
 
 # A 200 execute envelope carries per-tool failures as results, not HTTP errors.

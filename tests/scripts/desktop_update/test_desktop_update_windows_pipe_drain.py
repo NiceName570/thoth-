@@ -19,7 +19,7 @@ closes and ``Invoke-HermesStep`` blocks for the life of the gateway.
 Everything the hand-off owes the Desktop is downstream of that call:
 ``.hermes-update-result.json`` is never written, ``.hermes-update-in-progress``
 is never cleared, and the Desktop is never relaunched -- so the app sits on
-"Updating Hermes" until the user kills the gateway by hand, and the stale marker
+"Updating Thoth" until the user kills the gateway by hand, and the stale marker
 then refuses the next update too.
 
 **Trickling toward EOF.** The fix reads in chunks so an abandoned pipe still

@@ -1,5 +1,5 @@
-"""Bot Desktop runtime: one headless Xfce desktop per Hermes profile, served over RFB on a private
-Unix socket, viewed and driven from Hermes Desktop.
+"""Bot Desktop runtime: one headless Xfce desktop per Thoth profile, served over RFB on a private
+Unix socket, viewed and driven from Thoth.
 
 Layout under ``<HERMES_HOME>/bot-desktop/``: ``display`` (allocated X display number), ``rfb.sock``
 (Xvnc RFB Unix socket, 0600), ``Xauthority``, ``env`` (DISPLAY/XAUTHORITY/DBUS_SESSION_BUS_ADDRESS
@@ -93,7 +93,7 @@ def package_manager() -> Optional[str]:
 
 def install_command() -> Optional[str]:
     """The distro command that installs the Bot Desktop packages, as the human would type it on THIS host:
-    prefixed with ``sudo`` unless Hermes already runs as root, so it is both what the pane shows and what
+    prefixed with ``sudo`` unless Thoth already runs as root, so it is both what the pane shows and what
     :mod:`tools.bot_desktop.install` runs. ``None`` when no package manager is present.
 
     Not a promise that it can run here: see :func:`installable`. The published Docker image supervises

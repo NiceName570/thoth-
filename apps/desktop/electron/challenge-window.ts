@@ -27,7 +27,7 @@ import { createWindowOpenHandler } from './window-open-policy'
  * no permissions. It is pinned to the portal origin three ways: navigations
  * and SERVER REDIRECTS off-origin are cancelled, a main-frame commit anywhere
  * else ends the run, and a phase is only ever read from a portal URL — a
- * foreign page must never be able to get this window revealed under a Hermes
+ * foreign page must never be able to get this window revealed under a Thoth
  * title. Only `<portal>/challenge…` URLs are ever loaded — the URL arrives from the
  * network by way of the backend and the renderer, and "open this URL" must not
  * become "open any URL".

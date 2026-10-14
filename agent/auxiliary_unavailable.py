@@ -240,7 +240,7 @@ def _nous_credential_present(exc: BaseException) -> bool:
 def record_nous_credential_failure(exc: BaseException) -> str:
     """Remember *exc* as the latest Nous credential failure.
 
-    Logged once per distinct message: WARNING when a real credential failed, DEBUG when Hermes was
+    Logged once per distinct message: WARNING when a real credential failed, DEBUG when Thoth was
     simply never logged into Nous.
     """
     from hermes_cli.auth import format_auth_error

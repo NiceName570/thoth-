@@ -2,7 +2,7 @@
 
 The pause token used to live only in the updater's memory (plus an ``atexit`` resume), so a
 killed updater (console closed, ``taskkill``, power loss) left every paused gateway and SCM
-service stopped with nothing on disk saying so. The record is written under the ROOT Hermes
+service stopped with nothing on disk saying so. The record is written under the ROOT Thoth
 home BEFORE anything is stopped, names its owner (pid + creation time, the update-marker
 identity format), is rewritten as the token changes, and is removed only after a verified
 resume. A later launch whose owner check finds the updater dead (and no update live) resumes it.

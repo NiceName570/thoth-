@@ -3,7 +3,7 @@
 Failure class: interpreter. Real Windows machines carry two traps the managed runtime
 must ignore:
 
-* a different, standalone Python on PATH ahead of anything Hermes installed (#123185);
+* a different, standalone Python on PATH ahead of anything Thoth installed (#123185);
 * the pre-PM in-tree ``hermes-agent\\venv`` an older install left behind (#123965, #123972).
 
 After ``hermes update`` neither the gateway the user starts through ``hermes.exe`` nor a

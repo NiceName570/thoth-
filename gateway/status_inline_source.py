@@ -1,7 +1,7 @@
 """Inline-source (``python -c <src> …``) command-line parsing for gateway process identity.
 
 Everything after ``-c`` is data for the inline program, not the process's own identity -- except
-Hermes' own bootstraps, which run an entry point in-process and are mapped back to the equivalent
+Thoth' own bootstraps, which run an entry point in-process and are mapped back to the equivalent
 ``python -m <module> <argv…>`` (see #107002).
 """
 
@@ -69,7 +69,7 @@ def command_line_runs_inline_source(tokens: list[str]) -> bool:
     return inline_source_flag_index(tokens) is not None
 
 
-# Hermes' own inline bootstraps hand control to a Hermes entry point IN this process, so the argv
+# Thoth' own inline bootstraps hand control to a Thoth entry point IN this process, so the argv
 # they run with is this process's own identity; every other ``-c`` program keeps its trailing argv
 # as data (#107002). Each pattern is one emitted source shape, anchored at both ends so a program
 # merely CARRYING a bootstrap command line (the restart watcher's respawn argv) never matches.
@@ -138,7 +138,7 @@ def _bootstrap_entry(source: str, argv: list[str]) -> list[str] | None:
 
 def inline_bootstrap_argv(tokens: list[str]) -> list[str] | None:
     """*tokens* as the equivalent ``python -m <module> <argv…>`` when this interpreter's ``-c`` source
-    is a Hermes bootstrap running an entry point in-process; None for any other inline source.
+    is a Thoth bootstrap running an entry point in-process; None for any other inline source.
 
     Command lines usually arrive space-joined (``/proc``, psutil, ``ps``), which splits the source
     across tokens; the shortest token run that ends in a recognised tail is the source, whatever

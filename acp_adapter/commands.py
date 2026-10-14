@@ -66,7 +66,7 @@ class SlashCommandsMixin:
             "Queue a prompt to run after the current turn finishes",
             "prompt to run next",
         ),
-        "version": ("Show Hermes version", "Show Hermes version", None),
+        "version": ("Show Thoth version", "Show Thoth version", None),
     }
 
 
@@ -109,7 +109,7 @@ class SlashCommandsMixin:
         handler = getattr(self, f"_cmd_{cmd}")
 
         # Handlers run outside the per-turn cwd-pinning context. ``/compress``
-        # and ``/model`` REBUILD the system prompt, so unpinned they'd bake the Hermes install tree
+        # and ``/model`` REBUILD the system prompt, so unpinned they'd bake the Thoth install tree
         # into the persisted cached prompt. Pin inside a fresh context: no leak, no teardown.
         def _dispatch() -> str | None:
             try:
@@ -309,4 +309,4 @@ class SlashCommandsMixin:
     def _cmd_version(self, args: str, state: SessionState) -> str:
         from hermes_cli.version_info import get_version_info
 
-        return f"Hermes Agent v{get_version_info().derived_version}"
+        return f"Thoth v{get_version_info().derived_version}"

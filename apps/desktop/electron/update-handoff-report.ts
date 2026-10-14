@@ -66,7 +66,7 @@ export function reportHandoffResult(host: HandoffReportHost): void {
       void host.dialog.showMessageBox({
         type: 'info',
         title: 'Thoth update',
-        message: 'Hermes updated, but some follow-up steps need another try',
+        message: 'Thoth updated, but some follow-up steps need another try',
         detail: `${result.warnings.join('\n')}\n\nHermes retries them on the next launch or the next update.`
       })
     } else if (result && result.ok && result.manual) {
@@ -93,7 +93,7 @@ export function reportHandoffResult(host: HandoffReportHost): void {
         .showMessageBox({
           type: 'error',
           title: 'Thoth update',
-          message: "Hermes couldn't finish updating",
+          message: "Thoth couldn't finish updating",
           detail:
             "You're still on the previous version and can keep using it. Try the update again, or open the update log to report the problem.\n\n" +
             `Details: ${result.message}`,

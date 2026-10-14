@@ -12,7 +12,7 @@ A seeded property / matrix layer over every surface that writes ``config.yaml`` 
 * P3  a failed read never results in a clobbering write: for every single config read an
       operation performs, a transient ``EMFILE`` on exactly that read, plus unreadable, truncated
       and non-mapping files, must leave every section the operation did not target intact;
-* P4  Hermes's ``.env`` loaders are idempotent (self-references, placeholders, quoting), the
+* P4  Thoth's ``.env`` loaders are idempotent (self-references, placeholders, quoting), the
       sanitizer is a fixed point, and ``save_env_value`` changes exactly one line;
 * P5  every config migration is idempotent from every historical ``_config_version`` and never
       clobbers user-set values;
@@ -342,7 +342,7 @@ def _reset_config_caches(*, keep_lkg: bool = False) -> None:
 
 
 def _write_file(path: Path, text: str) -> None:
-    """Atomic replace (new inode), like every Hermes writer, so no cache can serve stale bytes."""
+    """Atomic replace (new inode), like every Thoth writer, so no cache can serve stale bytes."""
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_name(f".{path.name}.c18tmp")
     tmp.write_text(text, encoding="utf-8")

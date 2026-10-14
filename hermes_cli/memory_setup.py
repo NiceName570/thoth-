@@ -100,7 +100,7 @@ def _install_dependencies(provider_name: str) -> None:
     if status:
         print(f"  ✓ Dependencies prepared for {provider_name}")
         if status == "restart_required":
-            print("  Restart Hermes to use the prepared dependencies.")
+            print("  Restart Thoth to use the prepared dependencies.")
 
     # Also show external (non-pip) dependencies that are missing.
     for dep in meta.get("external_dependencies", []):
@@ -339,7 +339,7 @@ def _write_env_vars(
 
     ``hermes_home`` may be supplied by plugin ``post_setup`` hooks that
     already received an explicit home directory (e.g. a non-default
-    profile). It is applied through the context-local Hermes home override
+    profile). It is applied through the context-local Thoth home override
     so ``save_env_value`` still owns the validation, sanitization, and
     atomic-write path without mutating global ``os.environ``.
     """

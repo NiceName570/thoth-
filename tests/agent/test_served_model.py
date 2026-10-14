@@ -38,7 +38,7 @@ def test_httpx_hook_captures_litellm_header_and_clears_when_absent():
     client.chat.completions.create(model="hermes-router", messages=[{"role": "user", "content": "hi"}])
     assert result_model_fields(agent) == {"requested_model": "hermes-router", "served_model": None}
 
-    # Hermes' own fallback route surfaces the same way when no proxy header is present.
+    # Thoth' own fallback route surfaces the same way when no proxy header is present.
     agent._fallback_activated = True
     agent._primary_runtime = {"model": "gpt-5.6-sol"}
     agent.model = "qwen/qwen3.8-max"

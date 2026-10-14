@@ -38,7 +38,7 @@ def test_delegate_publication_refuses_without_our_claim(tmp_path, claim):
 
 
 def test_sidecar_timeout_never_releases_the_parked_update(tmp_path):
-    # The installer fixture is an inert executable witness, not a real Hermes
+    # The installer fixture is an inert executable witness, not a real Thoth
     # update. Production bash, locks, child creation and barrier all run unchanged.
     home, install = _install(tmp_path)
     marker = home / ".hermes-update-in-progress"

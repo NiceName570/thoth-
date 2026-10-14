@@ -254,7 +254,7 @@ def _serialize_payload(event: str, kwargs: dict[str, Any], delivery_id: str) -> 
 
 def _build_delivery(event: str, target: WebhookTarget, body: bytes, delivery_id: str) -> dict[str, Any]:
     headers = {
-        "Content-Type": "application/json", "User-Agent": "Hermes-Agent-Outbound-Webhook",
+        "Content-Type": "application/json", "User-Agent": "Thoth-Outbound-Webhook",
         "X-Hermes-Event": event, "X-Hermes-Delivery": delivery_id,
     }
     if target.secret:

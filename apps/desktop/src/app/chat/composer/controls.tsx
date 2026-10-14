@@ -324,7 +324,7 @@ function ConversationIndicator({
   )
 }
 
-// "Hey Hermes" wake-word toggle. ALWAYS rendered — the ear never hides. A
+// "Hey Thoth" wake-word toggle. ALWAYS rendered — the ear never hides. A
 // user must always be able to click it to turn passive listening on; if the
 // backend can't start (missing STT/TTS, deps still installing, no mic
 // permission, etc.) the click surfaces the reason in the tooltip and the

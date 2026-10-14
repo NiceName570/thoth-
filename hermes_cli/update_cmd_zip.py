@@ -23,13 +23,13 @@ from hermes_cli.update_cmd_common import _record_stop
 logger = logging.getLogger("hermes_cli.update_cmd")
 
 _ZIP_STAGING_ARTIFACT_SUFFIXES = ".hermes-update-staging", ".hermes-update-old"
-# Hermes' own root breadcrumbs: the swap journal + its owner lock, and the update/refresh markers.
+# Thoth' own root breadcrumbs: the swap journal + its owner lock, and the update/refresh markers.
 # They are never user work, so the dirty-tree guard must not refuse (and wedge) on them.
 _ZIP_HERMES_ROOT_ARTIFACTS = frozenset({
     ".hermes-update-zip-swap", ".hermes-update-zip-swap.lock", ".update-incomplete", ".lazy-refresh-incomplete"})
 # A journal temp a killed writer left (``write_durable_text``'s unpredictable name). The swap never
 # touches it (no ZIP ships it) and nothing deletes it, so admitting it risks no user bytes. A file at
-# the old fixed ``.hermes-update-zip-swap.tmp`` name is no longer Hermes': it blocks (review Z5).
+# the old fixed ``.hermes-update-zip-swap.tmp`` name is no longer Thoth': it blocks (review Z5).
 _ZIP_JOURNAL_TEMP = re.compile(r"\.hermes-update-zip-swap\.[0-9a-f]{12}\.tmp")
 
 # Single source of truth for entries the ZIP swap preserves — used by the dirty-tree filter and the swap loop.
@@ -319,7 +319,7 @@ def _is_zip_preserved_entry_status_line(line: str, shipped: Optional[Collection[
 
 
 def _is_zip_staging_artifact_status_line(line: str, staged: Collection[str] = ()) -> bool:
-    """True when a porcelain status line is Hermes' own: a root breadcrumb, or the staging copy of an
+    """True when a porcelain status line is Thoth' own: a root breadcrumb, or the staging copy of an
     entry this run staged. Any other ``*.hermes-update-staging``/``-old`` may be a user's file (a manual
     ``cp -r tools tools.hermes-update-old``) that staging would delete, so it blocks."""
     top = _status_top_level(line[3:] if len(line) >= 3 else line)
@@ -410,7 +410,7 @@ def _require_staging_space(extracted: str, entries: list[str], project_root: str
 
 def _link_or_copy_artifact(source: str, destination: str) -> None:
     """Hardlink where the filesystem allows (apps/desktop/node_modules is hundreds of MB, and a link stays
-    valid after the swap unlinks the old tree; on Windows a link also succeeds on a locked Hermes.exe
+    valid after the swap unlinks the old tree; on Windows a link also succeeds on a locked Thoth.exe
     where copy2 raises); byte copy otherwise."""
     try:
         os.link(source, destination)

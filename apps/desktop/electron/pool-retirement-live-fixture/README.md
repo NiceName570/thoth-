@@ -1,7 +1,7 @@
 # Native pool retirement integration
 
 From `apps/desktop`, after installing the repository-pinned Node dependencies and a
-Hermes Python environment (including the serve dependencies):
+Thoth Python environment (including the serve dependencies):
 
 ```sh
 HERMES_TEST_REAL_SERVE=1 \

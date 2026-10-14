@@ -69,7 +69,7 @@ def _doctor_runtime(plugin_path: Path):
     try:
         manifests = manager._scan_directory(plugins_root, source="user")
         if not manifests:
-            raise _DoctorLoadError(f"Hermes discovery found no valid plugin manifest under {copied}")
+            raise _DoctorLoadError(f"Thoth discovery found no valid plugin manifest under {copied}")
         if len(manifests) != 1:
             raise _DoctorLoadError(
                 f"Expected one plugin manifest, discovered {len(manifests)} under {copied}")
@@ -281,7 +281,7 @@ def _check_manifest_v2(report: "DoctorReport", manifest: Any) -> None:
     mv = getattr(manifest, "manifest_version", 1)
     if mv > SUPPORTED_MANIFEST_VERSION:
         report.warning(
-            f"manifest_version {mv} is newer than this Hermes supports "
+            f"manifest_version {mv} is newer than this Thoth supports "
             f"({SUPPORTED_MANIFEST_VERSION}); unknown fields are ignored")
 
     api_version = getattr(manifest, "api_version", None)
@@ -322,7 +322,7 @@ def _check_manifest_v2(report: "DoctorReport", manifest: Any) -> None:
         report.warning(
             "declared python_dependencies not installed: " + ", ".join(missing)
             + " — install and enable the plugin with hermes plugins. "
-            "For an enabled plugin, run hermes pm repair, then restart Hermes.")
+            "For an enabled plugin, run hermes pm repair, then restart Thoth.")
 
     schema = getattr(manifest, "config_schema", {}) or {}
     if schema:
@@ -368,7 +368,7 @@ def _check_desktop_half_copy(report: DoctorReport, path: Path) -> None:
 
 
 def doctor_plugin(target: str | os.PathLike[str] | None = None) -> DoctorReport:
-    """Validate one plugin through Hermes' real scanner and registration path."""
+    """Validate one plugin through Thoth' real scanner and registration path."""
     try:
         path = resolve_plugin_path(target)
     except FileNotFoundError as exc:

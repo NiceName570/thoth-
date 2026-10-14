@@ -42,7 +42,7 @@ def test_spawned_restart_watcher_is_not_identified_as_a_gateway(monkeypatch):
     cmdline = _spawned_watcher_cmdline(monkeypatch)
     # The watcher really does carry the gateway argv — that is what made this bite.
     assert "hermes_cli.main gateway run" in cmdline
-    # No Hermes subcommand at all may be read off it — not even a wrong one (the watcher source
+    # No Thoth subcommand at all may be read off it — not even a wrong one (the watcher source
     # text tokenizes into whatever words it happens to contain).
     assert _gateway_command_subcommand(cmdline) is None
     assert looks_like_gateway_command_line(cmdline) is False

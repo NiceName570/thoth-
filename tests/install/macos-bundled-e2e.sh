@@ -150,7 +150,7 @@ stage_bundle_inputs() {
 }
 
 # Derive the executable from the bundle's own Info.plist — the product
-# name is NOT assumed to be "Hermes" (packaged name: "Hermes Bundled") and
+# name is NOT assumed to be "Thoth" (packaged name: "Thoth Bundled") and
 # nothing is renamed. Returns the absolute binary path.
 derive_app_bin() { # $1: .app path
   local exec_name
@@ -188,7 +188,7 @@ phase_install() {
   local found
   found="$(find "$WORK_ROOT/install-old" -maxdepth 2 -name '*.app' -type d | head -1)"
   [ -n "$found" ] || fail "no .app inside the OLD release zip"
-  local old_app="$WORK_ROOT/apps/Hermes.app"
+  local old_app="$WORK_ROOT/apps/Thoth.app"
   mv "$found" "$old_app"
 
   local old_app_bin

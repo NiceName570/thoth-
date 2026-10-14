@@ -180,7 +180,7 @@ The web builder reads `web/public/` beneath it and requires `favicon.ico`.
 The desktop builder reads `apps/desktop/public/` beneath it and requires
 `apple-touch-icon.png`.
 
-Run the generator with a Hermes runtime Python (Pillow and resvg-py are core
+Run the generator with a Thoth runtime Python (Pillow and resvg-py are core
 dependencies):
 
 ```sh
@@ -374,7 +374,7 @@ match the supplied PM runtime. The assembler does not create that environment.
   from this map.
 
 Source-layout placement writes project distribution metadata without building
-a Hermes wheel. It also writes `site_packages/hermes-agent.pth` with a relative
+a Thoth wheel. It also writes `site_packages/hermes-agent.pth` with a relative
 code path. Source-layout placement therefore requires an output-owned dependency
 directory, including in `fixed` mode. Reference placement does not write this file.
 

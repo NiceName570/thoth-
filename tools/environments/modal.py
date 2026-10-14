@@ -260,7 +260,7 @@ class ModalEnvironment(BaseEnvironment):
         if self._persistent:
             async def _snapshot():
                 # ttl=None: the SDK default (30 days) would silently expire an idle
-                # persistent sandbox's snapshot; Hermes owns its lifetime.
+                # persistent sandbox's snapshot; Thoth owns its lifetime.
                 return (await self._sandbox.snapshot_filesystem.aio(ttl=None)).object_id
             try:
                 snapshot_id = self._worker.run_coroutine(_snapshot(), timeout=60)

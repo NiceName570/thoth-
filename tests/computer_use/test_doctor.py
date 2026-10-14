@@ -13,7 +13,7 @@ downstream consumers (CI / `hermes update`) rely on:
 We do NOT spin up a real cua-driver — that lives in the cua-driver
 integration test suite (libs/cua-driver/rust/tests/integration/
 test_health_report_mcp.py). Here we mock the subprocess and assert the
-Hermes-side adapter behaves correctly against the documented response
+Thoth-side adapter behaves correctly against the documented response
 shape.
 """
 
@@ -243,7 +243,7 @@ class TestJsonOutput:
              patch("sys.stdout", new_callable=StringIO) as out:
             doctor.run_doctor(json_output=True)
         # Verify the captured text round-trips through json.loads. Upstream
-        # health_report keys are preserved; Hermes adds hermes_identity.
+        # health_report keys are preserved; Thoth adds hermes_identity.
         parsed = json.loads(out.getvalue())
         report = _ok_report()
         for key, value in report.items():

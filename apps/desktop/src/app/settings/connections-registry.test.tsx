@@ -211,7 +211,7 @@ describe('ConnectionsRegistrySection', () => {
     expect(screen.queryByRole('button', { name: 'Hermes Cloud' })).toBeNull()
   })
 
-  it('saves a custom remote Hermes path for SSH connections', async () => {
+  it('saves a custom remote Thoth path for SSH connections', async () => {
     render(<ConnectionsRegistrySection />)
 
     await waitFor(() => expect(screen.getByText('Homelab')).toBeTruthy())
@@ -233,7 +233,7 @@ describe('ConnectionsRegistrySection', () => {
     })
   })
 
-  it('clears a saved remote Hermes path back to auto-detect', async () => {
+  it('clears a saved remote Thoth path back to auto-detect', async () => {
     const sshRegistry: DesktopConnectionsRegistry = {
       ...registry,
       connections: [

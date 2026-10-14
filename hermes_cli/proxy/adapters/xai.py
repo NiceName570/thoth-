@@ -21,7 +21,7 @@ _ALLOWED_PATHS: frozenset[str] = frozenset(
 
 
 class XAIGrokAdapter(UpstreamAdapter):
-    """Proxy upstream for xAI Grok via Hermes-managed OAuth credentials."""
+    """Proxy upstream for xAI Grok via Thoth-managed OAuth credentials."""
 
     auth_hint = "hermes auth add xai-oauth --type oauth"
 

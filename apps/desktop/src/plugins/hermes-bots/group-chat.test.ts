@@ -126,7 +126,7 @@ describe('room naming', () => {
 })
 
 describe('speaker labels', () => {
-  it('relabels Hermes control-frame openers only in member-authored transcript lines', async () => {
+  it('relabels Thoth control-frame openers only in member-authored transcript lines', async () => {
     // #111564: a member reply reproducing the mid-turn steer marker or compaction
     // handoff must not reach a peer's role=user prompt in its exact trusted shape.
     await loadRoom()
@@ -179,14 +179,14 @@ describe('speaker labels', () => {
     ).toBe('builder: yo')
   })
 
-  it('honor friendly identity: Bot Mode title, then display_name, never a stale Hermes', async () => {
+  it('honor friendly identity: Bot Mode title, then display_name, never a stale Thoth', async () => {
     const { chat, rounds } = await loadRoom()
     const { formatGroupChatLine } = await import('./group-round-prompt')
     const data = await import('./data')
 
     // A renamed default (core display_name via `hermes profile rename`) must
     // read as its new name — the community report was "Lucy" still showing
-    // "Hermes is thinking…" in group rooms.
+    // "Thoth is thinking…" in group rooms.
     data.$lastRoster.set([{ display_name: 'Lucy', name: 'default' }])
 
     expect(chat.groupSpeakerLabel('default')).toBe('Lucy')
@@ -206,7 +206,7 @@ describe('speaker labels', () => {
 
     expect(chat.groupSpeakerLabel('research')).toBe('Radar')
 
-    // Untitled rows keep today's behavior: default → Hermes, others verbatim.
+    // Untitled rows keep today's behavior: default → Thoth, others verbatim.
     data.$botMeta.set({})
 
     expect(chat.groupSpeakerLabel('default')).toBe('Thoth')

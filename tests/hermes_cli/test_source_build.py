@@ -396,7 +396,7 @@ def test_packaged_desktop_is_reused_only_while_it_names_head(tmp_path, monkeypat
     subprocess.run([*git[:3], "init", "-q"], check=True)
     subprocess.run([*git, "commit", "-q", "--allow-empty", "-m", "one"], check=True)
     desktop_dir = root / "apps/desktop"
-    exe = desktop_dir / "release/app/Hermes"
+    exe = desktop_dir / "release/app/Thoth"
     monkeypatch.setattr(main_desktop, "_desktop_packaged_executable", lambda _d: exe)
     resources = main_desktop._packaged_resources_dir(desktop_dir)
     (resources / "app.asar.unpacked/dist").mkdir(parents=True)

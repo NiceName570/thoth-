@@ -1,6 +1,6 @@
 """Plugin survival + upgrade contracts (mnemosyne-oss/mnemosyne#859).
 
-Hermes-side contracts an external memory-provider wrapper can hold us to,
+Thoth-side contracts an external memory-provider wrapper can hold us to,
 exercised through PUBLIC paths (no source inspection, no network — uv
 resolves offline local path-source fixtures):
 

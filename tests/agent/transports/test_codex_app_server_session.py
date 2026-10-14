@@ -180,7 +180,7 @@ class TestLifecycle:
         assert len(method_calls) == 1
 
     def test_thread_start_carries_hermes_prompt_and_disables_codex_personality(self):
-        """thread/start carries cwd, Hermes' composed prompt as developerInstructions and
+        """thread/start carries cwd, Thoth' composed prompt as developerInstructions and
         personality "none" (#74712, #72104, #26035). We intentionally do NOT pass `permissions`
         (experimentalApi-gated + requires a matching config.toml [permissions] table)."""
         client = FakeClient()
@@ -227,7 +227,7 @@ class TestLifecycle:
         assert thread_start_params(provider="openai-codex", requested_provider="openai-codex", model="gpt-5.4") == {
             **base, "model": "gpt-5.4"}
         assert thread_start_params(provider="custom", requested_provider="custom", model="gpt-5.4") == {**base, "model": "gpt-5.4"}
-        # ``-900k`` is a Hermes-side alias the backend rejects; codex gets the base slug.
+        # ``-900k`` is a Thoth-side alias the backend rejects; codex gets the base slug.
         assert thread_start_params(provider="openai-codex", requested_provider="openai-codex",
                                    model="gpt-5.6-sol-900k")["model"] == "gpt-5.6-sol"
         # The OpenAI API-key rung arrives as provider=custom with no codex model_providers id: codex's own
@@ -418,7 +418,7 @@ class TestRunTurn:
         assert params["serviceTier"] == "fast"
 
     def test_service_tier_is_sent_only_when_it_changes(self):
-        """codex's own configured tier is left alone until Hermes selects one; ``/fast off`` afterwards sends
+        """codex's own configured tier is left alone until Thoth selects one; ``/fast off`` afterwards sends
         an explicit null to clear it, and an unchanged tier is not re-sent."""
         client = FakeClient()
         for _ in range(4):
@@ -433,7 +433,7 @@ class TestRunTurn:
 
     def test_resumed_thread_receives_the_hermes_tier_even_when_it_is_null(self):
         """CLI ``/fast`` rebuilds the agent, so ``/fast off`` reaches a resumed thread that may still carry the
-        earlier tier: its first turn sends Hermes' tier, a clearing null included."""
+        earlier tier: its first turn sends Thoth' tier, a clearing null included."""
         client = FakeClient()
         client.queue_notification("turn/completed", threadId="t",
                                   turn={"id": "turn-fake-001", "status": "completed", "error": None})

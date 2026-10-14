@@ -17,7 +17,7 @@ Run the first task chat that setup hands off.
 | Source | Optional — install with `hermes skills install official/productivity/first-task` |
 | Path | `optional-skills/productivity/first-task` |
 | Version | `0.3.0` |
-| Author | Siddharth Balyan (alt-glitch) + Hermes Agent |
+| Author | Siddharth Balyan (alt-glitch) + Thoth |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `onboarding`, `first-run`, `desktop`, `handoff` |
@@ -26,7 +26,7 @@ Run the first task chat that setup hands off.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Thoth loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # First Task Skill

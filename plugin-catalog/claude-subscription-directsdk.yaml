@@ -1,7 +1,7 @@
 name: claude-subscription-directsdk
 repo: https://github.com/NousResearch/hermes-plugin-claude-subscription-directsdk
 sha: 4bc79c78031d1a042b5d8a7314ceea283db5c5e2
-description: Experimental model provider that runs Hermes turns on a Claude Pro/Max subscription through
+description: Experimental model provider that runs Thoth turns on a Claude Pro/Max subscription through
   the official Claude Code CLI (the Agent SDK path), so no separate API key or per-token bill. Requires
   the claude CLI installed and logged in; the plugin checks for it at load, in hermes model, in the pickers
   and before every request, and refuses cleanly with the install hint when it is missing. Disclosure — every

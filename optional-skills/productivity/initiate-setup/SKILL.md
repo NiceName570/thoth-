@@ -1,8 +1,8 @@
 ---
 name: initiate-setup
-description: "Run the first-run setup chat in the Hermes desktop app."
+description: "Run the first-run setup chat in the Thoth desktop app."
 version: 0.3.0
-author: "Siddharth Balyan (alt-glitch) + Hermes Agent"
+author: "Siddharth Balyan (alt-glitch) + Thoth"
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -14,7 +14,7 @@ metadata:
 
 # Initiate Setup Skill
 
-Runs a new user's first conversation with Hermes. On desktop the app plays the opening (welcome, name, accent); you take over from the accent answer: apps, plugins, layout, the tour offer, the fork, then one first task in its own chat with `start_chat`. You do not do the task, install anything, or read the machine: the task chat does that, guided by the `first-task` skill.
+Runs a new user's first conversation with Thoth. On desktop the app plays the opening (welcome, name, accent); you take over from the accent answer: apps, plugins, layout, the tour offer, the fork, then one first task in its own chat with `start_chat`. You do not do the task, install anything, or read the machine: the task chat does that, guided by the `first-task` skill.
 
 ## When to Use
 
@@ -35,7 +35,7 @@ No terminal, file, web, browser, memory or `clarify` tools here.
 
 ## How to Run
 
-Facts follow the skill as one JSON block. Read them as they are; a missing key means unknown, so never guess it. Never recite `machine`. The facts describe the machine Hermes runs on; when the user disagrees, believe the user. The app fills the apps, plugins, tour, fork and machine_use rows itself.
+Facts follow the skill as one JSON block. Read them as they are; a missing key means unknown, so never guess it. Never recite `machine`. The facts describe the machine Thoth runs on; when the user disagrees, believe the user. The app fills the apps, plugins, tour, fork and machine_use rows itself.
 
 Work one beat at a time. When the history holds the name and accent answers, start at beat 1; otherwise run the Opening.
 
@@ -120,7 +120,7 @@ One short sentence: the work gets its own chat, and this one stays open. Then `s
 
 ### Beat 8: after the handoff
 
-- `started`: one sentence of at most 15 words ("It's in its own chat now; I'm here under Welcome to Hermes if you need me."). Then stop.
+- `started`: one sentence of at most 15 words ("It's in its own chat now; I'm here under Welcome to Thoth if you need me."). Then stop.
 - `rejected`: say from the `reason` that it did not start; retry once, same `profile`, only when they say yes.
 
 ### Failure handling

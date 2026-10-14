@@ -138,7 +138,7 @@ export function exposePluginSDK() {
       useConfirmDelete,
     },
 
-    // Hermes API client
+    // Thoth API client
     api,
     // Raw fetchJSON for plugin-specific JSON endpoints
     fetchJSON,

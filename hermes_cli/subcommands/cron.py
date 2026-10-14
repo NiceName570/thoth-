@@ -79,8 +79,8 @@ def build_cron_parser(subparsers, *, cmd_cron: Callable) -> None:
             "clamped by the provider at request time. Omit to follow config.")
     cron_create.add_argument("--interpreter",
         help="Absolute or ~ path to a Python in your own venv (e.g. ~/venvs/report/bin/python) "
-            "for a .py --script / --monitor-script, so it can import packages Hermes does not "
-            "ship. .sh/.bash still run under bash. Omit to use Hermes' Python.")
+            "for a .py --script / --monitor-script, so it can import packages Thoth does not "
+            "ship. .sh/.bash still run under bash. Omit to use Thoth' Python.")
     cron_create.add_argument(
         "--continuity", dest="continuity", action="store_const", const=True, default=None,
         help="Each run wakes up with the job's own previous output injected "
@@ -150,7 +150,7 @@ def build_cron_parser(subparsers, *, cmd_cron: Callable) -> None:
             "the pin and follow config resolution.")
     cron_edit.add_argument("--interpreter",
         help="Absolute or ~ path to a Python for a .py script / monitor script. "
-            "Pass empty string to clear (back to Hermes' Python).")
+            "Pass empty string to clear (back to Thoth' Python).")
 
     # lifecycle actions
     cron_pause = cron_subparsers.add_parser("pause", help="Pause a scheduled job")

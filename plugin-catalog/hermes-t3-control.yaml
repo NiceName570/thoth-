@@ -8,7 +8,7 @@ category: tools
 requires_hermes: ">=0.20.4"
 docs_url: https://github.com/thetasigmaio/hermes-t3-control/blob/aeb5493e30e744b414cbfe88a70adb1acd59a1c8/docs/compatibility.md
 platforms: [linux]
-# Stock Hermes: t3_thread_send requires completion_policy: "none".
+# Stock Thoth: t3_thread_send requires completion_policy: "none".
 # Automatic completion callbacks are experimental, disabled by default, and
 # require separately patched host APIs; this entry does not install that patch.
 capabilities:

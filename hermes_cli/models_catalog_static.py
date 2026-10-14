@@ -113,7 +113,7 @@ def _xai_promote_top(ids: list[str]) -> list[str]:
 
 
 def _xai_merge_curated_extras(ids: list[str]) -> list[str]:
-    """Append Hermes-curated xAI models missing from models.dev, right after the pinned headline."""
+    """Append Thoth-curated xAI models missing from models.dev, right after the pinned headline."""
     out = list(ids)
     for extra in _XAI_CURATED_EXTRAS:
         if extra not in out:
@@ -533,7 +533,7 @@ _PROVIDER_ALIASES = dict((
 ))
 
 
-# Offline/fresh-install fallback for the model Hermes silently lands on when the user never picked
+# Offline/fresh-install fallback for the model Thoth silently lands on when the user never picked
 # one (GUI onboarding confirm card, empty ``model.default``, provider-set-but-model-missing). The
 # AUTHORITATIVE source is the remote catalog manifest, which labels exactly one entry per provider
 # ``"default": true`` (get_default_model_from_cache) so the default rotates without a release; this
@@ -584,7 +584,7 @@ _LIVE_FIRST_PICKER_PROVIDERS: frozenset[str] = frozenset({"opencode-zen", "openc
 _OPENAI_FAST_MODE_PREFIXES: tuple[str, ...] = ("gpt-", "o1", "o3", "o4")
 # OpenAI Ultrafast (service_tier="ultrafast", 6x Standard): broadly available for GPT-6 Astra only
 # (developers.openai.com/api/docs/guides/ultrafast-mode, 2026-09-29); GPT-6.1 Sol "coming soon".
-# Exact wire slugs, matched after stripping the vendor prefix and the Hermes-side ``-900k`` alias.
+# Exact wire slugs, matched after stripping the vendor prefix and the Thoth-side ``-900k`` alias.
 _OPENAI_ULTRAFAST_MODELS: frozenset[str] = frozenset({"gpt-6-astra"})
 
 
@@ -600,7 +600,7 @@ _MODELS_DEV_PREFERRED: frozenset[str] = frozenset({
 })
 
 
-# OpenRouter-style ids -> Copilot ids. Dash-notation Claude ids are accepted too: Hermes' default
+# OpenRouter-style ids -> Copilot ids. Dash-notation Claude ids are accepted too: Thoth' default
 # Claude IDs use hyphens (Anthropic native) but Copilot's API only accepts dot-notation, so a
 # copilot + hyphenated default would otherwise hit HTTP 400 "model_not_supported".
 _COPILOT_MODEL_ALIASES = dict((

@@ -329,14 +329,14 @@ def execution_backend_fields(*, kind: Any, backend: Any, result: Any, error_clas
     }
 
 
-# Set while Hermes itself drives a backend (TUI/Desktop path completion listings): that is not the
+# Set while Thoth itself drives a backend (TUI/Desktop path completion listings): that is not the
 # user's workload, so it must not show up as backend usage.
 _UNMETERED = contextvars.ContextVar("shared_metrics_unmetered_backend", default=False)
 
 
 @contextlib.contextmanager
 def unmetered_backend_calls() -> Iterator[None]:
-    """Run Hermes-owned terminal/browser/code calls without counting them as execution-backend use."""
+    """Run Thoth-owned terminal/browser/code calls without counting them as execution-backend use."""
     token = _UNMETERED.set(True)
     try:
         yield
@@ -347,7 +347,7 @@ def unmetered_backend_calls() -> Iterator[None]:
 def record_execution_backend(kind: str, backend: Any, result: Any = None, *, error_class: str | None = None) -> Any:
     """Count one tool call that reached its backend; returns ``result`` unchanged. ``backend`` may be a
     callable so resolving it costs nothing while collection is off. Calls the background review /
-    curator forks make are Hermes' own work, not the user's (terminal.outcome skips them too)."""
+    curator forks make are Thoth' own work, not the user's (terminal.outcome skips them too)."""
     from tools.skill_provenance import is_background_review
 
     if _UNMETERED.get() or is_background_review():

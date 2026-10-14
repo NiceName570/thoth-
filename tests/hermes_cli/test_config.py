@@ -68,7 +68,7 @@ class TestEnsureHermesHome:
     # module) so this fixture keeps testing the OLD text regardless of any
     # future change to _LEGACY_TEMPLATE_SOULS's length or ordering.
     _PRE_REWRITE_DEFAULT_SOUL = (
-        "You are Hermes Agent, an intelligent AI assistant created by Nous "
+        "You are Thoth, an intelligent AI assistant created by Nous "
         "Research. You are helpful, knowledgeable, and direct. You assist "
         "users with a wide range of tasks including answering questions, "
         "writing and editing code, analyzing information, creative work, "
@@ -445,7 +445,7 @@ class TestSaveAndLoadRoundtrip:
 class TestLoadEnvInlineComments:
     def test_unquoted_hash_is_a_comment_quoted_hash_is_data(self, tmp_path):
         """load_env is the one dotenv reader (agent.secret_scope.load_env_file): an unquoted ` #...` tail
-        is a comment, a quoted value keeps its hash. Hermes' own writer (_quote_env_value) always quotes
+        is a comment, a quoted value keeps its hash. Thoth' own writer (_quote_env_value) always quotes
         values containing `#`, so a saved secret round-trips."""
         from hermes_cli.config import invalidate_env_cache
 
@@ -1308,13 +1308,13 @@ class TestDiscordChannelPromptsConfig:
 class TestEnvWriteDenylist:
     """``save_env_value`` refuses to persist env-var names that
     influence how subprocesses execute — ``LD_PRELOAD``, ``PYTHONPATH``,
-    ``PATH``, ``EDITOR``, etc. — or selected Hermes runtime/security controls.
+    ``PATH``, ``EDITOR``, etc. — or selected Thoth runtime/security controls.
 
     The dashboard exposes ``PUT /api/env`` to any authed caller (and
     the session token lives in the SPA's HTML where any future plugin
     XSS or local process could exfiltrate it). Without this gate, an
     attacker who steals the token could plant
-    ``LD_PRELOAD=/tmp/evil.so`` in ``.env`` and own the next Hermes
+    ``LD_PRELOAD=/tmp/evil.so`` in ``.env`` and own the next Thoth
     process on next startup via the dotenv → ``os.environ`` chain in
     ``hermes_cli/env_loader.py``.
 

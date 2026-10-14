@@ -42,8 +42,8 @@ test('shouldSignFile rejects every non-package file the hook is asked to sign', 
   // The app exe and any payload binary are covered by the package's block
   // map — signing them is wasted round-trips and would break the hash if
   // done after makeappx packs the package.
-  assert.equal(shouldSignFile('release/win-unpacked/Hermes.exe'), false)
-  assert.equal(shouldSignFile('C:/work/hermes-agent/release/win-unpacked/Hermes.exe'), false)
+  assert.equal(shouldSignFile('release/win-unpacked/Thoth.exe'), false)
+  assert.equal(shouldSignFile('C:/work/hermes-agent/release/win-unpacked/Thoth.exe'), false)
   assert.equal(shouldSignFile('release/Hermes-0.17.0-win32-arm64.nsis.exe'), false)
   assert.equal(shouldSignFile('release/Hermes-0.17.0-win32-arm64.msixupload'), false)
   assert.equal(shouldSignFile('release/Hermes-0.17.0-win32-arm64.dll'), false)

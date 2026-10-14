@@ -41,7 +41,7 @@ def _token_status(source: str, source_label: str, creds: dict[str, Any]) -> dict
 
 
 def _anthropic_oauth_status() -> dict[str, Any]:
-    """Status for the "Anthropic Account" card: Hermes-managed PKCE file first, then the
+    """Status for the "Anthropic Account" card: Thoth-managed PKCE file first, then the
     registry-ordered env vars (process env — where Bitwarden-sourced secrets land — then .env).
 
     Claude Code's ``~/.claude/.credentials.json`` is deliberately NOT read here; it has its own
@@ -53,7 +53,7 @@ def _anthropic_oauth_status() -> dict[str, Any]:
     except Exception:
         hermes_creds = None
     if hermes_creds and hermes_creds.get("accessToken"):
-        return _token_status("hermes_pkce", f"Hermes PKCE ({_get_hermes_oauth_file()})", hermes_creds)
+        return _token_status("hermes_pkce", f"Thoth PKCE ({_get_hermes_oauth_file()})", hermes_creds)
 
     env_var_order: tuple = ("ANTHROPIC_API_KEY", "ANTHROPIC_TOKEN", "CLAUDE_CODE_OAUTH_TOKEN")
     try:
@@ -94,7 +94,7 @@ def _claude_code_only_status() -> dict[str, Any]:
 
 def _copilot_acp_status() -> dict[str, Any]:
     """Status for copilot-acp. ``logged_in`` only on positive evidence (env token or known on-disk
-    store); the CLI may hold its session in an OS keychain Hermes can't read, so the unverified
+    store); the CLI may hold its session in an OS keychain Thoth can't read, so the unverified
     state reads "managed by the Copilot CLI" — never signed out."""
     try:
         from hermes_cli.auth import get_external_process_provider_status

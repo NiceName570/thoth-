@@ -2,19 +2,19 @@
 sidebar_position: 11
 sidebar_label: "Plugins"
 title: "Plugins"
-description: "Extend Hermes with custom tools, hooks, and integrations via the plugin system"
+description: "Extend Thoth with custom tools, hooks, and integrations via the plugin system"
 ---
 
 # Plugins
 
-Hermes has a plugin system for adding custom tools, hooks, and integrations without modifying core code.
+Thoth has a plugin system for adding custom tools, hooks, and integrations without modifying core code.
 
 If you want to create a custom tool for yourself, your team, or one project,
 this is usually the right path. The developer guide's
-[Adding Tools](../../developer-guide/adding-tools.md) page is for built-in Hermes
+[Adding Tools](../../developer-guide/adding-tools.md) page is for built-in Thoth
 core tools that live in `tools/` and `toolsets.py`.
 
-**→ [Build a Hermes Plugin](../../developer-guide/plugins/index.md)** — step-by-step guide with a complete working example.
+**→ [Build a Thoth Plugin](../../developer-guide/plugins/index.md)** — step-by-step guide with a complete working example.
 
 ## Quick overview
 
@@ -28,7 +28,7 @@ Drop a directory into `~/.hermes/plugins/` with a `plugin.yaml` and Python code:
 └── tools.py         # tool handlers (what runs when called)
 ```
 
-Start Hermes — your tools appear alongside built-in tools. The model can call them immediately.
+Start Thoth — your tools appear alongside built-in tools. The model can call them immediately.
 
 ### Minimal working example
 
@@ -45,7 +45,7 @@ description: A minimal example plugin
 **`~/.hermes/plugins/hello-world/__init__.py`**
 
 ```python
-"""Minimal Hermes plugin — registers a tool and a hook."""
+"""Minimal Thoth plugin — registers a tool and a hook."""
 
 import json
 
@@ -86,11 +86,11 @@ def register(ctx):
     ctx.register_hook("post_tool_call", on_tool_call)
 ```
 
-Drop both files into `~/.hermes/plugins/hello-world/`, restart Hermes, and the model can immediately call `hello_world`. The hook prints a log line after every tool invocation.
+Drop both files into `~/.hermes/plugins/hello-world/`, restart Thoth, and the model can immediately call `hello_world`. The hook prints a log line after every tool invocation.
 
-The model-facing tool description belongs in `schema["description"]`. The optional `ctx.register_tool(description=...)` value is separate `ToolEntry` registry metadata: when omitted, it defaults to the schema description, but Hermes does not copy it back into a schema that lacks `description`. Prefer defining the text once in the schema. If you provide both values, keep them synchronized; the model sees the schema value.
+The model-facing tool description belongs in `schema["description"]`. The optional `ctx.register_tool(description=...)` value is separate `ToolEntry` registry metadata: when omitted, it defaults to the schema description, but Thoth does not copy it back into a schema that lacks `description`. Prefer defining the text once in the schema. If you provide both values, keep them synchronized; the model sees the schema value.
 
-Project-local plugins under `./.hermes/plugins/` are disabled by default. Enable them only for trusted repositories by setting `HERMES_ENABLE_PROJECT_PLUGINS=true` before starting Hermes.
+Project-local plugins under `./.hermes/plugins/` are disabled by default. Enable them only for trusted repositories by setting `HERMES_ENABLE_PROJECT_PLUGINS=true` before starting Thoth.
 
 ## What plugins can do
 
@@ -124,7 +124,7 @@ Every `ctx.*` API below is available inside a plugin's `register(ctx)` function.
 
 | Source | Path | Use case |
 |--------|------|----------|
-| Bundled | `<repo>/plugins/` | Ships with Hermes — see [Built-in Plugins](./built-in-plugins.md) |
+| Bundled | `<repo>/plugins/` | Ships with Thoth — see [Built-in Plugins](./built-in-plugins.md) |
 | User | `~/.hermes/plugins/` | Personal plugins |
 | Project | `.hermes/plugins/` | Project-specific plugins (requires `HERMES_ENABLE_PROJECT_PLUGINS=true`) |
 | pip | `hermes_agent.plugins` entry_points | Distributed packages |
@@ -134,7 +134,7 @@ Later sources override earlier ones on name collision, so a user plugin with the
 
 ### Plugin sub-categories
 
-Within each source, Hermes also recognizes sub-category directories that route plugins to specialized discovery systems:
+Within each source, Thoth also recognizes sub-category directories that route plugins to specialized discovery systems:
 
 | Sub-directory | What it holds | Discovery system |
 |---|---|---|
@@ -205,7 +205,7 @@ abbreviated SHAs are not accepted):
 hermes plugins install owner/repo --ref 0123456789abcdef0123456789abcdef01234567
 ```
 
-Hermes checks out the commit detached, verifies that `HEAD` exactly matches the
+Thoth checks out the commit detached, verifies that `HEAD` exactly matches the
 requested SHA, and records the canonical source, installed revision, and pin
 status in the current profile. `hermes plugins update` refuses to move a pinned
 plugin; choose a new exact commit explicitly with
@@ -218,7 +218,7 @@ starts clean; to reset a plugin completely, `hermes plugins remove` it first. Th
 profile-local install metadata contains no config values, environment values,
 secrets, or capability grants.
 
-The same pin is available in Hermes Desktop: **Skills → Plugins → Install from
+The same pin is available in Thoth: **Skills → Plugins → Install from
 Git** has a *Pin to commit* field that takes the full 40-character SHA, and the
 plugins list shows a `pinned @ <sha8>` badge on every pinned install so a team
 can confirm everyone is running the same commit. `hermes plugins list` prints
@@ -228,11 +228,11 @@ repositories too, through the same stored credentials described below.
 ### Installing from a private repository
 
 `hermes plugins install` clones non-interactively (it never prompts for a
-username or password), so a private repo needs a credential Hermes can find on
+username or password), so a private repo needs a credential Thoth can find on
 its own. Every clone, pinned `--ref` fetch and `hermes plugins update` pull is
 attempted anonymously first — public repos never see your credential, so a
 stale or revoked token cannot break a public install. Only when the remote
-refuses anonymous access does Hermes look for a credential. For an `https://`
+refuses anonymous access does Thoth look for a credential. For an `https://`
 source it tries, in order:
 
 1. `GITHUB_TOKEN` or `GH_TOKEN` from your `.env` (GitHub hosts only).
@@ -252,7 +252,7 @@ installs from git, and profile distributions fetched from a git URL.
 
 ### What the allow-list does NOT gate
 
-Several categories of plugin bypass `plugins.enabled` — they're part of Hermes' built-in surface and would break basic functionality if gated off by default:
+Several categories of plugin bypass `plugins.enabled` — they're part of Thoth' built-in surface and would break basic functionality if gated off by default:
 
 | Plugin kind | How it's activated instead |
 |---|---|
@@ -269,7 +269,7 @@ In short: **bundled "always-works" infrastructure loads automatically; third-par
 ### Approval transports
 
 An approval transport changes **where a human sees and answers** an existing
-Hermes tool-approval request. It does not decide whether a command needs
+Thoth tool-approval request. It does not decide whether a command needs
 approval and it is not an authorization-policy API.
 
 ```python
@@ -284,7 +284,7 @@ def register(ctx):
     ctx.register_approval_transport("my-ui", present)
 ```
 
-`present` may be synchronous or async. Hermes runs it on a bounded worker and
+`present` may be synchronous or async. Thoth runs it on a bounded worker and
 enforces the canonical `approvals.timeout` even if the plugin does not. The
 request is immutable and contains redacted display text, its host presentation
 class (`cli` or `gateway`), the host timeout, allowed choices, and an opaque
@@ -310,10 +310,10 @@ security:
 Transport exceptions, timeouts, unavailable registrations, invalid choices,
 and stale responses deny by default. To deliberately show the prompt on the
 ordinary CLI/TUI/gateway/ACP surface when the selected transport fails, set
-`transport_fallback: builtin`. Without that exact opt-in, Hermes never
+`transport_fallback: builtin`. Without that exact opt-in, Thoth never
 materializes the prompt on another surface.
 
-Hermes still owns hardline blocks, sudo-stdin protection, user deny rules,
+Thoth still owns hardline blocks, sudo-stdin protection, user deny rules,
 request binding, allowed scopes, persistence, hooks, and final authorization.
 Hardline commands are blocked before any transport callback. There is
 intentionally **no plugin approval policy, auto-allow callback, or required
@@ -323,7 +323,7 @@ grant it.
 
 ### Migration for existing users
 
-When you upgrade to a version of Hermes that has opt-in plugins (config schema v21+), any user plugins already installed under `~/.hermes/plugins/` that weren't already in `plugins.disabled` are **automatically grandfathered** into `plugins.enabled`. Your existing setup keeps working. Bundled standalone plugins are NOT grandfathered — even existing users have to opt in explicitly. (Bundled platform/backend plugins never needed grandfathering because they were never gated.)
+When you upgrade to a version of Thoth that has opt-in plugins (config schema v21+), any user plugins already installed under `~/.hermes/plugins/` that weren't already in `plugins.disabled` are **automatically grandfathered** into `plugins.enabled`. Your existing setup keeps working. Bundled standalone plugins are NOT grandfathered — even existing users have to opt in explicitly. (Bundled platform/backend plugins never needed grandfathering because they were never gated.)
 
 ## Available hooks
 
@@ -338,7 +338,7 @@ Plugins can register the 27 lifecycle events currently accepted by `hermes_cli.p
 These categories describe current behavior rather than defining future naming rules. Plugin middleware remains a separate registry/surface.
 ## Plugin types
 
-Hermes has four kinds of plugins:
+Thoth has four kinds of plugins:
 
 | Type | What it does | Selection | Location |
 |------|-------------|-----------|----------|
@@ -351,13 +351,13 @@ Memory providers and context engines are **provider plugins** — only one of ea
 
 ## Pluggable interfaces — where to go for each
 
-The table above shows the four plugin categories, but within "General plugins" the `PluginContext` exposes several distinct extension points — and Hermes also accepts extensions outside the Python plugin system (config-driven backends, shell-hooked commands, external servers, etc.). Use this table to find the right doc for what you want to build:
+The table above shows the four plugin categories, but within "General plugins" the `PluginContext` exposes several distinct extension points — and Thoth also accepts extensions outside the Python plugin system (config-driven backends, shell-hooked commands, external servers, etc.). Use this table to find the right doc for what you want to build:
 
 | Want to add… | How | Authoring guide |
 |---|---|---|
-| A **tool** the LLM can call | Python plugin — `ctx.register_tool()` | [Build a Hermes Plugin](../../developer-guide/plugins/index.md) · [Adding Tools](../../developer-guide/adding-tools.md) |
-| A **lifecycle hook** (pre/post LLM, session start/end, tool filter) | Python plugin — `ctx.register_hook()` | [Hooks reference](./hooks.md) · [Build a Hermes Plugin](../../developer-guide/plugins/index.md) |
-| A **slash command** for the CLI / gateway | Python plugin — `ctx.register_command()` | [Build a Hermes Plugin](../../developer-guide/plugins/index.md) · [Extending the CLI](../../developer-guide/extending-the-cli.md) |
+| A **tool** the LLM can call | Python plugin — `ctx.register_tool()` | [Build a Thoth Plugin](../../developer-guide/plugins/index.md) · [Adding Tools](../../developer-guide/adding-tools.md) |
+| A **lifecycle hook** (pre/post LLM, session start/end, tool filter) | Python plugin — `ctx.register_hook()` | [Hooks reference](./hooks.md) · [Build a Thoth Plugin](../../developer-guide/plugins/index.md) |
+| A **slash command** for the CLI / gateway | Python plugin — `ctx.register_command()` | [Build a Thoth Plugin](../../developer-guide/plugins/index.md) · [Extending the CLI](../../developer-guide/extending-the-cli.md) |
 | A **subcommand** for `hermes <thing>` | Python plugin — `ctx.register_cli_command()` | [Extending the CLI](../../developer-guide/extending-the-cli.md) |
 | A bundled **skill** that your plugin ships | Python plugin — `ctx.register_skill()` | [Creating Skills](../../developer-guide/creating-skills.md) |
 | An **inference backend** (LLM provider: OpenAI-compat, Codex, Anthropic-Messages, Bedrock) | Provider plugin — `register_provider(ProviderProfile(...))` in `plugins/model-providers/<name>/` | **[Model Provider Plugins](../../developer-guide/model-provider-plugin.md)** · [Adding Providers](../../developer-guide/adding-providers.md) |
@@ -369,7 +369,7 @@ The table above shows the four plugin categories, but within "General plugins" t
 | A **computer-use driver** (desktop control behind the `computer_use` tool) | Single-select provider plugin — `ctx.register_computer_use_provider()`, selected by `computer_use.backend` | [Computer-use backend plugins](../../developer-guide/plugins/index.md#computer-use-backend-plugins) |
 | A **TTS backend** (any CLI — Piper, VoxCPM, Kokoro, xtts, voice-cloning scripts, …) | Config-driven (recommended) — declare under `tts.providers.<name>` with `type: command` in `config.yaml`. OR Python backend plugin — `ctx.register_tts_provider()` for Python-SDK / streaming engines that need more than a shell template. | [TTS Setup](./tts.md#custom-command-providers) · [Python plugin guide](./tts.md#python-plugin-providers) |
 | An **STT backend** (any CLI — whisper.cpp, custom whisper binary, local ASR CLI) | Config-driven (recommended) — declare under `stt.providers.<name>` with `type: command` in `config.yaml`, or set `HERMES_LOCAL_STT_COMMAND` for the legacy single-command escape hatch. OR Python backend plugin — `ctx.register_transcription_provider()` for Python-SDK engines (OpenRouter, SenseAudio, Gemini-STT, etc.). | [STT Setup](./tts.md#stt-custom-command-providers) · [Python plugin guide](./tts.md#python-plugin-providers-stt) |
-| **External tools via MCP** (filesystem, GitHub, Linear, Notion, any MCP server) | Config-driven — declare `mcp_servers.<name>` with `command:` / `url:` in `config.yaml`. Hermes auto-discovers the server's tools and registers them alongside built-ins. | [MCP](./mcp.md) |
+| **External tools via MCP** (filesystem, GitHub, Linear, Notion, any MCP server) | Config-driven — declare `mcp_servers.<name>` with `command:` / `url:` in `config.yaml`. Thoth auto-discovers the server's tools and registers them alongside built-ins. | [MCP](./mcp.md) |
 | **Additional skill sources** (custom GitHub repos, private skill indexes) | CLI — `hermes skills tap add <repo>` | [Skills Hub](./skills.md#skills-hub) · [Publishing a custom tap](./skills.md#publishing-a-custom-skill-tap) |
 | **Gateway event hooks** (fire on `gateway:startup`, `session:start`, `agent:end`, `command:*`) | Drop `HOOK.yaml` + `handler.py` into `~/.hermes/hooks/<name>/` | [Event Hooks](./hooks.md#gateway-event-hooks) |
 | **Shell hooks** (run a shell command on events — notifications, audit logs, desktop alerts) | Config-driven — declare under `hooks:` in `config.yaml` | [Shell Hooks](./hooks.md#shell-hooks) |
@@ -401,7 +401,7 @@ Declarative plugins are symlinked with a `nix-managed-` prefix — they coexist 
 hermes plugins                               # unified interactive UI
 hermes plugins list                          # table: enabled / disabled / not enabled (bundled backends,
                                              # platforms and the live memory.provider count as enabled)
-hermes plugins search <term>                 # search the Hermes plugin catalog
+hermes plugins search <term>                 # search the Thoth plugin catalog
 hermes plugins install <name>                # install a catalog entry (repo @ reviewed pinned SHA)
 hermes plugins install user/repo             # install from Git, then prompt Enable? [y/N]
 hermes plugins install user/repo --enable    # request enable; dependency consent still applies
@@ -420,7 +420,7 @@ hermes plugins trust-update-url my-plugin    # confirm a changed update_url afte
 
 ### Update checks and provenance
 
-Hermes records Git install source and revision in `.install-metadata.json`.
+Thoth records Git install source and revision in `.install-metadata.json`.
 Unpinned tracked installs compare the saved source's remote HEAD, or a matching
 saved `update_url` feed. Pinned installs remain pinned. Self-cloned directories
 need `hermes plugins adopt NAME` before they become tracked installations.
@@ -439,7 +439,7 @@ By default, updates require `hermes plugins update NAME`. Setting
 Both routes use the update security scan. Auto-apply does not manage pinned,
 manual, drifted, or pip-distribution rows.
 
-If a manifest changes or introduces `update_url`, Hermes refuses the new address
+If a manifest changes or introduces `update_url`, Thoth refuses the new address
 until you approve it with `hermes plugins trust-update-url NAME`. This is a
 feed-source check, not a sandbox against already trusted plugin code.
 
@@ -452,7 +452,7 @@ Node sidecar dependencies have a separate prompt and remain plugin-local.
 
 PM prepares Python dependencies with core and the enabled plugin set before
 publishing the new environment and configuration. A resolution failure preserves
-the previous selection. Restart Hermes when a new selected environment is not
+the previous selection. Restart Thoth when a new selected environment is not
 yet active in the running process.
 
 The enabled set is the union over the default home **and every profile** under
@@ -464,13 +464,13 @@ dependency preparation for **all** homes (`could not parse plugin selection:
 <path>`), rather than silently dropping that profile's plugins from the next
 environment. Fix or remove the offending file; an empty `config.yaml` is fine.
 
-Ordinary Hermes application updates preserve user plugin directories, including
+Ordinary Thoth application updates preserve user plugin directories, including
 wrapper files and external sidecar links. Explicit plugin updates or removals
 can change those files. See [Package management](../../reference/package-management.md)
 and the [plugin authoring guide](../../developer-guide/plugins/index.md#lazy-install-optional-python-dependencies).
 ### One-click install links (Desktop)
 
-Hermes Desktop registers the `hermes://` URL scheme, so a website, README, or
+Thoth registers the `hermes://` URL scheme, so a website, README, or
 chat message can link straight to a plugin install:
 
 ```
@@ -481,7 +481,7 @@ hermes://plugin/install?repo=owner/repo&force=1    # replace an existing install
 hermes://plugin/install?catalog=<name>             # reviewed catalog entry at its pinned commit
 ```
 
-The `catalog=<name>` form is what the **Open in Hermes Desktop** button on
+The `catalog=<name>` form is what the **Open in Thoth** button on
 every [Plugin Catalog](./plugin-catalog.md) card uses. Desktop resolves the
 name against the live catalog (the same feed the **Capabilities → Plugins**
 picker shows) and opens the same **reviewed catalog entry** dialog an in-app
@@ -491,7 +491,7 @@ catalog shows an error toast and nothing else — it is never reinterpreted as a
 git path, so a link cannot smuggle an unreviewed repo behind a
 familiar-looking name.
 
-For a `repo=` link, clicking one opens Hermes and shows a **confirmation dialog** — the repo id,
+For a `repo=` link, clicking one opens Thoth and shows a **confirmation dialog** — the repo id,
 a "Before you install" note, and GitHub browse + clone links — then
 shallow-clones the repo to detect what it ships (an **agent plugin** —
 backend Python, a **desktop plugin** — app UI, or both). You pick the
@@ -509,11 +509,11 @@ Plugins → Install from Git**. Legacy `hermes://plugin-agent/…` and
 Websites need no SDK — a normal anchor works:
 
 ```html
-<a href="hermes://plugin/install?repo=owner/repo&enable=1">Install in Hermes</a>
+<a href="hermes://plugin/install?repo=owner/repo&enable=1">Install in Thoth</a>
 ```
 
 MCP servers have the equivalent link form — see
-[Add to Hermes link](../../reference/mcp-config-reference.md#add-to-hermes-link).
+[Add to Thoth link](../../reference/mcp-config-reference.md#add-to-hermes-link).
 
 ### Plugin capabilities and consent
 
@@ -576,7 +576,7 @@ set — existing configs keep working unchanged.
 Capabilities are a **consent and audit layer**, not isolation. Plugins run as
 regular in-process Python: a malicious plugin can ignore every gate here.
 Granting a capability is a statement of trust in the plugin author — it is
-not a code audit, and Hermes has not reviewed the plugin's code. Only install
+not a code audit, and Thoth has not reviewed the plugin's code. Only install
 plugins from sources you trust.
 :::
 
@@ -627,9 +627,9 @@ capability (`gateway.raw_events`) with a "no stability guarantee" label and a
 separate design, and has not shipped.
 :::
 
-### Discovering plugins — the Hermes plugin catalog
+### Discovering plugins — the Thoth plugin catalog
 
-`hermes plugins search <term>` searches the **Hermes plugin catalog** — the
+`hermes plugins search <term>` searches the **Thoth plugin catalog** — the
 curated, SHA-pinned catalog maintained in the hermes-agent repository
 (`plugin-catalog/`). Matching covers entry names, descriptions, and declared
 tools:
@@ -802,9 +802,9 @@ plugins:
 
 ### Running plugins out of process (`plugins.isolation`)
 
-By default third-party Python plugins are imported into the Hermes process, as they always have been.
+By default third-party Python plugins are imported into the Thoth process, as they always have been.
 Setting `plugins.isolation: host` moves them into a **plugin host**: one separate Python process per
-profile, started on demand, that imports the profile's user-installed plugins and talks to Hermes over a
+profile, started on demand, that imports the profile's user-installed plugins and talks to Thoth over a
 private pipe.
 
 ```yaml
@@ -816,20 +816,20 @@ plugins:
 
 Plugins do not change. They receive the same `ctx` and register tools, hooks, slash commands, skills and
 provider objects (image/video generation, web search, browser, TTS/STT, memory, context engines,
-model-provider profiles) exactly as before; Hermes registers matching entries on its side that call into
+model-provider profiles) exactly as before; Thoth registers matching entries on its side that call into
 the host. Dashboard plugin APIs are served by the host too. Bundled plugins keep running in-process.
 
 What changes in `host` mode:
 
-- **No shared interpreter.** A plugin's module never enters the Hermes process, so it cannot read
-  another profile's data from memory or patch Hermes internals. Under the multiplex gateway every
+- **No shared interpreter.** A plugin's module never enters the Thoth process, so it cannot read
+  another profile's data from memory or patch Thoth internals. Under the multiplex gateway every
   profile gets its own host, started with only that profile's environment and secrets.
-- **Crashes stay contained.** A plugin that crashes or exits kills its host, not Hermes; the call in
-  flight returns a tool error and Hermes restarts the host and reloads its plugins (bounded retries).
+- **Crashes stay contained.** A plugin that crashes or exits kills its host, not Thoth; the call in
+  flight returns a tool error and Thoth restarts the host and reloads its plugins (bounded retries).
 - **A few surfaces need in-process code** and fail that plugin with a clear reason instead of loading:
   gateway platform adapters (`register_platform`), approval transports, Telegram/platform handlers,
   model-provider profiles that build their own SDK client (`create_client`), streaming dashboard
-  endpoints, and plugins that monkeypatch Hermes modules. Run those with `isolation: in_process`.
+  endpoints, and plugins that monkeypatch Thoth modules. Run those with `isolation: in_process`.
 
 **Locking it for a shared deployment.** `plugins.isolation` is ordinary profile config, so whoever can
 edit a profile's `config.yaml` can turn it off. When the profiles belong to people you are isolating from
@@ -938,11 +938,11 @@ In CLI mode:
 In gateway mode:
 
 - `session_key` is required and must identify an existing gateway session. It is the stable routing key, not the CLI session ID.
-- Hermes reuses that session's stored platform, chat, thread, profile, and conversation history. Plugins cannot change that route through `session_key`.
-- Hermes rechecks the stored route against the gateway's current authorisation rules before dispatch.
-- Routes that relied only on an adapter-time or upstream authorisation decision are rejected unless Hermes can revalidate them from current core allowlists, pairing, or explicit allow-all configuration.
+- Thoth reuses that session's stored platform, chat, thread, profile, and conversation history. Plugins cannot change that route through `session_key`.
+- Thoth rechecks the stored route against the gateway's current authorisation rules before dispatch.
+- Routes that relied only on an adapter-time or upstream authorisation decision are rejected unless Thoth can revalidate them from current core allowlists, pairing, or explicit allow-all configuration.
 - Injected text is always conversational input. It cannot invoke slash commands, approve tools, or resolve pending confirmation and clarification prompts.
-- The route and conversation are pinned while dispatch is pending. Hermes drops the request if topic recovery changes the route or the session rotates before handling starts.
+- The route and conversation are pinned while dispatch is pending. Thoth drops the request if topic recovery changes the route or the session rotates before handling starts.
 - The request enters the platform adapter's normal message path. Active sessions use the existing busy-session queue rather than starting a competing turn.
 - Returns `True` when the live gateway accepts the request for asynchronous dispatch. This does not confirm that the agent turn or platform delivery has completed.
 - Returns `False` when neither `session_key` nor `origin` is given (or both are), the permission is not granted, or no live host can accept the request. Unknown or unroutable session keys discovered after asynchronous acceptance are written to the gateway log.
@@ -955,7 +955,7 @@ Starting a session with `origin` (gateway mode only):
 - Authorisation is not bypassed: the origin's user must pass the gateway's current allowlists, pairing, or allow-all configuration for that profile, the same check as the `session_key` path. Choose a `user_id` that is authorised, or the request is dropped at dispatch and logged.
 - The same text rules apply: no slash commands, approvals, or prompt resolution. The permission below is read from the plugin's own profile `config.yaml`.
 
-Ink TUI (`hermes --tui`) and the desktop / dashboard chat are a third host. They do not set the classic CLI reference and they do not register on the messaging-gateway injector — those two hosts stay separate so a live gateway cannot clobber the TUI (or the reverse). Pass the session's durable `session_key` (the `ses_…` id), not the ephemeral UI session id. Hermes queues the text on that session's prompt queue: a busy session keeps the message for the next turn, an idle session starts one. A key that is not a live TUI session is left for the messaging gateway when one is running, and is never rerouted to a different chat.
+Ink TUI (`hermes --tui`) and the desktop / dashboard chat are a third host. They do not set the classic CLI reference and they do not register on the messaging-gateway injector — those two hosts stay separate so a live gateway cannot clobber the TUI (or the reverse). Pass the session's durable `session_key` (the `ses_…` id), not the ephemeral UI session id. Thoth queues the text on that session's prompt queue: a busy session keeps the message for the next turn, an idle session starts one. A key that is not a live TUI session is left for the messaging gateway when one is running, and is never rerouted to a different chat.
 
 This enables plugins like remote control viewers, messaging bridges, or webhook receivers to feed messages into the conversation from external sources.
 
@@ -969,7 +969,7 @@ plugins:
 ```
 
 :::warning
-Only grant gateway injection to plugins you trust. Hermes checks this host API permission, restricts it to existing session routes or new sessions in the plugin's own profile, and applies current authorisation, but Python plugins run in-process and this setting is not a sandbox.
+Only grant gateway injection to plugins you trust. Thoth checks this host API permission, restricts it to existing session routes or new sessions in the plugin's own profile, and applies current authorisation, but Python plugins run in-process and this setting is not a sandbox.
 :::
 
 :::note
@@ -978,7 +978,7 @@ This plugin API does not expose a public HTTP endpoint or CLI command for extern
 
 ## Calling MCP servers from plugins
 
-`ctx.call_mcp()` lets a plugin call a tool on one of the user's configured MCP servers — synchronously, from any hook or tool handler — routing through Hermes' existing native MCP client (same connections, trust-tier gates, circuit breaker, and reconnect logic as model-invoked MCP tools; never a parallel client).
+`ctx.call_mcp()` lets a plugin call a tool on one of the user's configured MCP servers — synchronously, from any hook or tool handler — routing through Thoth' existing native MCP client (same connections, trust-tier gates, circuit breaker, and reconnect logic as model-invoked MCP tools; never a parallel client).
 
 ```python
 result = ctx.call_mcp(

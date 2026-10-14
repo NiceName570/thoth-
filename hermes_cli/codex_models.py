@@ -49,7 +49,7 @@ _FORWARD_COMPAT_TEMPLATE_MODELS: list[tuple[str, tuple[str, ...]]] = [
     ("gpt-5.6-terra", ("gpt-5.5", "gpt-5.4")),
     ("gpt-5.6-luna", ("gpt-5.5", "gpt-5.4")),
     ("gpt-5.5", ("gpt-5.4", "gpt-5.4-mini")),
-    # Spark surfaces whenever a compatible template is present; the backend (not Hermes)
+    # Spark surfaces whenever a compatible template is present; the backend (not Thoth)
     # gates real availability by ChatGPT Pro entitlement.
     ("gpt-5.3-codex-spark", ("gpt-5.4", "gpt-5.5"))]
 
@@ -75,7 +75,7 @@ def _add_context_variants(model_ids: list[str]) -> list[str]:
     """Insert ``<slug>-900k`` large-context picker variants after eligible base slugs.
 
     Base slugs keep the cheaper advertised 272K limit; the variant opts into the large window.
-    The suffix is Hermes-side only — stripped before the id hits the wire (agent/transports/codex.py,
+    The suffix is Thoth-side only — stripped before the id hits the wire (agent/transports/codex.py,
     agent/auxiliary_client.py).
     """
     from agent.model_metadata import CODEX_CONTEXT_VARIANT_SUFFIX, has_codex_context_variant

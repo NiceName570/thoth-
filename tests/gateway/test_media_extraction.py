@@ -55,8 +55,8 @@ class TestMediaExtraction:
         )
 
         capture_name = "computer_use_fedcba9876543210fedcba9876543210.jpg"
-        canonical = rf"D:\Hermes Data\cache\images\{capture_name}"
-        response = f'MEDIA:"/Users/Alice/Hermes Data/cache/images/{capture_name}"'
+        canonical = rf"D:\Thoth Data\cache\images\{capture_name}"
+        response = f'MEDIA:"/Users/Alice/Thoth Data/cache/images/{capture_name}"'
         messages = [
             {
                 "role": "tool",

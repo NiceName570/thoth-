@@ -6,7 +6,7 @@ description: "开箱即用的自动化蓝图——定时任务、GitHub 事件�
 
 # 自动化蓝图
 
-常见自动化模式的复制粘贴蓝图。每个蓝图使用 Hermes 内置的 [cron 调度器](../user-guide/features/cron.md) 实现基于时间的触发，使用 [webhook 平台](../user-guide/messaging/webhooks.md) 实现事件驱动触发。
+常见自动化模式的复制粘贴蓝图。每个蓝图使用 Thoth 内置的 [cron 调度器](../user-guide/features/cron.md) 实现基于时间的触发，使用 [webhook 平台](../user-guide/messaging/webhooks.md) 实现事件驱动触发。
 
 所有蓝图适用于**任意模型**——不绑定单一提供商。
 
@@ -142,8 +142,8 @@ Report any gaps where code changed but docs didn't. If everything is in sync, re
 hermes cron create "0 6 * * *" \
   "Run a dependency security audit on the hermes-agent project.
 
-1. Locate the hermes-agent checkout and its pyproject.toml and uv.lock. Do not activate or mutate Hermes's dependency environment.
-2. Scan uv.lock with an independently installed scanner that supports that lock format (check its --help). Preserve the complete findings and errors. If no scanner is available, report the blocker; do not install one into Hermes.
+1. Locate the hermes-agent checkout and its pyproject.toml and uv.lock. Do not activate or mutate Thoth's dependency environment.
+2. Scan uv.lock with an independently installed scanner that supports that lock format (check its --help). Preserve the complete findings and errors. If no scanner is available, report the blocker; do not install one into Thoth.
 3. Run: npm audit --json in website/ if it exists. Preserve stderr and distinguish findings from a failed scan.
 4. Check for any CVEs with CVSS score >= 7.0
 
@@ -241,7 +241,7 @@ results = []
 for ep in ENDPOINTS:
     try:
         start = time.time()
-        req = urllib.request.Request(ep["url"], headers={"User-Agent": "Hermes-Monitor/1.0"})
+        req = urllib.request.Request(ep["url"], headers={"User-Agent": "Thoth-Monitor/1.0"})
         resp = urllib.request.urlopen(req, timeout=10)
         elapsed = round((time.time() - start) * 1000)
         results.append({"name": ep["name"], "status": resp.getcode(), "ms": elapsed})
@@ -336,7 +336,7 @@ Keep each item to 1-2 sentences. Include links. Total under 600 words." \
 
 ```bash
 hermes cron create "0 8 * * *" \
-  "Search arXiv for the 3 most interesting papers on 'language model reasoning' OR 'tool-use agents' from the past day. For each paper, create an Obsidian note with the title, authors, abstract summary, key contribution, and potential relevance to Hermes Agent development." \
+  "Search arXiv for the 3 most interesting papers on 'language model reasoning' OR 'tool-use agents' from the past day. For each paper, create an Obsidian note with the title, authors, abstract summary, key contribution, and potential relevance to Thoth development." \
   --skill arxiv --skill obsidian \
   --name "Paper digest" \
   --deliver local

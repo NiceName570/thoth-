@@ -9,7 +9,7 @@ and a seeded two-login pool in ``auth.json``. Two vendor boundaries are faked:
 * the OpenAI OAuth token endpoint. Its URL is a hard-coded ``https://`` constant with no
   override, and the proxy-impersonation route cannot carry https, so a ``sitecustomize`` shim
   on the child's ``PYTHONPATH`` redirects exactly that URL, at the ``httpx.Client.send``
-  layer, to a loopback token fake. No Hermes function is patched; everything from the pool
+  layer, to a loopback token fake. No Thoth function is patched; everything from the pool
   through the refresh POST, the terminal classification and the auth.json write-back runs as
   shipped.
 

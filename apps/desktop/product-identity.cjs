@@ -1,8 +1,8 @@
 // The desktop product identity — THE single source for every name-shaped
 // value a variant owns. HERMES_DESKTOP_VARIANT=light builds "Thoth
 // Light", the remote-only client; everything else is full "Thoth".
-// Thoth is a fork of Hermes Agent: its own names and appId let it install
-// side by side with Hermes without sharing userData or the instance lock.
+// Thoth is a fork of Thoth: its own names and appId let it install
+// side by side with Thoth without sharing userData or the instance lock.
 //
 // Consumed at build time by electron-builder.config.cjs (packaging
 // identity). electron/product-identity.ts is the typed runtime accessor.

@@ -2,7 +2,7 @@ name: hermes-tailscale
 repo: https://github.com/Adolanium/hermes-tailscale
 sha: 7a0b5ab13ec7bd97bebdbfb638acfb5c40ad1f06
 version: "0.0.6"
-description: Browse Tailscale devices and connect to remote Hermes instances in Hermes Desktop.
+description: Browse Tailscale devices and connect to remote Thoth instances in Thoth.
 maintainer: Adolanium
 tier: community
 category: desktop

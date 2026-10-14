@@ -1,4 +1,4 @@
-"""Tests for the direct Hermes-to-Relay shared-metrics runtime."""
+"""Tests for the direct Thoth-to-Relay shared-metrics runtime."""
 
 from __future__ import annotations
 
@@ -1059,7 +1059,7 @@ def test_core_runtime_is_fail_open_without_a_published_binding(monkeypatch, capl
         tool_name="terminal",
         args={"command": "true"},
     ) == {"command": "true"}
-    assert "Hermes Relay runtime initialization failed" in caplog.text
+    assert "Thoth Relay runtime initialization failed" in caplog.text
     relay_runtime._reset_for_tests()
 
 
@@ -2514,7 +2514,7 @@ def test_failed_flush_keeps_daily_export_open_for_later_task(
     assert metrics["hermes.task_run.started"]["value"] == 2
     assert metrics["hermes.task_run.finished"]["value"] == 2
     assert flush_attempts == 2
-    assert "Hermes shared-metrics task flush failed" in caplog.text
+    assert "Thoth shared-metrics task flush failed" in caplog.text
 
 
 def _finish_desktop_task(session_id: str, task_id: str) -> None:
@@ -2800,7 +2800,7 @@ def _stored_counters(tmp_path) -> dict[str, list[dict[str, Any]]]:
 
 def test_v3_failure_dimensions_never_export_third_party_identifiers(direct_runtime, tmp_path):
     """Plugin tool names, exception class names, plugin platforms and raw exit reasons collapse
-    to closed classes, while Hermes's own vocabularies pass through."""
+    to closed classes, while Thoth's own vocabularies pass through."""
     base = {
         "session_id": "s1", "task_id": "t1", "api_request_id": "r1", "platform": "telegram",
         "provider": "anthropic", "model": "claude-sonnet",

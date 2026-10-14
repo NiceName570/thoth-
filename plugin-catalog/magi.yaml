@@ -1,7 +1,7 @@
 name: magi
 repo: https://github.com/MarcosAlves90/magi
 sha: f849295b63a8af55b7130467167b3b6dcc19be8a
-description: Review pending Hermes memory writes and inspect, add, edit, delete, or AI-compact stored memory from Desktop.
+description: Review pending Thoth memory writes and inspect, add, edit, delete, or AI-compact stored memory from Desktop.
 maintainer: MarcosAlves90
 tier: community
 category: desktop

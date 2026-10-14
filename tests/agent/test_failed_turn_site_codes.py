@@ -90,7 +90,7 @@ def test_context_rejection_near_the_window_still_compresses():
 
 def test_hosted_context_rejection_far_below_the_known_window_compresses():
     """A hosted route has no shared slot to wait out: a small request rejected there means the
-    route's real window is below the one Hermes assumes, so /retry would fail forever. Compress."""
+    route's real window is below the one Thoth assumes, so /retry would fail forever. Compress."""
     verdict, compressed = _context_rejection(
         47_000, window=1_000_000, base_url="https://api.anthropic.com",
         error="This model's maximum context length was exceeded. Please reduce the length of the messages.",

@@ -118,14 +118,14 @@ class TestEnginesAreSatisfiable:
 
     def test_managed_npm_is_accepted_by_the_engines(self):
         """The npm PM provisions must clear engines.npm, or fresh
-        Hermes-managed installs die at `npm ci` with EBADENGINE (#80769).
+        Thoth-managed installs die at `npm ci` with EBADENGINE (#80769).
         """
         npm_range = _root_manifest()["engines"]["npm"]
         managed_npm = _pm_lock().version("npm")
         assert managed_npm, "pm/lock.json does not pin npm"
         assert _satisfies_range(managed_npm, npm_range), (
             f"PM provisions npm {managed_npm}, but engines.npm is "
-            f"{npm_range!r}. A fresh Hermes-managed install cannot run npm ci."
+            f"{npm_range!r}. A fresh Thoth-managed install cannot run npm ci."
         )
 
 class TestExcludedNpmBand:

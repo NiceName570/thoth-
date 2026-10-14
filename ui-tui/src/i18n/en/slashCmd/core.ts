@@ -97,7 +97,7 @@ export const slashCmdCoreEn = {
     history: {
       noConversation: 'no conversation yet',
       youTag: (index: string) => `You #${index}`,
-      hermesTag: (index: string) => `Hermes #${index}`,
+      hermesTag: (index: string) => `Thoth #${index}`,
       toolCallsOne: (count: string) => `(${count} tool call)`,
       toolCallsOther: (count: string) => `(${count} tool calls)`,
       empty: '(empty)',

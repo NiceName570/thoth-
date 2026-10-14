@@ -148,7 +148,7 @@ def test_install_icon_copy_failure_falls_back_to_absolute(
     assert values["Icon"] == str(lde.icon_path(root))
 
     assert values["Type"] == "Application"
-    assert values["Name"] == "Hermes"
+    assert values["Name"] == "Thoth"
     assert values["Terminal"] == "false"
 
 
@@ -686,7 +686,7 @@ def test_known_wrapper_candidates_cover_installer_layouts(
 
 
 def test_installed_entry_carries_the_window_app_id(tmp_path, xdg_home, monkeypatch):
-    """The window's app_id is what GNOME matches the entry against — not the old "Hermes"."""
+    """The window's app_id is what GNOME matches the entry against — not the old "Thoth"."""
     _stub_install(tmp_path, monkeypatch)
     root = _make_project(tmp_path)
 
@@ -696,7 +696,7 @@ def test_installed_entry_carries_the_window_app_id(tmp_path, xdg_home, monkeypat
     assert entry.name == f"{lde.APP_ID}.desktop"
     values = _parse(entry.read_text(encoding="utf-8"))
     assert values["StartupWMClass"] == lde.APP_ID
-    assert values["Name"] == "Hermes"  # the menu label is not part of the identity
+    assert values["Name"] == "Thoth"  # the menu label is not part of the identity
 
 
 def test_install_keeps_the_legacy_entry_as_a_hidden_alias(tmp_path, xdg_home, monkeypatch):
@@ -714,7 +714,7 @@ def test_install_keeps_the_legacy_entry_as_a_hidden_alias(tmp_path, xdg_home, mo
     legacy = xdg_home / "applications" / lde.LEGACY_DESKTOP_ENTRY_NAME
     legacy.parent.mkdir(parents=True)
     legacy.write_text(
-        "[Desktop Entry]\nType=Application\nName=Hermes\nExec=hermes desktop\n",
+        "[Desktop Entry]\nType=Application\nName=Thoth\nExec=hermes desktop\n",
         encoding="utf-8",
     )
 
@@ -723,7 +723,7 @@ def test_install_keeps_the_legacy_entry_as_a_hidden_alias(tmp_path, xdg_home, mo
     assert entry is not None and entry.is_file()
     assert legacy.is_file(), "an existing pin resolves through this file — it must survive"
     alias = _parse(legacy.read_text(encoding="utf-8"))
-    assert alias["NoDisplay"] == "true"  # no second Hermes in the app grid
+    assert alias["NoDisplay"] == "true"  # no second Thoth in the app grid
     assert alias["StartupWMClass"] == lde.APP_ID  # still groups with the window
     entry_values = _parse(entry.read_text(encoding="utf-8"))
     assert alias["Exec"] == entry_values["Exec"]  # launches the same command
@@ -736,7 +736,7 @@ def test_unchanged_entry_still_aliases_a_legacy_entry(tmp_path, xdg_home, monkey
     root = _make_project(tmp_path)
     assert lde.install_desktop_entry(root) is not None
     legacy = xdg_home / "applications" / lde.LEGACY_DESKTOP_ENTRY_NAME
-    legacy.write_text("[Desktop Entry]\nType=Application\nName=Hermes\nExec=hermes desktop\n", encoding="utf-8")
+    legacy.write_text("[Desktop Entry]\nType=Application\nName=Thoth\nExec=hermes desktop\n", encoding="utf-8")
 
     lde.install_desktop_entry(root)
 
@@ -777,7 +777,7 @@ def test_install_opt_out_preserves_the_legacy_entry(tmp_path, xdg_home, monkeypa
     legacy = xdg_home / "applications" / lde.LEGACY_DESKTOP_ENTRY_NAME
     legacy.parent.mkdir(parents=True)
     legacy.write_text(
-        "[Desktop Entry]\nType=Application\nName=Hermes\nExec=hermes desktop\n",
+        "[Desktop Entry]\nType=Application\nName=Thoth\nExec=hermes desktop\n",
         encoding="utf-8",
     )
 
@@ -785,7 +785,7 @@ def test_install_opt_out_preserves_the_legacy_entry(tmp_path, xdg_home, monkeypa
 
     assert entry == xdg_home / "applications" / lde.DESKTOP_ENTRY_NAME
     assert legacy.read_text(encoding="utf-8") == (
-        "[Desktop Entry]\nType=Application\nName=Hermes\nExec=hermes desktop\n"
+        "[Desktop Entry]\nType=Application\nName=Thoth\nExec=hermes desktop\n"
     ), "the opt-out must leave the legacy entry byte-for-byte untouched"
 
 
@@ -836,7 +836,7 @@ def test_install_without_source_icon_uses_themed_name(tmp_path, xdg_home, monkey
     entry = lde.install_desktop_entry(root)
 
     # A broken absolute path renders as no icon. The themed name resolves
-    # when Hermes is installed some other way.
+    # when Thoth is installed some other way.
     assert _parse(entry.read_text(encoding="utf-8"))["Icon"] == "hermes"
 
 

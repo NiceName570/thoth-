@@ -2020,7 +2020,7 @@ def _lower_threshold_to_aux_context(
             f"  To make this permanent, use a larger compression model in config.yaml:\n       auxiliary:\n"
             f"         compression:\n           model: <model-with-{old_threshold:,}+-context>\n"
             f"  (Lowering compression.threshold cannot help here — with {_main_label}'s {main_ctx:,}-token window, "
-            f"Hermes's small-context floor and output reservation would recompute the trigger to "
+            f"Thoth's small-context floor and output reservation would recompute the trigger to "
             f"{recomputed_threshold:,} tokens, still above the compression model's {aux_context:,}.)"
         )
     _emit_feasibility_notice(agent, msg)
@@ -2076,7 +2076,7 @@ def check_compression_model_feasibility(agent: Any) -> None:
                 )
             else:
                 msg = (
-                    "⚠ No auxiliary LLM provider configured: Hermes has no helper model for summarising "
+                    "⚠ No auxiliary LLM provider configured: Thoth has no helper model for summarising "
                     "long chats, so older messages will be cut without a summary. Run `hermes setup` to add one."
                 )
             _emit_feasibility_notice(agent, msg)
@@ -2108,7 +2108,7 @@ def check_compression_model_feasibility(agent: Any) -> None:
             raise ValueError(
                 f"Auxiliary compression model {aux_model} has a context "
                 f"window of {aux_context:,} tokens, which is below the "
-                f"minimum {MINIMUM_CONTEXT_LENGTH:,} required by Hermes "
+                f"minimum {MINIMUM_CONTEXT_LENGTH:,} required by Thoth "
                 f"Agent.  Choose a compression model with at least "
                 f"{MINIMUM_CONTEXT_LENGTH // 1000}K context (set "
                 f"auxiliary.compression.model in config.yaml), or set "
@@ -3394,7 +3394,7 @@ def _warn_summary_or_aux_fallback(agent: Any) -> None:
                 _aux_fail_model, _aux_fail_err or "unknown error",
             )
             agent._emit_warning(
-                f"ℹ Configured compression model '{_aux_fail_model}' failed, so Hermes summarised "
+                f"ℹ Configured compression model '{_aux_fail_model}' failed, so Thoth summarised "
                 "with your main model instead. Check auxiliary.compression.model in your config."
             )
 
@@ -4098,7 +4098,7 @@ def compress_context(
     )
 
     # Codex owns the real thread; route compaction to its own compact (config
-    # compression.codex_app_server_auto). Memory handoff is Hermes-only: no native
+    # compression.codex_app_server_auto). Memory handoff is Thoth-only: no native
     # summary prompt to inject into. `is True`: MagicMock attributes are truthy.
     checkpoint_required = getattr(agent, "compression_checkpoint_required", False) is True
     if getattr(agent, "api_mode", None) == "codex_app_server":
@@ -4317,7 +4317,7 @@ def _compress_context_via_codex_app_server(
 ) -> tuple[list, str]:
     """Route compaction to Codex app-server for Codex-owned threads.
     Rewriting the local transcript would not shrink the Codex thread, so Codex compacts its own thread and
-    Hermes' transcript is left unchanged."""
+    Thoth' transcript is left unchanged."""
     _sid = getattr(agent, "session_id", None) or "none"
     _tokens = f"{approx_tokens:,}" if approx_tokens else "unknown"
     auto_mode = str(getattr(agent, "codex_app_server_auto_compaction", "native") or "native").lower()

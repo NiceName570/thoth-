@@ -116,7 +116,7 @@ def test_terminal_error_surfaced_once_without_retry(results: dict[str, Any], nam
 
 
 def test_rejected_bearer_refreshes_once_then_surfaces(results: dict[str, Any]) -> None:
-    """Every bearer 401s: Hermes may re-mint and retry once, never loop, and shows the error once."""
+    """Every bearer 401s: Thoth may re-mint and retry once, never loop, and shows the error once."""
     res = results["unauthenticated"]
     fake, turn = res["fake"], res["turn"]
     statuses = [r.get("status") for r in fake.requests]

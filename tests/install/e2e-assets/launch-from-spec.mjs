@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * Launch the Hermes desktop app from a captured launch spec and click the
+ * Launch the Thoth desktop app from a captured launch spec and click the
  * real update flow: Settings -> About -> "Update now".
  *
  * The spec is written by launch-capture/sitecustomize.py at `hermes

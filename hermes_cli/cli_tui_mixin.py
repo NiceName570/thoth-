@@ -65,9 +65,9 @@ def _approval_choice_label(choice: str) -> str:
 def _agent_name() -> str:
     try:
         from hermes_cli.skin_engine import get_active_skin
-        return get_active_skin().get_branding("agent_name", "Hermes")
+        return get_active_skin().get_branding("agent_name", "Thoth")
     except Exception:
-        return "Hermes"
+        return "Thoth"
 
 
 def _tn(key: str, count: int, **kwargs) -> str:
@@ -1131,7 +1131,7 @@ class CLITuiMixin:
         import signal as _sig
         from prompt_toolkit.application import run_in_terminal
         from hermes_cli.skin_engine import get_active_skin
-        agent_name = get_active_skin().get_branding("agent_name", "Hermes Agent")
+        agent_name = get_active_skin().get_branding("agent_name", "Thoth")
         msg = "\n" + t("cli.tui.suspended", agent_name=agent_name)
 
         def _suspend():

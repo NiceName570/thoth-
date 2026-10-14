@@ -38,7 +38,7 @@ _KNOWN_MANIFEST_FIELDS: set[str] = {
     "requires_hermes", "python_runtime", "provides_locales",
 }
 
-# Highest manifest schema version this Hermes understands.
+# Highest manifest schema version this Thoth understands.
 SUPPORTED_MANIFEST_VERSION = 2
 
 _CONFIG_SCHEMA_TYPES: dict[str, tuple] = {
@@ -136,7 +136,7 @@ def _parse_manifest_v2_fields(data: Mapping, key: str) -> dict[str, Any]:
                        "Plugin %s: manifest_version %r is not an integer; treating as 1", 1)
     if mv > SUPPORTED_MANIFEST_VERSION:
         logger.warning(
-            "Plugin %s: manifest_version %d is newer than this Hermes "
+            "Plugin %s: manifest_version %d is newer than this Thoth "
             "supports (%d); loading anyway and ignoring unknown fields", key, mv, SUPPORTED_MANIFEST_VERSION,
         )
     raw_api = data.get("api_version")
@@ -359,7 +359,7 @@ class PluginManifest:
     # Path-derived registry key used by plugins.enabled/disabled and `hermes plugins list`: ``disk-cleanup``
     # for a flat plugin, ``image_gen/openai`` for a category plugin. Empty -> name.
     key: str = ""
-    # Hermes version requirement (``">=0.19"``, comma-separated clauses allowed). Unsatisfied plugins are
+    # Thoth version requirement (``">=0.19"``, comma-separated clauses allowed). Unsatisfied plugins are
     # recorded with an error and skipped before import — see ``requires_hermes_error``.
     requires_hermes: str = ""
     portable: bool = False
@@ -376,7 +376,7 @@ class PluginManifest:
     # Advisory deps [{"id", "version_range"}]: missing ones warn but load; they order the load.
     requires_plugins: list[dict[str, Any]] = field(default_factory=list)
     # Declared pip deps — VALIDATED AND SURFACED ONLY, never auto-installed.
-    # VALIDATED AND SURFACED ONLY — Hermes never auto-installs these (isolation design for the install seam
+    # VALIDATED AND SURFACED ONLY — Thoth never auto-installs these (isolation design for the install seam
     # is a deferred follow-up; see #64165 round-2 review and #15220).
     python_dependencies: list[str] = field(default_factory=list)
     # Schema for plugins.entries.<id>.settings; mismatches warn, never fail.
@@ -435,7 +435,7 @@ _VERSION_COMPARATOR_RE = re.compile(r"^\s*(>=|<=|==|!=|>|<)\s*(.+?)\s*$")
 
 
 def running_hermes_version() -> str:
-    """Base release version of the Hermes code that is running."""
+    """Base release version of the Thoth code that is running."""
     from hermes_cli.version_info import get_version_info
 
     return get_version_info().base_version

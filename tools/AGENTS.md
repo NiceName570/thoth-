@@ -165,7 +165,7 @@ from an env var on the backend. Client and backend are separate machines: the de
 drive a locally spawned backend, one over SSH, one behind URL + token, or Hermes Cloud, and
 only the first two carry `HERMES_DESKTOP=1`. An env-keyed gate is a silent no-op on the other
 topologies — the tool is stripped from the schema while the platform hint tells the model it
-is "inside the Hermes desktop app". The pattern:
+is "inside the Thoth desktop app". The pattern:
 
 - **The toolset is the surface gate.** Keep such tools off `_HERMES_CORE_TOOLS` and in a named
   toolset (`desktop_ui`, `project`); the GUI gateway's `_load_enabled_toolsets(platform)`

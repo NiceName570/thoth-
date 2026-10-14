@@ -1,4 +1,4 @@
-"""Migrate Hermes MCP server config and Codex's installed curated plugins into ~/.codex/config.toml.
+"""Migrate Thoth MCP server config and Codex's installed curated plugins into ~/.codex/config.toml.
 """
 
 from __future__ import annotations
@@ -50,7 +50,7 @@ class MigrationReport:
                 note = f" (skipped: {', '.join(skipped)})" if skipped else ""
                 lines.append(f"  - {name}{note}")
         else:
-            lines.append("No MCP servers found in Hermes config.")
+            lines.append("No MCP servers found in Thoth config.")
         if self.migrated_plugins:
             lines.append(f"Migrated {len(self.migrated_plugins)} native Codex plugin(s):")
             lines.extend(f"  - {name}" for name in self.migrated_plugins)
@@ -61,13 +61,13 @@ class MigrationReport:
         if self.preserved_user_servers:
             lines.append(
                 f"Kept {len(self.preserved_user_servers)} user-owned MCP server(s) already in "
-                f"config.toml (Hermes projection skipped): {', '.join(self.preserved_user_servers)}")
+                f"config.toml (Thoth projection skipped): {', '.join(self.preserved_user_servers)}")
         lines.extend(f"⚠ {err}" for err in self.errors)
         return "\n".join(lines)
 
 
-# Hermes MCP keys codex understands (transport stdio/http, timeouts, general). Any other key is
-# dropped with a warning: ``sampling`` has no codex equivalent; the rest are unknown Hermes keys.
+# Thoth MCP keys codex understands (transport stdio/http, timeouts, general). Any other key is
+# dropped with a warning: ``sampling`` has no codex equivalent; the rest are unknown Thoth keys.
 _KNOWN_HERMES_KEYS = {
     "command", "args", "env", "cwd",
     "url", "headers", "transport",
@@ -87,10 +87,10 @@ def _str_map(d: dict) -> dict[str, str]:
 
 
 def _translate_one_server(name: str, hermes_cfg: dict) -> tuple[Optional[dict], list[str]]:
-    """Translate one Hermes MCP server config to codex's inline-table dict.
+    """Translate one Thoth MCP server config to codex's inline-table dict.
 
     Returns ``(codex_entry, skipped_keys)``; ``codex_entry`` is None when the config is unusable.
-    stdio (``command``) wins over ``url`` when both are set. Hermes' ``transport: sse`` hint is
+    stdio (``command``) wins over ``url`` when both are set. Thoth' ``transport: sse`` hint is
     informational only — codex auto-negotiates. ``enabled`` is emitted only when explicitly false
     (codex defaults to true).
     """
@@ -128,7 +128,7 @@ def _translate_one_server(name: str, hermes_cfg: dict) -> tuple[Optional[dict], 
         if key in _KEYS_DROPPED_WITH_WARNING:
             skipped.append(f"{key} (no codex equivalent)")
         elif key not in _KNOWN_HERMES_KEYS:
-            skipped.append(f"{key} (unknown Hermes key)")
+            skipped.append(f"{key} (unknown Thoth key)")
     return out, skipped
 
 
@@ -182,7 +182,7 @@ def render_codex_toml_section(
     """
     out = [MIGRATION_MARKER]
     if not servers and not plugins and not default_permission_profile:
-        out += ["# (no MCP servers, plugins, or permissions configured by Hermes)", MIGRATION_END_MARKER]
+        out += ["# (no MCP servers, plugins, or permissions configured by Thoth)", MIGRATION_END_MARKER]
         return "\n".join(out) + "\n"
     if default_permission_profile:
         profile = default_permission_profile
@@ -247,7 +247,7 @@ def _unmanaged_mcp_server_names(toml_text: str) -> set[str]:
 
     Unlike ``[plugins.*]`` — where ``plugin/list`` is the source of truth and we own the
     namespace — ``mcp_servers`` is shared: the docs promise that anything outside the managed
-    block is the user's. A Hermes server whose name is already declared by the user is therefore
+    block is the user's. A Thoth server whose name is already declared by the user is therefore
     NOT re-emitted (the user's table wins and is preserved verbatim); emitting both would be a
     duplicate table header, which is invalid TOML that codex refuses to load (issue #79023).
     """
@@ -378,7 +378,7 @@ def _looks_like_test_tempdir(path: str) -> bool:
 
 
 def _build_hermes_tools_mcp_entry() -> dict:
-    """Codex stdio entry launching Hermes' own tool surface as an MCP server (browser/web/
+    """Codex stdio entry launching Thoth' own tool surface as an MCP server (browser/web/
     delegate_task/vision/memory/skills call-backs).
 
     HERMES_HOME passes through only IF SET, read from os.environ (not get_hermes_home()): when
@@ -424,12 +424,12 @@ def migrate(
     hermes_config: dict, *, codex_home: Optional[Path] = None, dry_run: bool = False,
     discover_plugins: bool = True, default_permission_profile: Optional[str] = ":workspace",
     expose_hermes_tools: bool = True) -> MigrationReport:
-    """Translate Hermes mcp_servers config + Codex curated plugins into ~/.codex/config.toml.
+    """Translate Thoth mcp_servers config + Codex curated plugins into ~/.codex/config.toml.
 
     ``discover_plugins`` spawns the live codex CLI (set False in tests); discovery is best-effort
     and never blocks the migration. ``default_permission_profile`` (default ":workspace"; built-ins
     carry a leading ":", user profiles do not; None leaves codex's read-only default) avoids an
-    approval prompt on every write. ``expose_hermes_tools`` registers Hermes' own tool surface
+    approval prompt on every write. ``expose_hermes_tools`` registers Thoth' own tool surface
     (agent/transports/hermes_tools_mcp_server.py, launched on demand by codex over stdio) as an MCP
     server so the codex subprocess can call back for tools it lacks.
     """
@@ -440,7 +440,7 @@ def migrate(
     report.target_path = target
     hermes_servers = (hermes_config or {}).get("mcp_servers") or {}
     if not isinstance(hermes_servers, dict):
-        report.errors.append("mcp_servers in Hermes config is not a dict; cannot migrate.")
+        report.errors.append("mcp_servers in Thoth config is not a dict; cannot migrate.")
         return report
     translated: dict[str, dict] = {}
     for raw_name, cfg in hermes_servers.items():

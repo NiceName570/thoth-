@@ -441,7 +441,7 @@ def _attach_lint_findings(result: dict[str, Any], skill_md: Path, before: Option
         {"severity": f.severity, "rule": f.rule, "message": f.message} for f in findings]
     result["lint_hint"] = (
         "The write succeeded. These are advisory authoring-convention findings (not blockers) "
-        "— fix them with skill_manage(action='patch') to match Hermes skill standards.")
+        "— fix them with skill_manage(action='patch') to match Thoth skill standards.")
 
 
 def _clip(text: str, n: int, ellipsis: str) -> str:

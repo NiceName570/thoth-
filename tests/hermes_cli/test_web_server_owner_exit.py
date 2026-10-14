@@ -93,7 +93,7 @@ def test_lock_written_by_the_windows_ssh_runtime_lets_the_superseded_backend_ret
     monkeypatch.setattr(windows_ssh_runtime, "_root",
                         lambda: PureWindowsPath(r"C:\Users\u\.hermes\desktop-ssh"))
     desktop_record = {k: v for k, v in _lock(NEW).items() if k != "logPath"}
-    desktop_record.update(creationTimeNs="133700000000000000", hermesPath=r"C:\Hermes\hermes.exe")
+    desktop_record.update(creationTimeNs="133700000000000000", hermesPath=r"C:\Thoth\hermes.exe")
     lock_path = tmp_path / "desktop-ssh" / OID / "backend.lock.json"
     lock_path.parent.mkdir(parents=True)
     lock_path.write_bytes(windows_ssh_runtime._lock_record(OID, desktop_record))

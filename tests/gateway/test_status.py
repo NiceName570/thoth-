@@ -1193,7 +1193,7 @@ class TestTakeoverMarker:
         assert marker_path.exists()
 
     def test_consume_accepts_legacy_marker_without_hermes_home(self, tmp_path, monkeypatch):
-        """Back-compat (#29092): markers written by older Hermes versions have no
+        """Back-compat (#29092): markers written by older Thoth versions have no
         ``replacer_hermes_home`` field; an absent field is treated as same-home so
         single-profile setups and mixed old/new deployments keep working.
         """
@@ -1831,7 +1831,7 @@ def test_pid_record_names_the_entry_point_under_an_inline_launcher(tmp_path, mon
     (#124029, #123151)."""
     import types
 
-    entry = types.SimpleNamespace(__file__="/opt/Hermes Agent/hermes-agent/hermes_cli/main.py")
+    entry = types.SimpleNamespace(__file__="/opt/Thoth Agent/hermes-agent/hermes_cli/main.py")
     monkeypatch.setitem(status.sys.modules, "hermes_cli.main", entry)
     monkeypatch.setenv("HERMES_HOME", str(tmp_path))
     monkeypatch.setattr(status.sys, "argv", ["-c", "gateway", "run"])

@@ -29,7 +29,7 @@ Every new or modernised skill — bundled, optional, or contributed — meets al
    and dilute attention when many skills load. State the capability, not the implementation; no
    marketing words ("powerful", "comprehensive", "seamless", "advanced"); don't repeat the name.
    Check: `len(re.search(r'^description: (.*)$', text, re.M).group(1)) <= 60`.
-2. **Prose references native Hermes tools or the MCP servers the skill expects, in backticks**
+2. **Prose references native Thoth tools or the MCP servers the skill expects, in backticks**
    (`terminal`, `web_extract`, `read_file`, `patch`, `search_files`, `vision_analyze`,
    `browser_navigate`, `delegate_task`). Never name shell utilities the agent has wrapped: `grep` →
    `search_files`, `cat`/`head`/`tail` → `read_file`, `sed`/`awk` → `patch`, `find`/`ls` →
@@ -42,7 +42,7 @@ Every new or modernised skill — bundled, optional, or contributed — meets al
    first (`tempfile.gettempdir`, `pathlib.Path`, `psutil.pid_exists`, Python filtering instead of
    `grep`); gate narrower only when the dependency is genuinely platform-bound.
 4. **`author` credits the human first.** External contributor's real name + GitHub handle first,
-   "Hermes Agent" second. A commit authored as "Hermes Agent" (they drafted with Hermes) is replaced
+   "Thoth" second. A commit authored as "Thoth" (they drafted with Thoth) is replaced
    with the human's name — credit the human, not the tool.
 5. **Modern section order:** `# <Skill> Skill`, 2–3 sentence intro (what it does and doesn't),
    `## When to Use`, `## Prerequisites`, `## How to Run`, `## Quick Reference`, `## Procedure`,

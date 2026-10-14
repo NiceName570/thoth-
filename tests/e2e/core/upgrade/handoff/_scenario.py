@@ -479,7 +479,7 @@ def dashboard_verdict(o) -> str:
     if re.search(r"^SyntaxError", o.dash_restarts, re.MULTILINE) and "restarted:" in o.up.stdout:
         return (f"the respawned dashboard died parsing its launcher: the update replayed the pre-update argv and "
                 f"Python read a shell script (SyntaxError in logs/dashboard-restart.log); port {o.dash_port} is dark")
-    # The sandbox runs no Hermes unit, so any unit the dashboard stop restarts is the one the test runner
+    # The sandbox runs no Thoth unit, so any unit the dashboard stop restarts is the one the test runner
     # (and so the hand-started dashboard) happens to live in.
     unit = next((a or b for a, b in _UNIT_RESTART.findall(o.up.stdout)), None)
     if unit and not o.dash_restarts:

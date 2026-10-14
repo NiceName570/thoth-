@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 _MEMORY_PLUGINS_DIR = Path(__file__).parent
 ENTRY_POINTS_GROUP = "hermes_agent.memory_providers"
-# Per Hermes home (plugin managers are per home too): pruning under one multiplexed profile must
+# Per Thoth home (plugin managers are per home too): pruning under one multiplexed profile must
 # only retract that profile's provider skills, never a sibling profile's.
 _REGISTERED_MEMORY_PROVIDER_SKILLS: dict[str, dict[str, Path]] = {}
 # Native extensions whose first import must not race another thread (#58083 warm-up).

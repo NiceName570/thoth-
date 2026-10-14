@@ -1,8 +1,8 @@
 # Spotify
 
-Hermes can control Spotify — playback, queue, search, playlists, saved tracks/albums, and listening history — through the official **`spotify` plugin** from the [plugin catalog](./plugins.md). It uses Spotify's Web API with PKCE OAuth. The plugin is maintained by Nous Research in [NousResearch/hermes-spotify](https://github.com/NousResearch/hermes-spotify) and is not part of Hermes core. Tokens are stored in `~/.hermes/auth.json` and refreshed automatically on 401; you only log in once per machine (refresh tokens expire after ~6 months; re-run `hermes spotify login` when they do).
+Thoth can control Spotify — playback, queue, search, playlists, saved tracks/albums, and listening history — through the official **`spotify` plugin** from the [plugin catalog](./plugins.md). It uses Spotify's Web API with PKCE OAuth. The plugin is maintained by Nous Research in [NousResearch/hermes-spotify](https://github.com/NousResearch/hermes-spotify) and is not part of Thoth core. Tokens are stored in `~/.hermes/auth.json` and refreshed automatically on 401; you only log in once per machine (refresh tokens expire after ~6 months; re-run `hermes spotify login` when they do).
 
-Unlike Hermes' built-in OAuth integrations, Spotify requires every user to register their own lightweight developer app. Spotify does not let third parties ship a public OAuth app that anyone can use. It takes about two minutes and `hermes spotify login` walks you through it.
+Unlike Thoth' built-in OAuth integrations, Spotify requires every user to register their own lightweight developer app. Spotify does not let third parties ship a public OAuth app that anyone can use. It takes about two minutes and `hermes spotify login` walks you through it.
 
 ## Install
 
@@ -19,7 +19,7 @@ Nothing to do. Every profile that was already using Spotify (a Spotify login in 
 ## Prerequisites
 
 - A Spotify account. **Free** works for search, playlist, library, and activity tools. **Premium** is required for playback control (play, pause, skip, seek, volume, queue add, transfer).
-- Hermes Agent installed and running, with the `spotify` plugin installed.
+- Thoth installed and running, with the `spotify` plugin installed.
 - For playback tools: an **active Spotify Connect device** — the Spotify app must be open on at least one device (phone, desktop, web player, speaker) so the Web API has something to control. If nothing is active you'll get a `403 Forbidden` with a "no active device" message; open Spotify on any device and retry.
 
 ## Setup
@@ -40,7 +40,7 @@ hermes spotify login
 
 The 7 Spotify tools only reach the agent once you're logged in.
 
-If no `HERMES_SPOTIFY_CLIENT_ID` is set, Hermes walks you through the app registration inline:
+If no `HERMES_SPOTIFY_CLIENT_ID` is set, Thoth walks you through the app registration inline:
 
 1. Opens `https://developer.spotify.com/dashboard` in your browser
 2. Prints the exact values to paste into Spotify's "Create app" form
@@ -57,16 +57,16 @@ When the dashboard opens, click **Create app** and fill in:
 | Field | Value |
 |-------|-------|
 | App name | anything (e.g. `hermes-agent`) |
-| App description | anything (e.g. `personal Hermes integration`) |
+| App description | anything (e.g. `personal Thoth integration`) |
 | Website | leave blank |
 | Redirect URI | `http://127.0.0.1:43827/spotify/callback` |
 | Which API/SDKs? | check **Web API** |
 
-Agree to the terms and click **Save**. On the next page click **Settings** → copy the **Client ID** and paste it into the Hermes prompt. That's the only value Hermes needs — PKCE doesn't use a client secret.
+Agree to the terms and click **Save**. On the next page click **Settings** → copy the **Client ID** and paste it into the Thoth prompt. That's the only value Thoth needs — PKCE doesn't use a client secret.
 
 ### Running over SSH / in a headless environment
 
-If `SSH_CLIENT` or `SSH_TTY` is set, Hermes skips the automatic browser open during both the wizard and the OAuth step. Copy the dashboard URL and the authorization URL Hermes prints, open them in a browser on your local machine, and proceed normally — the local HTTP listener still runs on the remote host on port `43827`. Your laptop's browser can't reach the remote loopback without an SSH local-forward:
+If `SSH_CLIENT` or `SSH_TTY` is set, Thoth skips the automatic browser open during both the wizard and the OAuth step. Copy the dashboard URL and the authorization URL Thoth prints, open them in a browser on your local machine, and proceed normally — the local HTTP listener still runs on the remote host on port `43827`. Your laptop's browser can't reach the remote loopback without an SSH local-forward:
 
 ```bash
 ssh -N -L 43827:127.0.0.1:43827 user@remote-host
@@ -80,7 +80,7 @@ For jump-box / bastion setups and other gotchas (mosh, tmux, port conflicts), se
 hermes spotify status
 ```
 
-Shows whether tokens are present and when the access token expires. Refresh is automatic: when any Spotify API call returns 401, the client exchanges the refresh token and retries once. Refresh tokens persist across Hermes restarts, so you only re-auth if you revoke the app in your Spotify account settings or run `hermes spotify logout`.
+Shows whether tokens are present and when the access token expires. Refresh is automatic: when any Spotify API call returns 401, the client exchanges the refresh token and retries once. Refresh tokens persist across Thoth restarts, so you only re-auth if you revoke the app in your Spotify account settings or run `hermes spotify logout`.
 
 ## Using it
 
@@ -125,9 +125,9 @@ Control and inspect playback, plus fetch recently played history.
 
 ### Home Assistant-managed speakers
 
-If Home Assistant manages speakers that already support Spotify Connect (for example Sonos, Echo, Nest, or other Connect-capable speakers), they appear in `spotify_devices list` automatically whenever Spotify can see them. Hermes does not need a Home Assistant ↔ Spotify bridge for this path — Spotify handles the device routing natively.
+If Home Assistant manages speakers that already support Spotify Connect (for example Sonos, Echo, Nest, or other Connect-capable speakers), they appear in `spotify_devices list` automatically whenever Spotify can see them. Thoth does not need a Home Assistant ↔ Spotify bridge for this path — Spotify handles the device routing natively.
 
-Ask Hermes to transfer playback by the speaker's display name (for example, “transfer Spotify to the kitchen speaker”), or call `spotify_devices list` and pass the exact `device_id` to `spotify_devices transfer` when scripting. If the speaker is missing, open the Spotify app or the speaker's Spotify integration once so Spotify registers it as an active Connect target.
+Ask Thoth to transfer playback by the speaker's display name (for example, “transfer Spotify to the kitchen speaker”), or call `spotify_devices list` and pass the exact `device_id` to `spotify_devices transfer` when scripting. If the speaker is missing, open the Spotify app or the speaker's Spotify integration once so Spotify registers it as an active Connect target.
 
 #### `spotify_queue`
 | Action | Purpose | Premium? |
@@ -181,7 +181,7 @@ Read-only tools work on Free accounts. Anything that mutates playback or the que
 
 ## Scheduling: Spotify + cron
 
-Because Spotify tools are regular Hermes tools, a cron job running in a Hermes session can trigger playback on any schedule. No new code needed.
+Because Spotify tools are regular Thoth tools, a cron job running in a Thoth session can trigger playback on any schedule. No new code needed.
 
 ### Morning wake-up playlist
 
@@ -193,7 +193,7 @@ hermes cron add \
 ```
 
 What happens at 7am every weekday:
-1. Cron spins up a headless Hermes session.
+1. Cron spins up a headless Thoth session.
 2. Agent reads the prompt, calls `spotify_devices list` to find "kitchen speaker" by name, then `spotify_devices transfer` → `spotify_playback set_volume` → `spotify_playback set_shuffle` → `spotify_search` + `spotify_playback play`.
 3. Music starts on the target speaker. Total cost: one session, a few tool calls, no human input.
 
@@ -231,19 +231,19 @@ To revoke the app on Spotify's side, visit [Apps connected to your account](http
 
 **`403 Forbidden — Premium required`** — You're on a Free account trying to use a playback-mutating action. See the feature matrix above.
 
-**`204 No Content` on `get_currently_playing`** — nothing is currently playing on any device. This is Spotify's normal response, not an error; Hermes surfaces it as an explanatory empty result (`is_playing: false`).
+**`204 No Content` on `get_currently_playing`** — nothing is currently playing on any device. This is Spotify's normal response, not an error; Thoth surfaces it as an explanatory empty result (`is_playing: false`).
 
-**`INVALID_CLIENT: Invalid redirect URI`** — the redirect URI in your Spotify app settings doesn't match what Hermes is using. The default is `http://127.0.0.1:43827/spotify/callback`. Either add that to your app's allowed redirect URIs, or set `HERMES_SPOTIFY_REDIRECT_URI` in `~/.hermes/.env` to whatever you registered.
+**`INVALID_CLIENT: Invalid redirect URI`** — the redirect URI in your Spotify app settings doesn't match what Thoth is using. The default is `http://127.0.0.1:43827/spotify/callback`. Either add that to your app's allowed redirect URIs, or set `HERMES_SPOTIFY_REDIRECT_URI` in `~/.hermes/.env` to whatever you registered.
 
-**`429 Too Many Requests`** — Spotify's rate limit. Hermes returns a friendly error; wait a minute and retry. If this persists, you're probably running a tight loop in a script — Spotify's quota resets roughly every 30 seconds.
+**`429 Too Many Requests`** — Spotify's rate limit. Thoth returns a friendly error; wait a minute and retry. If this persists, you're probably running a tight loop in a script — Spotify's quota resets roughly every 30 seconds.
 
 **`401 Unauthorized` keeps coming back** — Your refresh token was revoked (usually because you removed the app from your account, or the app was deleted). Run `hermes spotify login` again.
 
-**Wizard doesn't open the browser** — If you're over SSH or in a container without a display, Hermes detects it and skips the auto-open. Copy the dashboard URL it prints and open it manually.
+**Wizard doesn't open the browser** — If you're over SSH or in a container without a display, Thoth detects it and skips the auto-open. Copy the dashboard URL it prints and open it manually.
 
 ## Advanced: custom scopes
 
-By default Hermes requests the scopes needed for every shipped tool. Override if you want to restrict access:
+By default Thoth requests the scopes needed for every shipped tool. Override if you want to restrict access:
 
 ```bash
 hermes spotify login --scope "user-read-playback-state user-modify-playback-state playlist-read-private"

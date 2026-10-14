@@ -1,7 +1,7 @@
-name: Hermes Plugin Validate
+name: Thoth Plugin Validate
 description: >-
-  Validate a plugin's manifest and registered capabilities with Hermes at the
-  requested ref. The caller owns its plugin checkout; Hermes and its locked
+  Validate a plugin's manifest and registered capabilities with Thoth at the
+  requested ref. The caller owns its plugin checkout; Thoth and its locked
   runtime are prepared separately under RUNNER_TEMP.
 
 inputs:
@@ -15,7 +15,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Prepare an isolated Hermes checkout
+    - name: Prepare an isolated Thoth checkout
       id: source
       shell: bash
       env:

@@ -6,13 +6,13 @@
 # new job. The driver's phases share state via the workroot, and every leg
 # runs the REAL user surface for its methods:
 #
-#   desktop-installer@latest    the website's Hermes-Setup.exe, downloaded and
+#   desktop-installer@latest    the website's Thoth-Setup.exe, downloaded and
 #                               run headed, AutoHotkey clicks Install ->
 #                               Launch, the real Electron window must appear.
 #   installer-script            the irm | iex one-liner: the install.ps1
 #                               shipped AT the OLD ref, headless.
 #   installer-script+desktop    the same one-liner with -IncludeDesktop:
-#                               builds Hermes.exe AND registers Start Menu /
+#                               builds Thoth.exe AND registers Start Menu /
 #                               Desktop shortcuts.
 #   hermes-update               venv hermes.exe update.
 #   open-app-update             the app's own Update button, app launched
@@ -50,7 +50,7 @@ on:
         required: true
         type: string
       update-method:
-        description: 'How the install updates to HEAD. Supported: open-app-update (Update button under Playwright, from a desktop-bearing install), hermes-desktop-app-update (same button, app launched via hermes desktop), hermes-update, installer-script, installer-script+desktop, desktop-installer@latest (re-download Hermes-Setup.exe, AHK clicks Install over the existing install).'
+        description: 'How the install updates to HEAD. Supported: open-app-update (Update button under Playwright, from a desktop-bearing install), hermes-desktop-app-update (same button, app launched via hermes desktop), hermes-update, installer-script, installer-script+desktop, desktop-installer@latest (re-download Thoth-Setup.exe, AHK clicks Install over the existing install).'
         required: true
         type: string
       install-ref:

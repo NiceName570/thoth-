@@ -96,7 +96,7 @@ def _spawn_worker(env: dict[str, str]) -> subprocess.Popen:
 
     # pm store PATH: the worker runs under the STORE python, whose third-party
     # imports (ddgs/primp) arrive via the launcher-composed PYTHONPATH. The
-    # sanitizer strips Hermes-owned entries (cross-version protection); this
+    # sanitizer strips Thoth-owned entries (cross-version protection); this
     # worker is the SAME interpreter, so merge the ambient PYTHONPATH back in.
     _ambient_pp = os.environ.get("PYTHONPATH")
     if _ambient_pp:
@@ -198,7 +198,7 @@ class DDGSWebSearchProvider(BaseWebSearchProvider):
 
     def search(self, query: str, limit: int = 5) -> dict[str, Any]:
         """Run the search in a disposable child with a hard wall-clock timeout so a
-        hung native ``primp`` call cannot freeze the Hermes process.
+        hung native ``primp`` call cannot freeze the Thoth process.
 
         See #36776, #68096.
         """

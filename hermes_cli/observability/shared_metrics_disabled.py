@@ -1,4 +1,4 @@
-"""hermes.feature_disabled.count: a user turns off something Hermes ships on, or removes something shipped.
+"""hermes.feature_disabled.count: a user turns off something Thoth ships on, or removes something shipped.
 
 One chokepoint sees every write: ``save_config`` hands over the raw config it replaced and the one it
 wrote, and :func:`config_transitions` diffs only what the user moved away from the shipped default
@@ -10,8 +10,8 @@ each (kind, name, event) at most once per day.
 The surface is the entry point that is running: ``set_process_surface`` from the ``hermes`` command
 dispatch (``tools`` / ``config`` / ``skills`` / ``plugins`` / chat slash commands / the web server) and
 the TUI gateway. A process with no surface (setup wizard, updates) records nothing, nor does a write
-Hermes makes itself inside a surfaced process (migrations, under :func:`hermes_applied_write`): those
-are Hermes applying choices, not a user turning something off.
+Thoth makes itself inside a surfaced process (migrations, under :func:`hermes_applied_write`): those
+are Thoth applying choices, not a user turning something off.
 
 ``save_config``'s callers may hold their own write lock (the dashboard's ``_CONFIG_MUTATION_LOCK``), so
 the hook only runs the cheap gate inline; the diff and the record run on a thread bound to the owning
@@ -226,7 +226,7 @@ def _emit(transitions: Iterable[tuple[str, str, str]], surface: str) -> None:
 
 @contextlib.contextmanager
 def hermes_applied_write() -> Iterator[None]:
-    """Config writes Hermes makes on its own (migrations) record nothing, whatever the surface."""
+    """Config writes Thoth makes on its own (migrations) record nothing, whatever the surface."""
     token = _hermes_write.set(True)
     try:
         yield

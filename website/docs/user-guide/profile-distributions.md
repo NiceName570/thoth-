@@ -4,13 +4,13 @@ sidebar_position: 3
 
 # Profile Distributions: Share a Whole Agent
 
-A **profile distribution** packages a complete Hermes agent — personality, skills, cron jobs, MCP connections, config — as a git repository. Anyone with access to the repo can install the whole agent with one command, update it in place, and keep their own memories, sessions, and API keys untouched.
+A **profile distribution** packages a complete Thoth agent — personality, skills, cron jobs, MCP connections, config — as a git repository. Anyone with access to the repo can install the whole agent with one command, update it in place, and keep their own memories, sessions, and API keys untouched.
 
 If a [profile](./profiles.md) is a local agent, a distribution is that agent made shareable.
 
 ## Two ways to share a profile
 
-Hermes has two sharing paths, and they answer different questions. Distributions are the durable one; export files are the quick one.
+Thoth has two sharing paths, and they answer different questions. Distributions are the durable one; export files are the quick one.
 
 | | **Distribution** (git repo) | **Export file** (`.tar.gz`) |
 |---|---|---|
@@ -30,7 +30,7 @@ The two aren't exclusive. Plenty of authors dogfood a profile, `/export` it to a
 
 ## What this means
 
-Before distributions, sharing a Hermes agent meant sending someone:
+Before distributions, sharing a Thoth agent meant sending someone:
 
 1. Your SOUL.md
 2. A list of skills to install
@@ -72,7 +72,7 @@ We considered tarballs, HTTP archives, a custom format. None of them beat git:
 - **Private repos work for free.** SSH keys, `git credential` helpers, GitHub CLI stored credentials — whatever auth your terminal is already set up for applies transparently.
 - **Reproducibility is a commit SHA.** The same thing pip and npm record.
 
-The tradeoff: recipients need git installed. On any machine running Hermes in 2026, that's already true.
+The tradeoff: recipients need git installed. On any machine running Thoth in 2026, that's already true.
 
 ## When should you use a distribution?
 
@@ -87,11 +87,11 @@ Not a fit:
 
 - **You want to hand someone your setup once, right now.** A distribution needs a repo, a manifest, and a `.gitignore`. `/export` needs none of that — see [Export and import a profile file](#export-and-import-a-profile-file). Same for backing up or moving a profile to a new machine.
 - **You want to share your desktop theme and layout.** A distribution carries the agent — SOUL, config, skills, cron, MCP, plugins. An export made from the desktop app also carries the look: skin, light/dark mode, custom themes, rail color, and window layout.
-- **You want to share API keys alongside the agent.** `auth.json`, `.env` and the other credential stores Hermes reads from a profile (`.op.env`, `npmrc`, OAuth and bot token files, `honcho.json`, `mem0.json`, `teams_pipeline_store.json`, `mcp-tokens/`, `vault/`, `proxy/`, browser profiles, platform sessions, and `.ssh/`, `.aws/`, `.gnupg/`, `.kube/`, `.docker/`, `.azure/`, `.config/gh/`, `.config/gcloud/` and `.envrc` at the root or nested under a skill) are deliberately excluded from distributions. Each installer brings their own credentials. (Export files strip them too.)
+- **You want to share API keys alongside the agent.** `auth.json`, `.env` and the other credential stores Thoth reads from a profile (`.op.env`, `npmrc`, OAuth and bot token files, `honcho.json`, `mem0.json`, `teams_pipeline_store.json`, `mcp-tokens/`, `vault/`, `proxy/`, browser profiles, platform sessions, and `.ssh/`, `.aws/`, `.gnupg/`, `.kube/`, `.docker/`, `.azure/`, `.config/gh/`, `.config/gcloud/` and `.envrc` at the root or nested under a skill) are deliberately excluded from distributions. Each installer brings their own credentials. (Export files strip them too.)
 - **You want to share memories / sessions / conversation history.** Those are user data, not distribution content. Never shipped. (Export files are different here — read [what an export contains](#what-an-export-file-contains) before sending one.)
 
 :::caution
-**Hermes does not control git.** The file exclusions described on this page are applied by the **installer** when someone runs `hermes profile install` or `hermes profile update`. They are **not** applied when you run `git add` or `git commit`.
+**Thoth does not control git.** The file exclusions described on this page are applied by the **installer** when someone runs `hermes profile install` or `hermes profile update`. They are **not** applied when you run `git add` or `git commit`.
 :::
 
 ## The lifecycle: author to installer to update
@@ -212,7 +212,7 @@ skills/.*
 
 This mirrors the [hard-excluded paths](#whats-not-in-a-distribution-ever) that the installer strips on its end. Anything else you want to keep out of the repo (scratch files, large assets, local-only skills) should also go in here.
 
-For cron, commit only `cron/jobs.json`. Hermes treats every other entry under `cron/` as runtime state (locks, ledgers, output, suggestions, and future scheduler sidecars) and never installs or replaces it from a distribution. Root-level hidden entries under `skills/` are likewise local Hermes bookkeeping; hidden files inside an authored skill directory remain part of that skill.
+For cron, commit only `cron/jobs.json`. Thoth treats every other entry under `cron/` as runtime state (locks, ledgers, output, suggestions, and future scheduler sidecars) and never installs or replaces it from a distribution. Root-level hidden entries under `skills/` are likewise local Thoth bookkeeping; hidden files inside an authored skill directory remain part of that skill.
 
 ### Step 4 — Push to a git repo
 
@@ -274,7 +274,7 @@ When an installer updates to a new version, some things get replaced (author's d
 |---|---|---|
 | **Distribution-owned** | `SOUL.md`, `config.yaml`, `mcp.json`, `skills/`, `cron/jobs.json`, `distribution.yaml` | Files are replaced from the new clone. Skill directories are merged per entry. `cron/jobs.json` is merged by job id: shipped definitions update in place, your local jobs and each job's paused/enabled state survive, and newly shipped jobs arrive paused. Other `cron/` files and root-level hidden `skills/` metadata are runtime state and stay local. |
 | **Config override** | `config.yaml` | Actually preserved by default — the installer may have tuned model or provider. Pass `--force-config` on update to reset. |
-| **User-owned** | `memories/`, `sessions/`, `state.db*`, `auth.json`, `.env` and the other credential stores (including those below a distribution-owned directory, such as `platforms/pairing/` and `platforms/whatsapp/session/`) and the recovery copies Hermes keeps of them (`state-snapshots/`, `auth.json.corrupt`, `.env.bak-*`), `logs/`, `workspace/`, `plans/`, `home/`, `*_cache/`, `local/` | Never touched, and `distribution_owned` cannot claim a credential store. An update that ships a file where your profile has a directory holding one (a file named `platforms`) is refused before anything is written |
+| **User-owned** | `memories/`, `sessions/`, `state.db*`, `auth.json`, `.env` and the other credential stores (including those below a distribution-owned directory, such as `platforms/pairing/` and `platforms/whatsapp/session/`) and the recovery copies Thoth keeps of them (`state-snapshots/`, `auth.json.corrupt`, `.env.bak-*`), `logs/`, `workspace/`, `plans/`, `home/`, `*_cache/`, `local/` | Never touched, and `distribution_owned` cannot claim a credential store. An update that ships a file where your profile has a directory holding one (a file named `platforms`) is refused before anything is written |
 
 You can override the distribution-owned list in the manifest:
 
@@ -347,7 +347,7 @@ hermes profile install github.com/acme/support-bot --name support-eu --alias
 After install, the agent's profile contains a `.env.EXAMPLE`:
 
 ```
-# Environment variables required by this Hermes distribution.
+# Environment variables required by this Thoth distribution.
 # Copy to `.env` and fill in your own values before running.
 
 # OpenAI API key (for model access)
@@ -381,7 +381,7 @@ Distribution: research-bot
 Version:      1.0.0
 Description:  Autonomous research assistant with arXiv and web tools
 Author:       Your Name
-Requires:     Hermes >=0.12.0
+Requires:     Thoth >=0.12.0
 Source:       https://github.com/you/research-bot
 Installed:    2026-05-08T17:04:32+00:00
 
@@ -508,7 +508,7 @@ Tweet the install command. People who try it send you issues and PRs. If someone
 
 ### Product: ship an opinionated agent
 
-You built Hermes-on-top — maybe a compliance-monitoring harness, a customer-support stack, a domain-specific research platform. You want to distribute it as a product.
+You built Thoth-on-top — maybe a compliance-monitoring harness, a customer-support stack, a domain-specific research platform. You want to distribute it as a product.
 
 ```yaml
 # distribution.yaml
@@ -636,11 +636,11 @@ In the CLI, TUI, or desktop chat:
 /export research-bot -o ~/Desktop/research-bot.tar.gz
 ```
 
-Without `-o`, the CLI and TUI place the archive in Hermes's managed
-`profile-exports/` directory under the default Hermes home, not in the current
+Without `-o`, the CLI and TUI place the archive in Thoth's managed
+`profile-exports/` directory under the default Thoth home, not in the current
 working directory. This keeps routine exports out of source checkouts and
 prevents a generated profile snapshot from being mistaken for a repository
-source file. If the Hermes home itself lives inside a Git checkout (some
+source file. If the Thoth home itself lives inside a Git checkout (some
 Docker/custom deployments), the archive goes to `~/.hermes-profile-exports/`
 or, failing that, a per-user directory under the OS temp dir — never into
 the checkout. If no safe automatic location exists at all (every candidate
@@ -686,13 +686,13 @@ You cannot import as `default` — that name is the built-in root profile (`~/.h
 
 ### What an export file contains
 
-Always excluded, both profile types: `auth.json`, `.env` and the other credential stores Hermes reads from a profile (OAuth and bot token files such as WeChat's `weixin/accounts/`, `honcho.json`, `mcp-tokens/`, `vault/`, the iron-proxy keys in `proxy/`, browser profiles including the `/browser connect` one in `chrome-debug/`, platform sessions and pairing stores, the Teams pipeline's `teams_pipeline_store.json` with its Graph webhook `clientState`), and `.ssh/`, `.aws/`, `.gnupg/`, `.kube/`, `.docker/`, `.azure/`, `.config/gh/`, `.config/gcloud/` and `.envrc`, at the root or nested under a skill. Your API keys never leave the machine. `honcho.json` and `mem0.json` can hold the provider's API key next to its settings, so after an import run `hermes honcho setup` or `hermes memory setup` again.
+Always excluded, both profile types: `auth.json`, `.env` and the other credential stores Thoth reads from a profile (OAuth and bot token files such as WeChat's `weixin/accounts/`, `honcho.json`, `mcp-tokens/`, `vault/`, the iron-proxy keys in `proxy/`, browser profiles including the `/browser connect` one in `chrome-debug/`, platform sessions and pairing stores, the Teams pipeline's `teams_pipeline_store.json` with its Graph webhook `clientState`), and `.ssh/`, `.aws/`, `.gnupg/`, `.kube/`, `.docker/`, `.azure/`, `.config/gh/`, `.config/gcloud/` and `.envrc`, at the root or nested under a skill. Your API keys never leave the machine. `honcho.json` and `mem0.json` can hold the provider's API key next to its settings, so after an import run `hermes honcho setup` or `hermes memory setup` again.
 
-**The default profile** (`~/.hermes`) is exported through an allow-list — only known Hermes artifacts, so an unrelated file sitting in your home directory can't get swept in:
+**The default profile** (`~/.hermes`) is exported through an allow-list — only known Thoth artifacts, so an unrelated file sitting in your home directory can't get swept in:
 
 `config.yaml`, `SOUL.md`, `MEMORY.md`, `USER.md`, `todo.json`, `system_prompt.md`, `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `skills/`, `plugins/`, `cron/`, `scripts/`, `sessions/`, `memories/`, `knowledge/`, `preferences/`, and `desktop.json` when the desktop staged one.
 
-**A named profile** (`~/.hermes/profiles/<name>`) copies the whole directory minus those credential stores, `home/` (the `HOME` of Hermes' tool subprocesses, where `git`, `ssh`, `gh`, `npm` and skill CLIs keep their credentials), and the recovery copies Hermes keeps of them (`backups/`, `state-snapshots/`, any `auth.json.*` or `.env.bak*`, and the `config.yaml.bak-<timestamp>` copies `hermes update` writes). A copy you name yourself, such as `config.yaml.bak-my-note`, is exported, with its secrets redacted like `config.yaml`'s. That's broader — if the profile has `state.db`, logs, or caches, they go in the archive too, and the file gets big.
+**A named profile** (`~/.hermes/profiles/<name>`) copies the whole directory minus those credential stores, `home/` (the `HOME` of Thoth' tool subprocesses, where `git`, `ssh`, `gh`, `npm` and skill CLIs keep their credentials), and the recovery copies Thoth keeps of them (`backups/`, `state-snapshots/`, any `auth.json.*` or `.env.bak*`, and the `config.yaml.bak-<timestamp>` copies `hermes update` writes). A copy you name yourself, such as `config.yaml.bak-my-note`, is exported, with its secrets redacted like `config.yaml`'s. That's broader — if the profile has `state.db`, logs, or caches, they go in the archive too, and the file gets big.
 
 :::caution Read your archive before you send it
 An export is a snapshot of your profile, not a curated release. Unlike a distribution, it **can** include `memories/`, `sessions/`, and `USER.md` — and nothing scans skills, memories, or your persona for anything personal you wrote into them. Credentials are filtered by filename; content is not.
@@ -759,6 +759,6 @@ The short version:
 - [Profile Commands reference](../reference/profile-commands.md) — every flag, every option
 - [`hermes profile export` / `import`](../reference/profile-commands.md#hermes-profile-export) — the CLI form of [export files](#export-and-import-a-profile-file)
 - [Slash Commands reference](../reference/slash-commands.md) — `/export`, `/import`, and every other in-chat command
-- [Using SOUL with Hermes](../guides/use-soul-with-hermes.md) — authoring personalities
+- [Using SOUL with Thoth](../guides/use-soul-with-hermes.md) — authoring personalities
 - [Personality & SOUL](./features/personality.md) — how SOUL fits into the agent
 - [Skills catalog](../reference/skills-catalog.md) — skills you can bundle

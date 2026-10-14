@@ -48,7 +48,7 @@ def test_session_create_rejects_incoherent_model_provider_pair_before_any_state(
 @pytest.mark.parametrize("params", [
     {"model": "claude-opus-5", "provider": "anthropic"},  # coherent
     {"model": "claude-opus-5-20261001", "provider": "anthropic"},  # same family, not (yet) listed
-    {"model": "gpt-5.5", "provider": "custom:local"},  # custom endpoint: Hermes cannot know its models
+    {"model": "gpt-5.5", "provider": "custom:local"},  # custom endpoint: Thoth cannot know its models
     {"model": "gpt-5.5", "provider": "openrouter"},  # aggregator
 ])
 def test_session_create_keeps_coherent_unlisted_and_custom_pairs(_create, params):

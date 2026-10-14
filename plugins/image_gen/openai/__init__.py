@@ -77,7 +77,7 @@ def _resolve_endpoint() -> tuple[str, str]:
 
 
 def _build_client(openai: Any, base_url: str, api_key: str) -> Any:
-    """``openai.OpenAI`` on Hermes' env-only-proxy httpx client, so a local/custom endpoint never
+    """``openai.OpenAI`` on Thoth' env-only-proxy httpx client, so a local/custom endpoint never
     routes through a macOS system proxy whose ExceptionsList httpx cannot see (#64888). The project
     header is blanked: an ``OPENAI_PROJECT_ID`` set for chat makes ``/images/generations`` 403 on
     projects with a model allow-list, and the key already carries the project (#60748)."""
@@ -194,7 +194,7 @@ class OpenAIImageGenProvider(StaticImageGenProvider):
             logger.debug("OpenAI image %s failed", verb, exc_info=True)
             return fail(f"OpenAI image {'editing' if is_edit else 'generation'} failed: {exc}", "api_error")
 
-        # gpt-image bills per text/image token; the tier id is a Hermes label, the API model prices.
+        # gpt-image bills per text/image token; the tier id is a Thoth label, the API model prices.
         # Recorded before extraction/save: the tokens are billed whether or not an image came back.
         record_token_usage(getattr(response, "usage", None), model=meta["api_model"], provider="openai")
         data = getattr(response, "data", None) or []

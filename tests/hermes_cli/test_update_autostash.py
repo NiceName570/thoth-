@@ -106,7 +106,7 @@ def test_rescue_retention_uses_real_refs(tmp_path, monkeypatch, mode):
 
 
 @pytest.mark.parametrize('fault,body,modules,message', [
-    ('syntax', '<<<<<<< Updated upstream\nVALUE = 2\n', (), 'made the Hermes agent unexecutable'),
+    ('syntax', '<<<<<<< Updated upstream\nVALUE = 2\n', (), 'made the Thoth agent unexecutable'),
     ('import', "raise RuntimeError('restored local failure')\n", ('consumer',), 'restored local failure'),
     ('preexisting', 'VALUE = 2\n', ('first',), None),
     ('later', "raise RuntimeError('restored later failure')\n", ('first', 'consumer'), 'restored later failure'),
@@ -659,7 +659,7 @@ def test_untracked_file_replaced_by_the_update_keeps_the_stash(tmp_path, local_s
     """#124641: the update adds a file where the user had an untracked file of the same name.
     ``stash apply`` refuses it ("already exists, no checkout"); the stash is the only copy of the
     user's version, so it is never dropped. The restored tree still gets the health check: a restore
-    that breaks Hermes resets the tree and exits 1."""
+    that breaks Thoth resets the tree and exits 1."""
     git, stash_ref = _repo_with_stash(tmp_path, local_source)
     # The pull adds its own notes.md.
     (tmp_path / "notes.md").write_text("upstream notes\n", encoding="utf-8")

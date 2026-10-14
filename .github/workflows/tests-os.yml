@@ -207,7 +207,7 @@ jobs:
       strict_acceptance: ${{ inputs.strict_acceptance }}
 
   e2e-windows:
-    # Real Hermes processes on a real Windows host (tests/e2e/core/windows): hermes.exe,
+    # Real Thoth processes on a real Windows host (tests/e2e/core/windows): hermes.exe,
     # `hermes serve`, `hermes gateway run/stop`, the tui_gateway stdio process, cron script
     # jobs, the terminal tool's Git Bash / PowerShell / cmd children and a ConPTY console,
     # all against the loopback fake provider (tests/fakes/fake_llm_provider.py). Separate
@@ -252,7 +252,7 @@ jobs:
           OPENAI_API_KEY: ''
           NOUS_API_KEY: ''
 
-      - name: No leftover Python / Hermes processes
+      - name: No leftover Python / Thoth processes
         # Backstop for the per-test ownership checks: a file killed by its 900 s timeout,
         # or a detached grandchild some test's cleanup missed, leaves an interpreter behind
         # (Windows never re-parents, so nothing reaps it). The runner itself runs no

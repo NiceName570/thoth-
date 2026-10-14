@@ -25,7 +25,7 @@ def installation(request, tmp_path, monkeypatch):
         home / "sessions" / "saved.json": b'{"saved": true}',
     }
     record = tmp_path / "desktop-installed-apps.json"
-    bundle = tmp_path / "apps" / "Hermes.app"
+    bundle = tmp_path / "apps" / "Thoth.app"
     userdata = tmp_path / "desktop-data"
     gui_files = {
         root / "apps" / "desktop" / "dist" / "index.html": b"renderer",

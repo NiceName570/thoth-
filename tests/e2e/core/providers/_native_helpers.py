@@ -5,8 +5,8 @@ subprocess with a hermetic fake HOME / HERMES_HOME, a config.yaml that selects a
 and the provider's endpoint redirected to a loopback fake from ``tests/fakes/providers/``. Only the
 vendor boundary is faked; runtime resolution, the adapter, the agent loop, tools and SQLite are real.
 
-What a test asserts: the NEXT wire request Hermes sends (captured by the fake), the persisted
-``state.db`` rows, and the CLI's user-visible output — never Hermes source text.
+What a test asserts: the NEXT wire request Thoth sends (captured by the fake), the persisted
+``state.db`` rows, and the CLI's user-visible output — never Thoth source text.
 """
 
 from __future__ import annotations

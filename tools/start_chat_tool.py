@@ -3,7 +3,7 @@ from tools.registry import registry
 START_CHAT_SCHEMA = {
     "name": "start_chat",
     "description": (
-        "Start a new chat in the Hermes desktop app and send it its first message, so the task runs "
+        "Start a new chat in the Thoth desktop app and send it its first message, so the task runs "
         "there in view of the user while this chat stays where it is. Call it ONCE per task: every "
         "call opens another chat, and nothing de-duplicates a repeated call. The new chat starts with "
         "no history, so the message must carry everything the task needs. 'profile' must name an "

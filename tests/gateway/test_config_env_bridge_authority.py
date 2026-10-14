@@ -66,7 +66,7 @@ def _run_gateway_import(
     env["HERMES_HOME"] = str(hermes_home)
     # Keep interpreter paths plus the Windows bootstrap variables required by
     # stdlib platform detection and native dependency loading.  The child is
-    # otherwise intentionally clean so stale Hermes settings cannot leak in.
+    # otherwise intentionally clean so stale Thoth settings cannot leak in.
     for k in (
         "PATH",
         "PYTHONPATH",

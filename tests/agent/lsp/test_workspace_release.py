@@ -175,7 +175,7 @@ def test_workspace_removal_releases_only_its_language_servers(entry, mock_pyrigh
 
 
 def test_reaper_shuts_down_client_whose_root_was_deleted(mock_pyright, tmp_path):
-    """A root deleted outside Hermes is reaped on the next sweep even though the client is not idle."""
+    """A root deleted outside Thoth is reaped on the next sweep even though the client is not idle."""
     repo = _make_repo(tmp_path, "repo")
     svc = _service()
     try:

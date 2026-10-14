@@ -4,7 +4,7 @@ import * as path from 'node:path'
 import { seedInstall, UPDATE_ROOT } from './harness'
 
 /**
- * Refuse to run where an update could reach the developer's own Hermes. The
+ * Refuse to run where an update could reach the developer's own Thoth. The
  * cells run `hermes update --gateway`, which stops gateways it can see; CI
  * runners have none, and locally the suite must run in its own PID namespace
  * (e.g. `bwrap --dev-bind / / --unshare-pid --proc /proc ...` with the user

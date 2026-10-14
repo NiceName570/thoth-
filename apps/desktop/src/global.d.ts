@@ -106,7 +106,7 @@ declare global {
       // `onBrowserPopoutClosed` so the caller can dock the tab again.
       openBrowserWindow: (tabId: string) => Promise<{ ok: boolean; error?: string }>
       // Cross-window renderer relay (pop-out Browser ↔ chat windows). Electron
-      // main relays opaque payloads to the other Hermes renderer windows;
+      // main relays opaque payloads to the other Thoth renderer windows;
       // renderer code keeps the destination exact and rejects anything not
       // addressed to its window.
       windowRelay?: {

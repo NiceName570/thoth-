@@ -4,7 +4,7 @@
   or ``model.base_url``), the picker catalog (``provider_model_ids``, behind ``hermes model``,
   ``/model``, the dashboard and Desktop pickers) must come from THAT endpoint's
   ``/v1/models`` — asserted by the fake seeing the GET and its relay-only id in the result.
-* OAuth wire aliases: on the Claude subscription route Hermes renames tools on the wire
+* OAuth wire aliases: on the Claude subscription route Thoth renames tools on the wire
   (``mcp__`` prefix, ``memory`` -> ``context_notes``, ``session_search`` ->
   ``chat_history_lookup``). A real ``hermes -z`` turn must map every wire name the model
   may use back to the real tool, including names passed as tool-search arguments.

@@ -22,7 +22,7 @@ LINTERS = {
     '.rs': 'rustfmt --check {file} 2>&1',
 }
 
-# Node linters Hermes runs on the host (local backend) under its PM-managed Node,
+# Node linters Thoth runs on the host (local backend) under its PM-managed Node,
 # never the user's: the terminal PATH puts the user's dirs first, and ``npx tsc``
 # re-execs ``env node`` through that PATH.
 _MANAGED_NODE_LINTERS = {'.js': ('node', '--check'), '.ts': ('npx', 'tsc', '--noEmit')}
@@ -175,7 +175,7 @@ class LintMixin:
             base_cmd = _MANAGED_NODE_LINTERS[ext][0]
             result = self._run_managed_node_linter(ext, path)
             if result is None:
-                return LintResult(skipped=True, message=f"{base_cmd} not available (Hermes-managed Node not installed)")
+                return LintResult(skipped=True, message=f"{base_cmd} not available (Thoth-managed Node not installed)")
         else:
             linter_cmd = LINTERS[ext]
             base_cmd = linter_cmd.split()[0]

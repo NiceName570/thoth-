@@ -1,20 +1,20 @@
 # ============================================================================
 # Windows Desktop GUI install + update E2E driver (the REAL user flow)
 # ============================================================================
-# Proves, on a real Windows machine, that a user who installs Hermes the way
+# Proves, on a real Windows machine, that a user who installs Thoth the way
 # the website tells them to can then update to the commit under test through
 # a real update surface -- with every leg driven through the GUI a user
 # actually touches:
 #
-#   INSTALL   - downloads the production Hermes-Setup.exe from the website,
+#   INSTALL   - downloads the production Thoth-Setup.exe from the website,
 #               launches it HEADED, and AutoHotkey clicks Install, waits,
-#               then clicks Launch. The real Electron Hermes.exe must appear.
+#               then clicks Launch. The real Electron Thoth.exe must appear.
 #               The exe runs EXACTLY as shipped against serve.git, whose
 #               `main` is parked at OLD (-InstallRef, default: the newest
 #               release tag) -- so the install lands on OLD the same way a
 #               user's install landed on whatever main served that day.
 #   UPDATE    - OLD -> HEAD through the route selected by -Route:
-#                 desktop    (implemented) launch the installed Hermes.exe
+#                 desktop    (implemented) launch the installed Thoth.exe
 #                            under Playwright's Electron driver and CLICK
 #                            Settings -> About -> "Update now". The
 #                            production hand-off chain runs untouched:
@@ -26,7 +26,7 @@
 #                 update     run `hermes update` from the installed command
 #                            (the CLI route a GUI user might take).
 #                 installer  re-run the bootstrap installer over the
-#                            existing install (download Hermes-Setup.exe
+#                            existing install (download Thoth-Setup.exe
 #                            again, AHK clicks Install; lands on HEAD).
 #
 # HOW THE STAGING WORKS (no MITM proxy, no network fakery):
@@ -89,7 +89,7 @@ param(
     [string]$Route = "open-app-update",
 
     # The OLD version: the ref served as `main` while the installer runs,
-    # i.e. what the user starts on. The published Hermes-Setup.exe carries
+    # i.e. what the user starts on. The published Thoth-Setup.exe carries
     # no commit pin (Pin { commit: None, branch: "main" }) -- it installs
     # whatever `main` points at, so staging OLD means serving it there.
     # Empty or "auto" = newest release tag in the checkout (the "user on
@@ -357,8 +357,8 @@ function Get-InstalledHead {
 
 function Get-DesktopExe {
     foreach ($c in @(
-        (Join-Path $InstallDir "apps\desktop\release\win-unpacked\Hermes.exe"),
-        (Join-Path $InstallDir "apps\desktop\release\win-arm64-unpacked\Hermes.exe")
+        (Join-Path $InstallDir "apps\desktop\release\win-unpacked\Thoth.exe"),
+        (Join-Path $InstallDir "apps\desktop\release\win-arm64-unpacked\Thoth.exe")
     )) {
         if (Test-Path -LiteralPath $c) { return $c }
     }
@@ -613,7 +613,7 @@ function Invoke-ManualCardUpdate([string]$ReceiptPath, [string]$TargetSha) {
     Invoke-HermesUpdate
     Assert-True ((Get-InstalledHead) -eq $TargetSha) "manual update landed on target commit"
     Test-HermesRuns "post-manual-update"
-    Assert-True ($null -ne (Get-DesktopExe)) "Hermes.exe still present after manual update"
+    Assert-True ($null -ne (Get-DesktopExe)) "Thoth.exe still present after manual update"
 }
 
 function Clear-HistoricalInstallerChurn {
@@ -734,7 +734,7 @@ function Invoke-HermesDesktopAppUpdate([string]$TargetSha) {
     }
     Assert-True ($driveExit -eq 0) "app driven via captured hermes desktop spec; update completed"
 
-    # The production updater relaunches Hermes. Close that verified window
+    # The production updater relaunches Thoth. Close that verified window
     # normally so the test-owned checkpoint starts and owns its own backend.
     $desktopExe = Get-DesktopExe
     $deadline = (Get-Date).AddMinutes(5)
@@ -749,8 +749,8 @@ function Invoke-HermesDesktopAppUpdate([string]$TargetSha) {
     Close-VerifiedDesktop $desktopExe $windows[0].Id
 }
 
-# Evidence for a GUI-driver failure, taken while the installer is still alive: which Hermes
-# processes exist (was Hermes.exe ever started, and by whom), the installer's thread states,
+# Evidence for a GUI-driver failure, taken while the installer is still alive: which Thoth
+# processes exist (was Thoth.exe ever started, and by whom), the installer's thread states,
 # and a full memory dump of the installer. The installer's tracing log is buffered and never
 # reaches disk when the job kills it; the dump still holds it. A Launch that left the
 # installer on LAUNCHING had no other trace (tests/install/e2e-assets/install-and-launch.ahk).
@@ -763,7 +763,7 @@ function Save-GuiDriverFailureEvidence([System.Diagnostics.Process]$Installer, [
         Format-Table -AutoSize -Wrap | Out-String -Width 400 |
         Tee-Object -FilePath (Join-Path $OutDir "processes.txt") | Write-Host
     if ($Installer.HasExited) {
-        Write-Host "  Hermes-Setup.exe already exited (code $($Installer.ExitCode) at $($Installer.ExitTime))"
+        Write-Host "  Thoth-Setup.exe already exited (code $($Installer.ExitCode) at $($Installer.ExitTime))"
         return
     }
     $Installer.Refresh()
@@ -777,7 +777,7 @@ function Save-GuiDriverFailureEvidence([System.Diagnostics.Process]$Installer, [
 public static extern bool MiniDumpWriteDump(IntPtr hProcess, uint processId, Microsoft.Win32.SafeHandles.SafeFileHandle hFile, uint dumpType, IntPtr exceptionParam, IntPtr userStreamParam, IntPtr callbackParam);
 '@
     }
-    $dumpPath = Join-Path $OutDir "Hermes-Setup.dmp"
+    $dumpPath = Join-Path $OutDir "Thoth-Setup.dmp"
     $file = [System.IO.File]::Create($dumpPath)
     try {
         # MiniDumpWithFullMemory | MiniDumpWithHandleData | MiniDumpWithThreadInfo
@@ -787,8 +787,8 @@ public static extern bool MiniDumpWriteDump(IntPtr hProcess, uint processId, Mic
     finally {
         $file.Close()
     }
-    if ($ok) { Write-Host "  Hermes-Setup.exe dump: $dumpPath ($([math]::Round((Get-Item $dumpPath).Length / 1MB, 1)) MB)" }
-    else { Write-Host "  Hermes-Setup.exe dump failed (Win32 error $err)" }
+    if ($ok) { Write-Host "  Thoth-Setup.exe dump: $dumpPath ($([math]::Round((Get-Item $dumpPath).Length / 1MB, 1)) MB)" }
+    else { Write-Host "  Thoth-Setup.exe dump failed (Win32 error $err)" }
 }
 
 function Save-DesktopScreenshot([string]$OutFile) {
@@ -845,13 +845,13 @@ function Stop-DesktopRecorder($proc, [string]$OutDir) {
 
 function Stop-HermesAppProcesses([string]$Label) {
     # Close the desktop app the blunt way between phases (a user quitting).
-    # Only Hermes.exe (Electron) -- never hermes.exe (the venv CLI shim).
-    $procs = @(Get-Process -Name "Hermes" -ErrorAction SilentlyContinue)
+    # Only Thoth.exe (Electron) -- never hermes.exe (the venv CLI shim).
+    $procs = @(Get-Process -Name "Thoth" -ErrorAction SilentlyContinue)
     foreach ($p in $procs) {
         try { Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue } catch {}
     }
     if ($procs.Count -gt 0) {
-        Write-Host "  [$Label] stopped $($procs.Count) Hermes.exe process(es)"
+        Write-Host "  [$Label] stopped $($procs.Count) Thoth.exe process(es)"
         Start-Sleep -Seconds 3
     }
 }
@@ -872,8 +872,8 @@ function New-NextCommit([string]$Repo, [string]$Parent) {
     $saved = @{}
     $vars = @{
         GIT_INDEX_FILE = (Join-Path $WorkRoot "next.index")
-        GIT_AUTHOR_NAME = "Hermes E2E"; GIT_AUTHOR_EMAIL = "e2e@hermes.invalid"
-        GIT_COMMITTER_NAME = "Hermes E2E"; GIT_COMMITTER_EMAIL = "e2e@hermes.invalid"
+        GIT_AUTHOR_NAME = "Thoth E2E"; GIT_AUTHOR_EMAIL = "e2e@hermes.invalid"
+        GIT_COMMITTER_NAME = "Thoth E2E"; GIT_COMMITTER_EMAIL = "e2e@hermes.invalid"
     }
     foreach ($k in $vars.Keys) { $saved[$k] = [Environment]::GetEnvironmentVariable($k); [Environment]::SetEnvironmentVariable($k, $vars[$k]) }
     try {
@@ -944,7 +944,7 @@ function Invoke-PhaseStage {
 }
 
 # ----------------------------------------------------------------------------
-# Phase: install-gui -- website Hermes-Setup.exe, headed, AHK-driven
+# Phase: install-gui -- website Thoth-Setup.exe, headed, AHK-driven
 # ----------------------------------------------------------------------------
 function Invoke-PhaseInstallGui {
     param(
@@ -959,7 +959,7 @@ function Invoke-PhaseInstallGui {
         $ExpectedSha = $state.old
         $ExpectedLabel = "OLD ($($state.old_ref))"
     }
-    Write-Step "$($Mode.ToUpper()) (GUI): Hermes-Setup.exe from the website, headed, AHK clicks"
+    Write-Step "$($Mode.ToUpper()) (GUI): Thoth-Setup.exe from the website, headed, AHK clicks"
     $proof = Join-Path $ProofRoot $(if ($Mode -eq "install") { "install-gui" } else { "update-gui-installer" })
     New-Item -ItemType Directory -Path $proof -Force | Out-Null
 
@@ -984,12 +984,12 @@ function Invoke-PhaseInstallGui {
     ) | Set-Content -LiteralPath (Join-Path $proof "bootstrap-install-script.txt") -Encoding ASCII
     Write-Host "  bootstrap script is scripts/install.ps1 from $ExpectedLabel ($ExpectedSha)"
 
-    $setupExe = Join-Path $WorkRoot "Hermes-Setup.exe"
+    $setupExe = Join-Path $WorkRoot "Thoth-Setup.exe"
     if (-not (Test-Path -LiteralPath $setupExe)) {
         Write-Host "  downloading $SetupExeUrl"
         Invoke-WebRequest -Uri $SetupExeUrl -OutFile $setupExe
     }
-    Assert-True ((Get-Item $setupExe).Length -gt 1MB) "Hermes-Setup.exe downloaded ($([math]::Round((Get-Item $setupExe).Length / 1MB, 1)) MB)"
+    Assert-True ((Get-Item $setupExe).Length -gt 1MB) "Thoth-Setup.exe downloaded ($([math]::Round((Get-Item $setupExe).Length / 1MB, 1)) MB)"
 
     # AutoHotkey v2, portable zip (no installer, no winget flakes).
     $ahkExe = Join-Path $AhkDir "AutoHotkey64.exe"
@@ -1027,13 +1027,13 @@ function Invoke-PhaseInstallGui {
                 $env:HERMES_SETUP_DEV_REPO_ROOT = $previousSetupSource
             }
         }
-        Write-Host "  Hermes-Setup.exe launched (pid $($installer.Id))"
+        Write-Host "  Thoth-Setup.exe launched (pid $($installer.Id))"
 
-        # Drive it: Install click -> wait -> Launch click -> Hermes.exe window.
+        # Drive it: Install click -> wait -> Launch click -> Thoth.exe window.
         # Arg 3 lets the AHK script use the installer's own log as the
         # install-finished fallback signal.
         $ahk = Start-Process -FilePath $ahkExe `
-            -ArgumentList (Join-Path $AhkDir "install-and-launch.ahk"), $ahkLog, "Hermes-Setup.exe", (Join-Path $HermesHome "logs\bootstrap-installer.log") `
+            -ArgumentList (Join-Path $AhkDir "install-and-launch.ahk"), $ahkLog, "Thoth-Setup.exe", (Join-Path $HermesHome "logs\bootstrap-installer.log") `
             -PassThru
         # Install on a cold runner takes a while; the AHK script's own inner
         # timeout (45 min on the Launch wait) is the effective budget.
@@ -1055,13 +1055,13 @@ function Invoke-PhaseInstallGui {
 
         # The Launch hand-off under test: the app the installer spawned must
         # actually be running.
-        Assert-True ($null -ne (Get-Process -Name "Hermes" -ErrorAction SilentlyContinue)) "Hermes.exe process is running (installer Launch hand-off worked)"
+        Assert-True ($null -ne (Get-Process -Name "Thoth" -ErrorAction SilentlyContinue)) "Thoth.exe process is running (installer Launch hand-off worked)"
 
         # Installer should have exited after Launch.
         if (-not $installer.HasExited) {
             Start-Sleep -Seconds 10
         }
-        Assert-True $installer.HasExited "Hermes-Setup.exe exited after Launch"
+        Assert-True $installer.HasExited "Thoth-Setup.exe exited after Launch"
     }
     finally {
         Stop-DesktopRecorder $recorder (Join-Path $proof "desktop-frames")
@@ -1084,7 +1084,7 @@ function Invoke-PhaseInstallGui {
         Assert-True ($installedSha -ne $state.current) "installed checkout differs from HEAD (an update is genuinely available)"
     }
     Test-HermesRuns "post-$Mode-gui"
-    Assert-True ($null -ne (Get-DesktopExe)) "packaged Desktop Hermes.exe exists"
+    Assert-True ($null -ne (Get-DesktopExe)) "packaged Desktop Thoth.exe exists"
 
     # The installer Launch proof above must pass before a test-owned launch.
     $script:ChatFailure = $true
@@ -1120,7 +1120,7 @@ function Invoke-GuiUpdateDesktopRoute([string]$TargetSha) {
     Write-Host "  serve.git main advanced to $TargetSha"
 
     $desktopExe = Get-DesktopExe
-    Assert-True ($null -ne $desktopExe) "packaged Hermes.exe present before update"
+    Assert-True ($null -ne $desktopExe) "packaged Thoth.exe present before update"
 
     $resultPath = Join-Path $HermesHome ".hermes-update-result.json"
     $markerPath = Join-Path $HermesHome ".hermes-update-in-progress"
@@ -1211,26 +1211,26 @@ function Invoke-GuiUpdateDesktopRoute([string]$TargetSha) {
 
         Assert-True ((Get-InstalledHead) -eq $TargetSha) "checkout landed on target commit"
         Test-HermesRuns "post-update"
-        Assert-True ($null -ne (Get-DesktopExe)) "Hermes.exe still present after update"
+        Assert-True ($null -ne (Get-DesktopExe)) "Thoth.exe still present after update"
 
         # The production hand-off relaunches the desktop (RelaunchExe).
         # A relaunched window is the user-visible proof the update loop closed.
-        Write-Host "  waiting for the relaunched Hermes.exe ..."
+        Write-Host "  waiting for the relaunched Thoth.exe ..."
         $rDeadline = (Get-Date).AddMinutes(5)
         $relaunched = $null
         while ((Get-Date) -lt $rDeadline) {
-            $relaunched = Get-Process -Name "Hermes" -ErrorAction SilentlyContinue
+            $relaunched = Get-Process -Name "Thoth" -ErrorAction SilentlyContinue
             if ($relaunched) { break }
             Start-Sleep -Seconds 5
         }
         Assert-True ($null -ne $relaunched) "updater relaunched the desktop app"
         Start-Sleep -Seconds 12   # let the window paint for the screenshot
-        # Foreground the relaunched Hermes window so the proof screenshot
+        # Foreground the relaunched Thoth window so the proof screenshot
         # captures IT, not whatever else is on top (the full-desktop grab is
         # otherwise at the mercy of z-order -- an earlier run caught VS Code).
         $mainProc = $null
         try {
-            $mainProc = Get-Process -Name "Hermes" -ErrorAction SilentlyContinue |
+            $mainProc = Get-Process -Name "Thoth" -ErrorAction SilentlyContinue |
                 Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
             if ($mainProc) {
                 Add-Type -Namespace HdE2E -Name Win -MemberDefinition @'
@@ -1603,7 +1603,7 @@ function Invoke-PhaseUpdate {
             Assert-DesktopArtifact "HEAD"
         }
         "desktop-installer@latest" {
-            # A user re-downloading Hermes-Setup.exe and clicking Install over
+            # A user re-downloading Thoth-Setup.exe and clicking Install over
             # the existing install (the GUI twin of re-running the one-liner).
             # Windows has no already-installed fast path, so the full installer
             # UI shows and the same AHK drive applies; install.ps1's repository
@@ -1678,7 +1678,7 @@ function Invoke-PhaseVerifyStamp {
     } finally { $ErrorActionPreference = $prevEap }
     $verdict | ForEach-Object { Write-Host $_ }
     if ($verifyExit -eq 0) { return }
-    # Permanent legacy shape, not a pending fix: the released Hermes-Setup.exe
+    # Permanent legacy shape, not a pending fix: the released Thoth-Setup.exe
     # replaces install.ps1's receipt with its own (#124949): "completedAtUnix"
     # (epoch seconds) instead of "completedAt", and a null pinnedCommit when git
     # is not on PATH. #125053 fixed the writer, but the installer .exe is not
@@ -1695,10 +1695,10 @@ function Invoke-PhaseVerifyStamp {
     $setupExeReceipt = $receipt -and ($receipt.PSObject.Properties.Name -contains 'completedAtUnix')
     if ($setupExeReceipt -and $fails.Count -and -not @($fails | Where-Object { $_ -notmatch $legacyOnly }).Count) {
         $unix = $receipt.completedAtUnix
-        Assert-True ((($unix -is [int]) -or ($unix -is [long])) -and $unix -gt 0) "Hermes-Setup.exe receipt completedAtUnix is epoch seconds: '$unix'"
+        Assert-True ((($unix -is [int]) -or ($unix -is [long])) -and $unix -gt 0) "Thoth-Setup.exe receipt completedAtUnix is epoch seconds: '$unix'"
         # The receipt cannot vouch for the commit, so the checkout must.
         Assert-True ($head -eq $state.current) "installed checkout is at the expected commit ($($state.current.Substring(0, 12)))"
-        $note = "Hermes-Setup.exe legacy receipt accepted (#124949; the released exe is not rebuilt): $($fails -join '; ')"
+        $note = "Thoth-Setup.exe legacy receipt accepted (#124949; the released exe is not rebuilt): $($fails -join '; ')"
         Write-Host "  $note"
         if ($env:GITHUB_STEP_SUMMARY) { Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Value $note -Encoding UTF8 }
         return

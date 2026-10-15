@@ -39,7 +39,7 @@ Then run `hermes` (the command keeps its upstream name so existing setups carry 
 | **Local models with no setup** | A running Ollama (`127.0.0.1:11434`) or LM Studio (`127.0.0.1:1234`) shows up in the model menu by itself, as an ordinary provider. |
 | **Ollama that stays on the GPU** | Auto-detected context is capped at 64K instead of the model's training max, so the KV cache no longer spills to the CPU. Eject frees loaded Ollama models from RAM/VRAM without restarting the server. |
 | **More providers** | Cline (ClinePass and pay-as-you-go keys), abliteration.ai, and TypeSafe / DefAPI cards on Settings > Providers. |
-| **Jev observer plugin** | Opt-in `jev-observer` scores each reply with Jev, plus a contextual mode that judges a window of earlier turns. Toggle it from the Plugins page. Nothing is injected into the conversation. |
+| **Jev observer plugin** | Opt-in `jev-observer` scores each reply with Jev, plus a contextual mode that judges a window of earlier turns. Toggle it from the Plugins page. Nothing is injected into the conversation. [Guide with examples](plugins/jev-observer/README.md). |
 | **Memories page** | View, edit and delete saved memories from the desktop sidebar, under Scheduled jobs. |
 | **Plan usage meter** | The status bar shows how much of your Codex or Claude plan is left, with reset times on hover. |
 | **Finish-the-job persona** | The default persona carries a task through in the same turn and asks only when it is truly blocked. |

@@ -4,6 +4,9 @@ What Thoth changes on top of [Hermes Agent](https://github.com/NousResearch/herm
 
 ## Unreleased
 
+### Jev Observer guide
+- [plugins/jev-observer/README.md](plugins/jev-observer/README.md) and a docs page explain setup, a worked example, both observers, every command, settings, privacy, cost and known limits.
+
 ### README and repo tidy-up ([#9](https://github.com/NiceName570/thoth-/pull/9))
 - The README opens by saying what Thoth is for, why to pick it over Hermes, and a one-line Windows install.
 - Feature and "frictions removed" tables, a repo map, and this changelog.

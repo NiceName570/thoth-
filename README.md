@@ -16,6 +16,36 @@
   <a href="README.es.md"><img src="https://img.shields.io/badge/Lang-Español-orange?style=for-the-badge" alt="Español"></a>
 </p>
 
+**Thoth is a Windows-first fork of [Hermes Agent](https://github.com/NousResearch/hermes-agent) by [Nous Research](https://nousresearch.com).** It keeps Hermes's agent core, learning loop, tools and messaging gateway, and changes the parts that got in the way on a Windows desktop with local models.
+
+## What Thoth adds
+
+| Feature | What you get |
+|---|---|
+| **Local models with no setup** | A running Ollama (`127.0.0.1:11434`) or LM Studio (`127.0.0.1:1234`) shows up in the model menu by itself, as an ordinary provider. |
+| **Ollama that stays on the GPU** | Auto-detected context is capped at 64K instead of the model's training max, so the KV cache no longer spills to the CPU. Eject frees loaded Ollama models from RAM/VRAM without restarting the server. |
+| **More providers** | Cline (ClinePass and pay-as-you-go keys), abliteration.ai, and TypeSafe / DefAPI cards on Settings > Providers. |
+| **Jev observer plugin** | Opt-in `jev-observer` scores each reply with Jev, plus a contextual mode that judges a window of earlier turns. Toggle it from the Plugins page. Nothing is injected into the conversation. |
+| **Memories page** | View, edit and delete saved memories from the desktop sidebar, under Scheduled jobs. |
+| **Plan usage meter** | The status bar shows how much of your Codex or Claude plan is left, with reset times on hover. |
+| **Finish-the-job persona** | The default persona carries a task through in the same turn and asks only when it is truly blocked. |
+
+## Frictions removed
+
+| Before (Hermes) | Now (Thoth) |
+|---|---|
+| First launch asked whether to connect to a gateway or install, then waited | Installs locally straight away; a remote gateway can still be added from Settings |
+| Setup failed with `Get-FileHash not recognized` when launched from PowerShell 7 | The installer runs cleanly from PowerShell 7 |
+| Local models needed a separate Local Models page, llama.cpp installer and downloads | One model menu; Ollama and LM Studio are detected automatically |
+| Nous Portal was pushed in onboarding, plus a cloud-only mode | Nous Portal is a normal provider; no cloud-only path |
+| Saved base URLs (like `LM_BASE_URL`) came back masked and had to be retyped | Base URLs show in plain text and edit in place; API keys stay hidden |
+| Edge read-aloud broke when Microsoft moved its speech endpoint | Edge TTS uses the new endpoint and falls back to local Piper if Edge fails |
+
+Thoth still runs the `hermes` command and keeps data in `~/.hermes` (`%LOCALAPPDATA%\hermes` on Windows), so existing Hermes setups carry over.
+
+<details>
+<summary>Everything inherited from Hermes Agent</summary>
+
 **The self-improving AI agent built by [Nous Research](https://nousresearch.com).** It's the only agent with a built-in learning loop — it creates skills from experience, improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions. Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle. It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.
 
 Use any model you want — [Nous Portal](https://portal.nousresearch.com), OpenRouter, OpenAI, your own endpoint, and [many others](https://hermes-agent.nousresearch.com/docs/integrations/providers). Switch with `hermes model` — no code changes, no lock-in.
@@ -30,24 +60,20 @@ Use any model you want — [Nous Portal](https://portal.nousresearch.com), OpenR
 <tr><td><b>Research-ready</b></td><td>Batch trajectory generation, trajectory compression for training the next generation of tool-calling models.</td></tr>
 </table>
 
+</details>
+
 ---
 
 ## Quick Install
 
-### Linux, macOS, WSL2
-
-```bash
-curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
-```
-
 ### Windows (native, PowerShell)
 
-> **Heads up:** Native Windows runs Thoth without WSL — CLI, gateway, TUI, and tools all work natively. If you'd rather use WSL2, the Linux/macOS one-liner above works there too. Found a bug? Please [file issues](https://github.com/NiceName570/thoth-/issues).
+> **Heads up:** Native Windows runs Thoth without WSL — CLI, gateway, TUI, and tools all work natively. If you'd rather use WSL2, the Linux/macOS one-liner below works there too. Found a bug? Please [file issues](https://github.com/NiceName570/thoth-/issues).
 
 Run this in PowerShell:
 
 ```powershell
-iex (irm https://hermes-agent.nousresearch.com/install.ps1)
+iex (irm https://raw.githubusercontent.com/NiceName570/thoth-/main/scripts/install.ps1)
 ```
 
 The source installer delegates Python 3.14, Node.js, npm, ripgrep, FFmpeg,
@@ -56,9 +82,13 @@ for Windows archive in Thoth's tool store. It does not replace your system Git.
 See [installation methods](https://hermes-agent.nousresearch.com/docs/getting-started/installation)
 for the separate MSIX/App Installer package and its update ownership.
 
-> **Android / Termux:** A signed APT repository is available for aarch64 devices, with a `stable` channel (tagged releases) and a prerelease `canary` channel. The package includes Python, Node.js, and the TUI. Use the [Termux guide](https://hermes-agent.nousresearch.com/docs/getting-started/termux), not the desktop/server installer script.
->
-> **Windows:** Native Windows is fully supported — the PowerShell one-liner above installs everything. If you'd rather use WSL2, the Linux command works there too. Native Windows install lives under `%LOCALAPPDATA%\hermes`; WSL2 installs under `~/.hermes` as on Linux.
+### Linux, macOS, WSL2
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/NiceName570/thoth-/main/scripts/install.sh | bash
+```
+
+> **Windows:** Native Windows install lives under `%LOCALAPPDATA%\hermes`; WSL2 installs under `~/.hermes` as on Linux.
 
 After installation:
 
@@ -120,25 +150,6 @@ hermes doctor       # Diagnose any issues
 ```
 
 📖 **[Full documentation →](https://hermes-agent.nousresearch.com/docs/)**
-
----
-
-## Skip the API-key collection — Nous Portal
-
-Thoth works with whatever provider you want — that's not changing. But if you'd rather not collect five separate API keys for the model, web search, image generation, TTS, and a cloud browser, **[Nous Portal](https://portal.nousresearch.com)** covers all of them under one subscription:
-
-- **300+ models** — pick any of them with `/model <name>`
-- **Tool Gateway** — web search, image generation (FAL), text-to-speech (OpenAI), cloud browser (Browser Use), all routed through your sub. No extra accounts.
-
-One command from a fresh install:
-
-```bash
-hermes setup --portal
-```
-
-That logs you in via OAuth, sets Nous as your provider, and turns on the Tool Gateway. Check what's wired up any time with `hermes portal info`. Full details on the [Tool Gateway docs page](https://hermes-agent.nousresearch.com/docs/user-guide/features/tool-gateway).
-
-You can still bring your own keys per-tool whenever you want — the gateway is per-backend, not all-or-nothing.
 
 ---
 
@@ -216,6 +227,23 @@ See `hermes claw migrate --help` for all options, or use the `openclaw-migration
 
 ---
 
+## Where things live
+
+| Path | What it is |
+|---|---|
+| `apps/desktop/` | The Thoth desktop app (Electron) |
+| `agent/`, `run_agent.py` | The agent turn loop, providers, memory and compression |
+| `hermes_cli/`, `cli.py` | The `hermes` command, setup, config and the desktop app's backend routes |
+| `gateway/` | The messaging gateway and its platform adapters |
+| `tools/` | Tool implementations (terminal, files, browser, TTS, ...) |
+| `plugins/` | Bundled plugins, including `jev-observer` and the model providers |
+| `skills/`, `optional-skills/` | Built-in and optional skills |
+| `scripts/` | Installers (`install.ps1`, `install.sh`), checks and test runner |
+| `tests/` | The Python test suite, mirroring the source tree |
+| `hermes_state*.py` | The session database, split into one file per topic |
+
+---
+
 ## Contributing
 
 We welcome contributions! See the [Contributing Guide](https://hermes-agent.nousresearch.com/docs/developer-guide/contributing) for development setup, code style, and PR process.
@@ -240,4 +268,4 @@ for activation, daily use, dependency changes, and leaving the environment.
 
 MIT — see [LICENSE](LICENSE).
 
-Built by [Nous Research](https://nousresearch.com).
+Thoth is a fork of [Hermes Agent](https://github.com/NousResearch/hermes-agent), built by [Nous Research](https://nousresearch.com).

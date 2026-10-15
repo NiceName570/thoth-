@@ -4,7 +4,7 @@
 
 # Thoth ☤
 <p align="center">
-  <a href="https://hermes-agent.nousresearch.com/">Thoth</a> | <a href="https://hermes-agent.nousresearch.com/">Thoth</a>
+  <a href="https://github.com/NiceName570/thoth-">Thoth</a> | <a href="https://github.com/NiceName570/thoth-/tree/main/apps/desktop">Thoth Desktop</a>
 </p>
 <p align="center">
   <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Docs-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="Documentación"></a>
@@ -42,7 +42,7 @@ curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 
 ### Windows (nativo, PowerShell)
 
-> **Nota:** En Windows nativo, Thoth funciona sin WSL — la CLI, el gateway, la TUI y las herramientas funcionan de forma nativa. Si prefieres usar WSL2, el comando de Linux/macOS de arriba también funciona allí. ¿Encontraste un error? Por favor [crea un issue](https://github.com/NousResearch/hermes-agent/issues).
+> **Nota:** En Windows nativo, Thoth funciona sin WSL — la CLI, el gateway, la TUI y las herramientas funcionan de forma nativa. Si prefieres usar WSL2, el comando de Linux/macOS de arriba también funciona allí. ¿Encontraste un error? Por favor [crea un issue](https://github.com/NiceName570/thoth-/issues).
 
 Ejecuta esto en PowerShell:
 
@@ -192,7 +192,7 @@ de verificación están en [Development Setup](CONTRIBUTING.md#development-setup
 
 - 💬 [Discord](https://discord.gg/NousResearch)
 - 📚 [Skills Hub](https://agentskills.io)
-- 🐛 [Issues](https://github.com/NousResearch/hermes-agent/issues)
+- 🐛 [Issues](https://github.com/NiceName570/thoth-/issues)
 - 🔌 [computer-use-linux](https://github.com/avifenesh/computer-use-linux) — Servidor MCP de control de escritorio Linux para Thoth y otros hosts MCP, con árboles de accesibilidad AT-SPI, entrada Wayland/X11, capturas de pantalla y targeting de ventanas del compositor.
 - 🔌 [HermesClaw](https://github.com/AaronWong1999/hermesclaw) — Puente WeChat comunitario: Ejecuta Thoth y OpenClaw en la misma cuenta de WeChat.
 

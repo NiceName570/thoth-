@@ -4,7 +4,7 @@
 
 # Thoth ☤
 <p align="center">
-  <a href="https://hermes-agent.nousresearch.com/">Thoth</a> | <a href="https://hermes-agent.nousresearch.com/">Thoth</a>
+  <a href="https://github.com/NiceName570/thoth-">Thoth</a> | <a href="https://github.com/NiceName570/thoth-/tree/main/apps/desktop">Thoth Desktop</a>
 </p>
 <p align="center">
   <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Docs-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="Documentation"></a>
@@ -42,7 +42,7 @@ curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 
 ### Windows (native, PowerShell)
 
-> **Heads up:** Native Windows runs Thoth without WSL — CLI, gateway, TUI, and tools all work natively. If you'd rather use WSL2, the Linux/macOS one-liner above works there too. Found a bug? Please [file issues](https://github.com/NousResearch/hermes-agent/issues).
+> **Heads up:** Native Windows runs Thoth without WSL — CLI, gateway, TUI, and tools all work natively. If you'd rather use WSL2, the Linux/macOS one-liner above works there too. Found a bug? Please [file issues](https://github.com/NiceName570/thoth-/issues).
 
 Run this in PowerShell:
 
@@ -230,7 +230,7 @@ for activation, daily use, dependency changes, and leaving the environment.
 
 - 💬 [Discord](https://discord.gg/NousResearch)
 - 📚 [Skills Hub](https://agentskills.io)
-- 🐛 [Issues](https://github.com/NousResearch/hermes-agent/issues)
+- 🐛 [Issues](https://github.com/NiceName570/thoth-/issues)
 - 🔌 [computer-use-linux](https://github.com/avifenesh/computer-use-linux) — Linux desktop-control MCP server for Thoth and other MCP hosts, with AT-SPI accessibility trees, Wayland/X11 input, screenshots, and compositor window targeting.
 - 🔌 [HermesClaw](https://github.com/AaronWong1999/hermesclaw) — Community WeChat bridge: Run Thoth and OpenClaw on the same WeChat account.
 

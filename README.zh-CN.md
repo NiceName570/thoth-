@@ -177,7 +177,7 @@ PM 引导、Python 3.14 测试环境和规范验证命令见
 
 - 💬 [Discord](https://discord.gg/NousResearch)
 - 📚 [技能中心](https://agentskills.io)
-- 🐛 [问题反馈](https://github.com/NousResearch/hermes-agent/issues)
+- 🐛 [问题反馈](https://github.com/NiceName570/thoth-/issues)
 - 💡 [讨论区](https://github.com/NousResearch/hermes-agent/discussions)
 - 🔌 [HermesClaw](https://github.com/AaronWong1999/hermesclaw) — 社区微信桥接：在同一微信账号上运行 Thoth 和 OpenClaw。
 

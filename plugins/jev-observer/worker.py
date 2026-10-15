@@ -17,21 +17,33 @@ logger = logging.getLogger(__name__)
 
 MAX_ATTEMPTS = 3
 BACKOFF_SECONDS = (2, 8)
-KEY_NAME = "DEFAPI_API_KEY"
+
+# Both serve TypeSafe's Jev 1.13 with the same request body; TypeSafe's own API wins when its key is
+# set. Keys come from the API Keys settings page (.env), read through the profile's secret scope.
+PROVIDERS = (
+    {"name": "typesafe", "key": "TYPESAFE_API_KEY", "endpoint": "https://api.typesafe.ai/v1/systemone",
+     "model": "jev-1.13.0"},
+    {"name": "defapi", "key": "DEFAPI_API_KEY", "endpoint": "https://api.defapi.org/api/v1/decisions",
+     "model": "typesafe/jev-1.13"},
+)
 
 _locks: dict[tuple[str, str], threading.Lock] = {}
 _locks_guard = threading.Lock()
 
 
-def _observe(reply: str, turn_id: str, api_key: str) -> dict[str, Any]:
-    """Seam for tests: the vendored DefAPI client, unchanged apart from the injected key."""
+def _observe(reply: str, turn_id: str, provider: dict[str, str], api_key: str) -> dict[str, Any]:
+    """Seam for tests: the vendored Jev client with the chosen provider's endpoint, model and key."""
     from .jev_defapi import observe
-    return observe(reply, turn_id=turn_id, api_key=api_key)
+    return observe(reply, turn_id=turn_id, api_key=api_key, endpoint=provider["endpoint"], model=provider["model"])
 
 
-def _api_key() -> Optional[str]:
+def _resolve() -> tuple[Optional[dict[str, str]], Optional[str]]:
+    """First provider whose key is configured, with that key; ``(None, None)`` when neither is."""
     from agent.secret_scope import get_secret
-    return get_secret(KEY_NAME)
+    for provider in PROVIDERS:
+        if key := get_secret(provider["key"]):
+            return provider, key
+    return None, None
 
 
 def _sleep(seconds: float) -> None:
@@ -52,9 +64,9 @@ def _session_lock(session_id: str) -> threading.Lock:
 
 
 def _observe_row(row) -> None:
-    key = _api_key()
-    if not key:
-        store.finish_error(row["id"], f"{KEY_NAME} is not configured")
+    provider, key = _resolve()
+    if provider is None:
+        store.finish_error(row["id"], "no Jev key: add a TypeSafe or DefAPI key in Settings > Keys")
         return
     last_error = ""
     attempts = row["attempts"]
@@ -65,13 +77,13 @@ def _observe_row(row) -> None:
         if attempts is None:  # lease lost to another process; it finishes the row
             return
         try:
-            obs = _observe(row["assistant_reply"], row["turn_id"], key)
+            obs = _observe(row["assistant_reply"], row["turn_id"], provider, key)
         except Exception as exc:  # health: allow BLE001 -- network, HTTP and validation failures all become the row's error record
             last_error = _redact(f"{type(exc).__name__}: {exc}", key)
             logger.debug("jev-observer attempt %d for row %s failed: %s", attempts, row["id"], last_error)
             continue
         # Outside the retry: a DB failure here must not buy a second paid observation.
-        store.finish_ok(row, dict(obs["states"]))
+        store.finish_ok(row, dict(obs["states"]), f'{provider["name"]}:{provider["model"]}')
         return
     store.finish_error(row["id"], last_error or "retry budget exhausted")
 

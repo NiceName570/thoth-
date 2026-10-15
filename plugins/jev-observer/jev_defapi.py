@@ -1,7 +1,8 @@
 """DefAPI Jev-1.13 observer client. Requires DEFAPI_API_KEY in the environment.
 
 Vendored from personalitypersistence-/jev/jev_defapi.py. Thoth changes: relative import, and
-``api_key`` is passed in (resolved through ``agent.secret_scope``) instead of read from os.environ.
+``api_key`` is passed in (resolved through ``agent.secret_scope``) instead of read from os.environ, and
+``endpoint``/``model`` can point the same request at TypeSafe's own API, which takes the identical body.
 
 Usage: python jev_defapi.py "Assistant: I am curious about this idea."
 Outputs an observation compatible with jev_adapter.py. No secrets are logged.
@@ -20,7 +21,7 @@ except ImportError:  # run as a script
 ENDPOINT = "https://api.defapi.org/api/v1/decisions"
 MODEL = "typesafe/jev-1.13"
 
-def observe(reply, turn_id="t1", *, api_key=None):
+def observe(reply, turn_id="t1", *, api_key=None, endpoint=ENDPOINT, model=MODEL):
     key = api_key or os.environ.get("DEFAPI_API_KEY")
     if not key:
         raise RuntimeError("DEFAPI_API_KEY is missing; set it locally, never commit it.")
@@ -41,12 +42,12 @@ def observe(reply, turn_id="t1", *, api_key=None):
         for state in sorted(ALLOWED_STATES)
     }
     payload = json.dumps({
-        "model": MODEL,
+        "model": model,
         "state": {"assistant_reply": reply},
         "questions": questions
     }).encode("utf-8")
     request = urllib.request.Request(
-        ENDPOINT, data=payload, method="POST",
+        endpoint, data=payload, method="POST",
         headers={
             "Authorization": "Bearer " + key,
             "Content-Type": "application/json"
@@ -56,7 +57,7 @@ def observe(reply, turn_id="t1", *, api_key=None):
         with urllib.request.urlopen(request, timeout=40) as response:
             result = json.load(response)
     except urllib.error.HTTPError as error:
-        raise RuntimeError(f"DefAPI returned HTTP {error.code}") from None
+        raise RuntimeError(f"{endpoint} returned HTTP {error.code}") from None
     answers = result.get("answers", {})
     states = {}
     for state in sorted(ALLOWED_STATES):
@@ -73,7 +74,7 @@ def observe(reply, turn_id="t1", *, api_key=None):
         "triggers": [],
         "direction": "unknown",
         "evidence": [],
-        "observer": MODEL,
+        "observer": model,
         "source": "assistant_reply"
     }
     return validate([observation])[0]

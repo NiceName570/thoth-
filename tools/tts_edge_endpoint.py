@@ -2,9 +2,27 @@
 
 from __future__ import annotations
 
+import asyncio
 import importlib
-from typing import Any
+from typing import Any, Callable
 from urllib.parse import parse_qs, urlencode, urlsplit
+
+# The replacement host answers a burst of handshakes with 429; read-aloud opens one connection per
+# chunk, so roughly every other chunk was refused. A short wait clears it.
+EDGE_THROTTLE_RETRY_DELAYS = (0.5, 1.0, 2.0)
+
+
+async def save_edge_speech(make_communicate: Callable[[], Any], output_path: str) -> None:
+    """Save speech with bounded retries on the endpoint's 429 handshake throttle. Each attempt
+    builds a fresh ``Communicate``: the SDK refuses to stream the same instance twice."""
+    for delay in (*EDGE_THROTTLE_RETRY_DELAYS, None):
+        try:
+            await make_communicate().save(output_path)
+            return
+        except Exception as exc:
+            if delay is None or getattr(exc, "status", None) != 429:
+                raise
+        await asyncio.sleep(delay)
 
 
 def configure_edge_synthesis_endpoint(sdk: Any) -> None:

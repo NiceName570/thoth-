@@ -132,6 +132,9 @@ describe('settings helpers', () => {
       // MINIMAX_CN_ must beat the generic MINIMAX_ prefix.
       expect(providerGroup('MINIMAX_CN_API_KEY')).toBe('MiniMax (China)')
       expect(providerGroup('MINIMAX_API_KEY')).toBe('MiniMax')
+      // Jev keys get their own provider cards rather than falling into "Other" (hidden).
+      expect(providerGroup('TYPESAFE_API_KEY')).toBe('TypeSafe')
+      expect(providerGroup('DEFAPI_API_KEY')).toBe('DefAPI')
       // KIMI_CN_ likewise must beat KIMI_.
       expect(providerGroup('KIMI_CN_API_KEY')).toBe('Kimi (China)')
       expect(providerGroup('KIMI_API_KEY')).toBe('Kimi / Moonshot')

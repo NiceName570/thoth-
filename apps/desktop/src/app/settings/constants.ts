@@ -233,6 +233,20 @@ export const PROVIDER_GROUPS: ProviderPrefix[] = [
     description: 'Authenticate via AWS profile + region',
     docsUrl: 'https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-regions.html',
     priority: 23
+  },
+  {
+    prefix: 'TYPESAFE_',
+    name: 'TypeSafe',
+    description: 'Jev decision model (used by the jev-observer plugin)',
+    docsUrl: 'https://typesafe.ai',
+    priority: 25
+  },
+  {
+    prefix: 'DEFAPI_',
+    name: 'DefAPI',
+    description: 'Jev 1.13 through DefAPI (jev-observer fallback when no TypeSafe key)',
+    docsUrl: 'https://defapi.org',
+    priority: 26
   }
 ]
 

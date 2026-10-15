@@ -201,7 +201,7 @@ def test_missing_key_is_error_without_call(plugin, monkeypatch):
     monkeypatch.setattr(plugin.worker, "_resolve", lambda: (None, None))
     _fire(plugin, "s1", "turn-1", "a", "reply")
     (row,) = _rows(plugin)
-    assert row["status"] == "error" and "Settings > Keys" in row["error"] and plugin.observer.calls == []
+    assert row["status"] == "error" and "Settings > Providers" in row["error"] and plugin.observer.calls == []
 
 
 @pytest.mark.parametrize("env, expected", [

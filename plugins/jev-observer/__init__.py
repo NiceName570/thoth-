@@ -3,7 +3,7 @@
 ``post_llm_call`` captures the user message and final reply into a local ``pending`` row and hands
 Jev scoring to a background thread. The hook returns nothing and touches no prompt, reply or
 memory, so observations cannot influence the conversation. Opt in from the desktop Plugins page
-(or ``hermes plugins enable jev-observer``); the Jev key goes in Settings > Keys.
+(or ``hermes plugins enable jev-observer``); the Jev key goes in Settings > Providers.
 """
 
 from __future__ import annotations

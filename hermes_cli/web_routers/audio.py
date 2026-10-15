@@ -205,6 +205,40 @@ async def create_voice_live_session(payload: VoiceLiveSessionRequest, profile: O
     return {"ok": True, **result}
 
 
+_edge_voices_cache: list[dict[str, str]] = []
+
+
+def _edge_voice_entry(voice: dict[str, Any]) -> Optional[dict[str, str]]:
+    short_name = str(voice.get("ShortName") or "").strip()
+    if not short_name:
+        return None
+    locale = str(voice.get("Locale") or "")
+    name = short_name.removeprefix(f"{locale}-").removesuffix("Neural") if locale else short_name
+    details = ", ".join(p for p in (str(voice.get("LocaleName") or locale), str(voice.get("Gender") or "")) if p)
+    return {"voice_id": short_name, "name": name, "label": f"{name} ({details})" if details else name}
+
+
+@router.get("/api/audio/edge/voices")
+async def get_edge_voices():
+    """Return the full Edge voice catalog for the ``tts.edge.voice`` dropdown. Edge needs no key, so
+    the list is the same for every profile; it is fetched once and kept for the process."""
+    if _edge_voices_cache:
+        return {"available": True, "voices": _edge_voices_cache}
+    try:
+        from tools.tts_tool import _import_edge_tts
+
+        raw = await _import_edge_tts().list_voices()
+    except Exception as exc:
+        if _voice_list_error_logged_once(f"edge:{exc}"):
+            _log.warning("Edge voice list failed: %s", exc)
+        return {"available": False, "voices": []}
+    voices = [entry for entry in map(_edge_voice_entry, raw) if entry]
+    # English voices first, then by language and name.
+    voices.sort(key=lambda v: (not v["voice_id"].startswith("en-"), v["label"].lower()))
+    _edge_voices_cache[:] = voices
+    return {"available": True, "voices": voices}
+
+
 def _elevenlabs_voice_label(voice: dict[str, Any]) -> str:
     name = str(voice.get("name") or voice.get("voice_id") or "Voice").strip()
     category = str(voice.get("category") or "").strip()

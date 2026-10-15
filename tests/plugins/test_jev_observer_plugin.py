@@ -22,6 +22,9 @@ FAKE_PROVIDER = {"name": "typesafe", "key": "TYPESAFE_API_KEY", "endpoint": "htt
 def _isolate_env(tmp_path, monkeypatch):
     hermes_home = tmp_path / ".hermes"
     hermes_home.mkdir()
+    # This file covers the reply-only baseline; the contextual observer has its own tests.
+    (hermes_home / "config.yaml").write_text(
+        "plugins:\n  entries:\n    jev-observer:\n      settings:\n        contextual: false\n", encoding="utf-8")
     monkeypatch.setenv("HERMES_HOME", str(hermes_home))
     yield hermes_home
 
@@ -254,7 +257,7 @@ def test_export_uses_handoff_adapter_on_latest_reply_per_exchange(plugin, tmp_pa
     _fire(plugin, "s1", "turn-2", "b", "first")
     _fire(plugin, "s1", "turn-3", "b", "second try!")
     out = tmp_path / "handoff.json"
-    assert cli.handle(Namespace(jev_action="export", session="s1", recent=3, out=str(out))) == 0
+    assert cli.handle(Namespace(jev_action="export", session="s1", recent=3, out=str(out), observer="reply", run=None)) == 0
     data = json.loads(out.read_text(encoding="utf-8"))
     assert data["schema"] == "jev-observer-v1"
     assert data["source_turns"] == ["turn-1", "turn-3"]
@@ -262,7 +265,7 @@ def test_export_uses_handoff_adapter_on_latest_reply_per_exchange(plugin, tmp_pa
     assert data["observer_version"] == "jev-reply-v1" and data["conversation_id"] == "s1"
 
     capsys.readouterr()
-    cli.handle(Namespace(jev_action="export", session="s1", recent=1, out=None))
+    cli.handle(Namespace(jev_action="export", session="s1", recent=1, out=None, observer="reply", run=None))
     assert json.loads(capsys.readouterr().out)["source_turns"] == ["turn-3"]
 
 

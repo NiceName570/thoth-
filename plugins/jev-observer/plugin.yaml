@@ -4,3 +4,19 @@ description: "Passive Jev observer: after each completed exchange, scores the as
 author: "Thoth fork"
 provides_hooks:
   - post_llm_call
+config_schema:
+  contextual:
+    type: bool
+    default: true
+    label: "Contextual observer"
+    description: "Also judge each exchange in context (understanding, correction uptake, repair, momentum, ...) as jev-context-v1, next to the reply-only baseline."
+  context_window:
+    type: int
+    default: 4
+    label: "Context window"
+    description: "Previous exchanges included with each contextual judgment (0-12)."
+  open_corrections:
+    type: int
+    default: 3
+    label: "Earlier corrections carried"
+    description: "User corrections from before the window carried into each judgment (0-6)."

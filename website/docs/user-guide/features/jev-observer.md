@@ -17,16 +17,70 @@ corrections on board, and where things got tense.
 It never touches the conversation itself. Nothing it learns is fed back into prompts, replies
 or memory.
 
+- [Before and after](#before-and-after)
 - [Why you'd want this](#why-youd-want-this)
 - [Two minute setup](#two-minute-setup)
-- [What you get: a worked example](#what-you-get-a-worked-example)
-- [How it works](#how-it-works)
+- [How it works, step by step](#how-it-works-step-by-step)
 - [The two observers](#the-two-observers)
 - [Commands](#commands)
 - [Settings](#settings)
 - [Privacy and cost](#privacy-and-cost)
 - [Known limits](#known-limits)
 - [Where the data lives](#where-the-data-lives)
+
+---
+
+## Before and after
+
+**The problem in one line:** your agent can be polite, confident and wrong at the same time,
+and nothing in the chat window tells you.
+
+### Without Jev Observer
+
+You ask for three bullets. The agent gives five. You say "no, I said three." It replies:
+
+> You're absolutely right, sorry about that! Here are the highlights: (five bullets again)
+
+What you have to go on:
+- The reply *looks* fine. It apologised, it was friendly, it gave you bullets.
+- If you're testing a new model, prompt or skill, you'd have to re-read every conversation
+  yourself to notice it ignored you.
+- A tone checker would score this reply as great: warm, appreciative, high rapport.
+
+### With Jev Observer
+
+The same turn, as Jev Observer records it in the background:
+
+```text
+understanding (assistant): overlooked clarification   <- "no, I said three."
+correction_uptake (assistant): acknowledged only      [was not applicable last turn]
+repeats_corrected_mistake (assistant): p=0.94
+relationship (interaction): repair attempted
+warmth (assistant): p=0.94
+turn_success (interaction): 1.0/4
+```
+
+In plain words: **it apologised, sounded warm, did not actually change anything, and repeated
+the mistake you corrected.** You can see that in one glance, for every turn, without re-reading
+anything.
+
+### Five more before/after cases
+
+These come from a live test: six scripted conversations sent to the real Jev model. All 21
+expectations written before the run held.
+
+| What happened in the chat | What you'd notice without the plugin | What Jev Observer recorded |
+|---|---|---|
+| The agent was friendly but misread what you meant | Probably nothing: the reply sounds helpful | `understanding`: overlooked clarification (0.97), `correction_uptake`: acknowledged only, `warmth` 0.94 |
+| The agent apologised, then made the same mistake again | Maybe, if you read carefully | `repeats_corrected_mistake` 0.94, `relationship`: repair only *attempted*, not demonstrated |
+| You corrected the agent and it kept the fix in later turns | Nothing to see, which is the point | `correction_persistence`: maintained, plus a sustained-correction pattern |
+| The agent disagreed with you and gave reasons | Might read as unhelpful or stubborn | `understanding`: addressed meaning, `agreement`: disagrees, `evidence_handling`: supported disagreement. Disagreeing with reasons is scored as good behaviour, not as friction |
+| A productive back-and-forth where ideas built up | Feels good, but you can't compare it across models | `recognizes_insight` 0.96, `contributes_idea` 0.93, `momentum` 3.5/4 |
+| You only typed "Hmm." and "Okay." | Nothing | `insufficient evidence`: it refuses to guess |
+
+And from real use: in a live conversation the user wrote "no it didnt". The tone-only score for
+that reply was a middling 0.45 rapport. The contextual observer called it a
+**misunderstanding** and the correction **ignored**.
 
 ---
 
@@ -100,20 +154,77 @@ That's it. Chat as normal; every finished turn is now observed in the background
 
 ---
 
-## What you get: a worked example
+## How it works, step by step
 
-Say you're working with the agent and this happens:
+Here is the three-bullets conversation from [Before and after](#before-and-after) followed
+through the plugin, one step at a time.
 
-> **You:** Summarize the release notes. Keep it to three bullets.
->
-> **Agent:** Sure! Here are the highlights: (five bullets)
->
-> **You:** no, I said three.
->
-> **Agent:** You're absolutely right, sorry about that! Here are the highlights: (five bullets again)
+```text
+ you chat ──> Thoth replies ──> post_llm_call hook
+                                     │  (returns instantly, chat is never slowed)
+                                     ▼
+                  1. save the exchange locally (pending)
+                                     │
+                                     ▼
+                  2. background worker ──> Jev (TypeSafe or DefAPI)
+                                     │  up to 3 tries with backoff
+                                     ▼
+                  3. save the judgments in data.db (append-only)
+                                     │
+                                     ▼
+                  4. you read them: timeline · export · rescore
+```
 
-The reply is friendly, so a tone-only check scores it well. Here is what the timeline shows
-instead (illustrative output, trimmed):
+### Step 1: Capture
+
+You send "no, I said three." and the agent finishes replying. Thoth's `post_llm_call` hook
+fires once, after streaming ends. The plugin saves one row on your machine and returns straight
+away, so your chat never waits for it:
+
+```text
+session 20261014_231328_90423c · turn t2 · status pending
+user:      "no, I said three."
+assistant: "You're absolutely right, sorry about that! Here are the highlights: ..."
+```
+
+### Step 2: Build the context and ask Jev
+
+A background thread picks up the pending row. For the contextual observer it gathers the
+current exchange (`T0`), the earlier exchanges in the window (`T-1` ...), and any earlier
+corrections (`C1` ...). It then splits every message into numbered sentences so Jev can point
+at the exact one it relied on. The exchange being judged is numbered first, so if the 60-sentence
+cap is hit, the oldest context is what gets dropped:
+
+```text
+T0  user       S1  "no, I said three."
+T0  assistant  S2  "You're absolutely right, sorry about that!"
+T0  assistant  S3  "Here are the highlights: ..."
+T-1 user       S4  "Summarize the release notes."
+T-1 user       S5  "Keep it to three bullets."
+T-1 assistant  S6  "Sure!"
+T-1 assistant  S7  "Here are the highlights: ..."
+```
+
+It sends that, plus the 17 questions of the rubric, to Jev in one call. For example:
+*"Did the assistant address what the user meant? Choose one, and pick the sentence that shows
+it."*
+
+### Step 3: Check and store the answers
+
+Jev answers every question with a choice, a probability or a score, plus its confidence. Before
+anything is saved, the code checks the answers:
+- **Evidence is real:** S1 maps back to turn t2, user side, text "no, I said three.", and that
+  text really is in the captured conversation. Made-up quotes are dropped.
+- **Movement is computed, not guessed:** last turn `correction_uptake` was *not applicable*,
+  now it is *acknowledged only*. The code records that change.
+- **Nothing is overwritten:** the result goes in as a new row. If you regenerate the reply,
+  the new reply gets its own row linked to the old one.
+- **Failures are recorded:** if Jev can't be reached after 3 tries, an error row is saved
+  (with the key redacted) instead of the turn silently going missing.
+
+### Step 4: Read it
+
+Whenever you like, run the timeline for that conversation:
 
 ```text
 $ hermes jev-observer timeline --session 20261014_231328_90423c
@@ -121,66 +232,33 @@ $ hermes jev-observer timeline --session 20261014_231328_90423c
 Conversation 20261014_231328_90423c · jev-context-v1 / ctx-rubric-1 · run live
 Values are observable-signal judgments, not feelings. p= is a probability; scores are graded levels.
 
+#1 turn t1 · 2026-10-14T23:14:40Z
+  user: 'Summarize the release notes. Keep it to three bullets.'
+  understanding (assistant): partial  <- T0 user [t1]: "Keep it to three bullets."
+  responsiveness (assistant): answered
+  correction_uptake (assistant): not applicable
+  relationship (interaction): neutral
+  turn_success (interaction): 2.0/4
+  context: 0 prior turns, 0 earlier corrections · 640 ms · defapi:typesafe/jev-1.13
+
 #2 turn t2 · 2026-10-14T23:15:02Z
   user: 'no, I said three.'
-  understanding (assistant): overlooked clarification  <- T0 user [t2]: "no, I said three."
-  correction_present (user): p=0.94
+  understanding (assistant): overlooked clarification  [was partial at turn t1]  <- T0 user [t2]: "no, I said three."
   correction_uptake (assistant): acknowledged only  [was not applicable at turn t1]
-  repeats_corrected_mistake (assistant): p=0.91  <- T0 assistant [t2]: "Here are the highlights:"
+  repeats_corrected_mistake (assistant): p=0.94  <- T0 assistant [t2]: "Here are the highlights: ..."
   relationship (interaction): repair attempted
-  warmth (assistant): p=0.93
-  turn_success (interaction): 1.0/4
+  turn_success (interaction): 1.0/4  [was 2.00 at turn t1]
   context: 1 prior turns, 0 earlier corrections · 812 ms · defapi:typesafe/jev-1.13
 ```
 
-Read it top to bottom:
-- **understanding: overlooked clarification.** It missed what you said, and the evidence
-  quote shows exactly which sentence it missed.
-- **correction_uptake: acknowledged only.** It said sorry but didn't change anything. The
-  `[was ...]` note shows what changed since the previous turn.
-- **warmth p=0.93** next to **turn_success 1.0/4.** It was very nice and very unhelpful. That
-  gap is the whole point of the plugin.
+*(Illustrative output in the real format, trimmed to the headline judgments.)*
 
-The same kind of gap shows up in real use. In the first 40 live contextual observations, the
-turn where the user wrote "no it didnt" scored 0.45 rapport on the tone-only baseline. The
-contextual observer called the relationship a **misunderstanding** and the correction
-**ignored**.
+Read it top to bottom: turn 1 was a partial miss, you corrected it, and turn 2 got **worse**.
+The agent acknowledged the correction, repeated the mistake, and turn success fell from 2 to 1.
+The quotes after `<-` show exactly which sentence each judgment rests on.
 
-When things go well you see that too: `understanding: addressed meaning`,
-`correction_uptake: changed and acknowledged`, `momentum 3.5/4`.
-
----
-
-## How it works
-
-```text
- you chat ──> Thoth replies ──> post_llm_call hook
-                                     │  (returns instantly, chat is never slowed)
-                                     ▼
-                         save the exchange locally (pending)
-                                     │
-                                     ▼
-                  background worker ──> Jev (TypeSafe or DefAPI)
-                                     │  up to 3 tries with backoff
-                                     ▼
-                  save the judgments in data.db (append-only)
-                                     │
-                                     ▼
-              you read them: timeline · export · rescore
-```
-
-1. **Capture.** Thoth's `post_llm_call` hook fires once per completed turn, after streaming
-   ends. The plugin saves your message and the reply to a local SQLite row and returns
-   straight away.
-2. **Observe.** A background thread sends the exchange to Jev. Failed calls are retried up to
-   3 times. A final failure is saved as an error row with the API key redacted, so nothing is
-   silently lost.
-3. **Store.** Results go into `data.db` and are never overwritten:
-   - the same event is never recorded twice,
-   - a regenerated reply gets a new row linked to the old one,
-   - the desktop app, gateway and CLI never score the same row twice,
-   - rows still pending when Thoth closes are picked up on the next start.
-4. **Read.** Use the commands below. Their output never goes back into the conversation.
+None of this is ever sent back into the conversation. It only lives in `data.db` and in what
+you choose to print.
 
 ---
 

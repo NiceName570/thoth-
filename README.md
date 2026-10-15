@@ -55,6 +55,22 @@ Then run `hermes` (the command keeps its upstream name so existing setups carry 
 | Saved base URLs (like `LM_BASE_URL`) came back masked and had to be retyped | Base URLs show in plain text and edit in place; API keys stay hidden |
 | Edge read-aloud broke when Microsoft moved its speech endpoint | Edge TTS uses the new endpoint and falls back to local Piper if Edge fails |
 
+### Jev Observer in ten seconds
+
+You tell the agent "no, I said three bullets." It replies "You're absolutely right, sorry!" and
+gives you five bullets again. The reply looks polite, so nothing warns you. Jev Observer records
+this for that turn:
+
+```text
+understanding: overlooked clarification   <- "no, I said three."
+correction_uptake: acknowledged only
+repeats_corrected_mistake: p=0.94
+turn_success: 1.0/4
+```
+
+It runs in the background after every turn, never changes the conversation, and lets you see
+where a model, prompt or skill actually listens to you. [Full guide with before/after examples](plugins/jev-observer/README.md).
+
 Thoth still runs the `hermes` command and keeps data in `~/.hermes` (`%LOCALAPPDATA%\hermes` on Windows), so existing Hermes setups carry over.
 
 <details>

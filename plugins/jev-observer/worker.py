@@ -89,19 +89,30 @@ def _observe_row(row) -> None:
 
 
 def drain(session_id: str) -> None:
-    """Observe every pending row of one conversation, oldest first, so deltas see earlier results."""
+    """Observe every pending row of one conversation, oldest first, so deltas see earlier results:
+    the reply-only baseline first, then contextual rows (which read the captured exchanges)."""
+    from . import context_worker
     try:
         with _session_lock(session_id):
             while (row := store.claim_next(session_id)) is not None:
                 _observe_row(row)
+            context_worker.drain(session_id)
     except Exception:
         logger.warning("jev-observer worker failed for session %s", session_id, exc_info=True)
 
 
+def drain_run(session_id: str, run: str) -> None:
+    """Contextual rows of one explicit run only (a rescore); the passive drain never touches them."""
+    from . import context_worker
+    with _session_lock(session_id):
+        context_worker.drain(session_id, run)
+
+
 def requeue_all() -> None:
     """Resume rows a previous process left pending (crash, exit mid-request)."""
+    from . import context_store
     try:
-        for session_id in store.pending_sessions():
+        for session_id in sorted({*store.pending_sessions(), *context_store.pending_sessions()}):
             drain(session_id)
     except Exception:
         logger.warning("jev-observer requeue failed", exc_info=True)

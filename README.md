@@ -1,24 +1,36 @@
-> **Thoth is a fork of [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent)**, reworked as a Windows-first desktop agent for local models. See [What Thoth adds](#what-thoth-adds) and [Frictions removed](#frictions-removed).
-
 <p align="center">
   <img src="assets/banner.png" alt="Thoth" width="100%">
 </p>
 
 # Thoth ☤
+
 <p align="center">
-  <a href="https://github.com/NiceName570/thoth-">Thoth</a> | <a href="https://github.com/NiceName570/thoth-/tree/main/apps/desktop">Thoth Desktop</a>
+  <a href="https://github.com/NousResearch/hermes-agent"><img src="https://img.shields.io/badge/Fork%20of-Hermes%20Agent-blueviolet?style=for-the-badge" alt="Fork of Hermes Agent"></a>
+  <img src="https://img.shields.io/badge/Windows-first-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows first">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/Changelog-what%20changed-orange?style=for-the-badge" alt="Changelog"></a>
 </p>
 <p align="center">
-  <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Docs-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="Documentation"></a>
-  <a href="https://discord.gg/NousResearch"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
-  <a href="https://github.com/NousResearch/hermes-agent/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
-  <a href="https://nousresearch.com"><img src="https://img.shields.io/badge/Built%20by-Nous%20Research-blueviolet?style=for-the-badge" alt="Built by Nous Research"></a>
-  <a href="README.zh-CN.md"><img src="https://img.shields.io/badge/Lang-中文-red?style=for-the-badge" alt="中文"></a>
-  <a href="README.ur-pk.md"><img src="https://img.shields.io/badge/Lang-اردو-green?style=for-the-badge" alt="اردو"></a>
-  <a href="README.es.md"><img src="https://img.shields.io/badge/Lang-Español-orange?style=for-the-badge" alt="Español"></a>
+  <a href="README.zh-CN.md">中文</a> · <a href="README.ur-pk.md">اردو</a> · <a href="README.es.md">Español</a>
 </p>
 
-**Thoth is a Windows-first fork of [Hermes Agent](https://github.com/NousResearch/hermes-agent) by [Nous Research](https://nousresearch.com).** It keeps Hermes's agent core, learning loop, tools and messaging gateway, and changes the parts that got in the way on a Windows desktop with local models.
+**A personal AI agent for Windows that runs on your own local models, with no Docker and no WSL.** Thoth is a fork of [Hermes Agent](https://github.com/NousResearch/hermes-agent) by [Nous Research](https://nousresearch.com): same agent core, memory, skills, tools and messaging gateway, reworked for a Windows desktop.
+
+### Why Thoth instead of Hermes
+
+1. **Your local models just show up.** Start Ollama or LM Studio and its models are in the model menu. No Local Models page, no keys, no base URLs to type.
+2. **Ollama stays fast.** Thoth caps the auto-detected context at 64K so big models stay on your GPU instead of spilling to the CPU, and one click ejects loaded models to free VRAM.
+3. **The desktop app installs itself.** First launch goes straight to a local install, and the installer works from PowerShell 7 as well as Windows PowerShell.
+4. **Fewer upsells, more providers.** Nous Portal is an ordinary provider, with no cloud-only mode, and Cline, abliteration.ai, TypeSafe and DefAPI are built in.
+5. **An agent that finishes the job.** The default persona carries a task through in one go instead of stopping to re-ask, and a Memories page lets you see and fix what it remembers.
+
+### Install on Windows
+
+```powershell
+iex (irm https://raw.githubusercontent.com/NiceName570/thoth-/main/scripts/install.ps1)
+```
+
+Then run `hermes` (the command keeps its upstream name so existing setups carry over). Linux, macOS and WSL2 are under [Quick Install](#quick-install). Every change from upstream is in the [changelog](CHANGELOG.md).
 
 ## What Thoth adds
 

@@ -66,7 +66,7 @@ def _session_lock(session_id: str) -> threading.Lock:
 def _observe_row(row) -> None:
     provider, key = _resolve()
     if provider is None:
-        store.finish_error(row["id"], "no Jev key: add a TypeSafe or DefAPI key in Settings > Keys")
+        store.finish_error(row["id"], "no Jev key: add a TypeSafe or DefAPI key in Settings > Providers")
         return
     last_error = ""
     attempts = row["attempts"]

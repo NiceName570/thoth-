@@ -48,7 +48,7 @@ def _export(args) -> int:
 def _check(args) -> int:
     provider, key = worker._resolve()
     if provider is None:
-        print("No Jev key: add a TypeSafe or DefAPI key in Settings > Keys.")
+        print("No Jev key: add a TypeSafe or DefAPI key in Settings > Providers.")
         return 1
     obs = worker._observe(args.text, "check", provider, key)
     print(json.dumps({"provider": provider["name"], "observer": obs.get("observer"), "states": obs["states"]},

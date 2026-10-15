@@ -2916,12 +2916,14 @@ OPTIONAL_ENV_VARS = {
         "Perplexity API key for the Search API web backend (ranked results + query-relevant page "
         "snippets)", "Perplexity API key", "https://www.perplexity.ai/account/api",
         tools=["web_search", "web_extract"]),
-    "TYPESAFE_API_KEY": _tool(
-        "TypeSafe API key for the Jev decision model (api.typesafe.ai); used by the jev-observer "
-        "plugin and the Jev catalog plugins", "TypeSafe API key", "https://typesafe.ai"),
-    "DEFAPI_API_KEY": _tool(
-        "DefAPI key for the Jev decision model (typesafe/jev-1.13 via api.defapi.org); the "
-        "jev-observer plugin uses it when no TypeSafe key is set", "DefAPI API key", "https://defapi.org"),
+    # Jev decision-model keys (jev-observer plugin, Jev catalog plugins). Provider category so they
+    # sit on the Providers > API keys page with the other vendor keys.
+    "TYPESAFE_API_KEY": _prov(
+        "TypeSafe API key for the Jev decision model (api.typesafe.ai)", "TypeSafe API key",
+        "https://typesafe.ai", advanced=False),
+    "DEFAPI_API_KEY": _prov(
+        "DefAPI key for the Jev decision model (typesafe/jev-1.13 via api.defapi.org)", "DefAPI API key",
+        "https://defapi.org", advanced=False),
     "KEENABLE_API_KEY": _tool(
         "Keenable API key for fast independent-index web search and page fetch (optional — "
         "keyless free tier works without it)", "Keenable API key", "https://keenable.ai",

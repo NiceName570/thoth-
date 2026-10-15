@@ -58,7 +58,7 @@ In plain words: **it apologised, sounded warm, did not actually change anything,
 the mistake you corrected.** You can see that in one glance, for every turn, without re-reading
 anything.
 
-### Five more before/after cases
+### Six more before/after cases
 
 These come from a live test: six scripted conversations sent to the real Jev model. All 21
 expectations written before the run held.

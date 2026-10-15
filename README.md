@@ -39,7 +39,7 @@ Then run `hermes` (the command keeps its upstream name so existing setups carry 
 | **Local models with no setup** | A running Ollama (`127.0.0.1:11434`) or LM Studio (`127.0.0.1:1234`) shows up in the model menu by itself, as an ordinary provider. |
 | **Ollama that stays on the GPU** | Auto-detected context is capped at 64K instead of the model's training max, so the KV cache no longer spills to the CPU. Eject frees loaded Ollama models from RAM/VRAM without restarting the server. |
 | **More providers** | Cline (ClinePass and pay-as-you-go keys), abliteration.ai, and TypeSafe / DefAPI cards on Settings > Providers. |
-| **Jev observer plugin** | Opt-in `jev-observer` scores each reply with Jev, plus a contextual mode that judges a window of earlier turns. Toggle it from the Plugins page. Nothing is injected into the conversation. |
+| **Jev observer plugin** | Opt-in `jev-observer` scores each reply with Jev, plus a contextual mode that judges a window of earlier turns. Toggle it from the Plugins page. Nothing is injected into the conversation. [Guide with examples](plugins/jev-observer/README.md). |
 | **Memories page** | View, edit and delete saved memories from the desktop sidebar, under Scheduled jobs. |
 | **Plan usage meter** | The status bar shows how much of your Codex or Claude plan is left, with reset times on hover. |
 | **Finish-the-job persona** | The default persona carries a task through in the same turn and asks only when it is truly blocked. |
@@ -54,6 +54,22 @@ Then run `hermes` (the command keeps its upstream name so existing setups carry 
 | Nous Portal was pushed in onboarding, plus a cloud-only mode | Nous Portal is a normal provider; no cloud-only path |
 | Saved base URLs (like `LM_BASE_URL`) came back masked and had to be retyped | Base URLs show in plain text and edit in place; API keys stay hidden |
 | Edge read-aloud broke when Microsoft moved its speech endpoint | Edge TTS uses the new endpoint and falls back to local Piper if Edge fails |
+
+### Jev Observer in ten seconds
+
+You tell the agent "no, I said three bullets." It replies "You're absolutely right, sorry!" and
+gives you five bullets again. The reply looks polite, so nothing warns you. Jev Observer records
+this for that turn:
+
+```text
+understanding: overlooked clarification   <- "no, I said three."
+correction_uptake: acknowledged only
+repeats_corrected_mistake: p=0.94
+turn_success: 1.0/4
+```
+
+It runs in the background after every turn, never changes the conversation, and lets you see
+where a model, prompt or skill actually listens to you. [Full guide with before/after examples](plugins/jev-observer/README.md).
 
 Thoth still runs the `hermes` command and keeps data in `~/.hermes` (`%LOCALAPPDATA%\hermes` on Windows), so existing Hermes setups carry over.
 

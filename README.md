@@ -1,3 +1,5 @@
+> **Thoth is a fork of [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent)**, reworked as a Windows-first desktop agent for local models. See [What Thoth adds](#what-thoth-adds) and [Frictions removed](#frictions-removed).
+
 <p align="center">
   <img src="assets/banner.png" alt="Thoth" width="100%">
 </p>

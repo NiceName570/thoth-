@@ -1685,7 +1685,7 @@ slash:
   voice:
     description: "Toggle voice mode"
   wake:
-    description: "Toggle the 'Hey Thoth's wake word listener"
+    description: "Toggle the 'Hey Thoth' wake word listener"
   busy:
     description: "Control how messages behave while Thoth is working"
   tools:

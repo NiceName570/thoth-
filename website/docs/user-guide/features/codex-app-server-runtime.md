@@ -248,7 +248,7 @@ The value is a single executable path, not a shell command — no quoting or ext
 
 ## Self-improvement loop (memory + skill nudges)
 
-Thoth' background self-improvement fires on counter thresholds:
+Thoth's background self-improvement fires on counter thresholds:
 
 - Every 10 user prompts → a forked review agent looks at the conversation and decides whether anything should be saved to memory.
 - Every 10 tool iterations within a single turn → same idea but for skills (`skill_manage` writes).
@@ -396,7 +396,7 @@ This matches the boundary OpenClaw arrived at after some early experimentation: 
 
 ## MCP server migration
 
-Thoth' `mcp_servers` config is auto-translated to the TOML format Codex expects. The migration runs every time you enable the runtime and is idempotent — re-runs replace the managed section but preserve any user-edited Codex config.
+Thoth's `mcp_servers` config is auto-translated to the TOML format Codex expects. The migration runs every time you enable the runtime and is idempotent — re-runs replace the managed section but preserve any user-edited Codex config.
 
 What translates:
 

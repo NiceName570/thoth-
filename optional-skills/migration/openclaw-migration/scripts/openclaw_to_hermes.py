@@ -537,7 +537,7 @@ def _case_preserving_replacement(replacement: str):
     def _sub(match: "re.Match[str]") -> str:
         matched = match.group(0)
         if matched and matched.islower():
-            return replacement.lower()
+            return "hermes"  # the data folder and command keep the upstream name
         return replacement
     return _sub
 

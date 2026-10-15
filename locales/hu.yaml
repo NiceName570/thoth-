@@ -1630,7 +1630,7 @@ slash:
   voice:
     description: "Hangmód be-/kikapcsolása"
   wake:
-    description: "A 'Hey Thoth's ébresztőszó-figyelő be-/kikapcsolása"
+    description: "A 'Hey Thoth' ébresztőszó-figyelő be-/kikapcsolása"
   busy:
     description: "Az üzenetek viselkedésének beállítása, amíg a Thoth dolgozik"
   tools:

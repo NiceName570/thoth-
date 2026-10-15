@@ -29,7 +29,7 @@ if (values.desktop === 'absent') {
   const release = path.join(values.root, 'apps', 'desktop', 'release');
   const candidates = {
     linux: ['linux-unpacked/Thoth', 'linux-unpacked/hermes'],
-    darwin: [process.arch === 'arm64' ? 'mac-arm64/Thoth.app/Contents/MacOS/Thoth's : 'mac/Thoth.app/Contents/MacOS/Thoth'],
+    darwin: [process.arch === 'arm64' ? 'mac-arm64/Thoth.app/Contents/MacOS/Thoth' : 'mac/Thoth.app/Contents/MacOS/Thoth'],
     win32: [process.arch === 'arm64' ? 'win-arm64-unpacked/Thoth.exe' : 'win-unpacked/Thoth.exe'],
   }[process.platform];
   if (!candidates) throw new Error(`unsupported source smoke host: ${process.platform}`);

@@ -9641,7 +9641,7 @@
               }
             ],
             "default": null,
-            "title": "Requires Thoth"
+            "title": "Requires Hermes"
           },
           "has_desktop_half": {
             "anyOf": [

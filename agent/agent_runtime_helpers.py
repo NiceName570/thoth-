@@ -2436,6 +2436,8 @@ def _finish_switch(agent, new_provider, old_norm, new_norm) -> None:
             entry for entry in fallback_chain
             if (entry.get("provider") or "").strip().lower() not in {old_norm, new_norm}
         ]
+    from agent.free_rotation import with_free_rotation
+    fallback_chain = with_free_rotation(fallback_chain, getattr(agent, "provider", ""), getattr(agent, "model", ""))
     agent._fallback_chain = fallback_chain
     agent._fallback_model = fallback_chain[0] if fallback_chain else None
     # Apply the switched-to provider's request_overrides (custom_providers extra_body).

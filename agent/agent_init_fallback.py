@@ -25,8 +25,11 @@ def _init_fallback_chain(agent, fallback_model):
     from agent.agent_runtime_helpers import sync_credential_pool_entry_id
     sync_credential_pool_entry_id(agent)
 
-    # Ordered backups tried when the primary is exhausted (legacy single-dict or list).
-    agent._fallback_chain = _fallback_entries(fallback_model)
+    # Ordered backups tried when the primary is exhausted (legacy single-dict or list); a free
+    # primary rotates through free models first (agent/free_rotation.py).
+    from agent.free_rotation import with_free_rotation
+    agent._fallback_chain = with_free_rotation(
+        _fallback_entries(fallback_model), getattr(agent, "provider", ""), getattr(agent, "model", ""))
     agent._fallback_index = 0
     agent._fallback_activated = getattr(agent, "_fallback_activated", False)
     # Legacy attribute kept for backward compat (tests, external callers)

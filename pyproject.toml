@@ -563,8 +563,9 @@ hermes-acp = "acp_adapter.entry:main"
 # Extras that only an explicit selection installs (setup, sync_venv). Bundles
 # build with --all-extras and pass --no-extra for each of these, so their
 # closures never ship. KittenTTS pulls torch, transformers and spaCy through
-# misaki[en]: installed when the user picks it, not preinstalled.
-opt-in-extras = ["kittentts"]
+# misaki[en]: installed when the user picks it, not preinstalled. silk (pilk) and daytona
+# (obstore) have no CPython 3.14 Windows wheels and would need a C/Rust compiler to bundle.
+opt-in-extras = ["kittentts", "silk", "daytona"]
 
 # Per-extra platform gates (settled 2026-09-02): an extra listed here is
 # only installable on platforms matching the marker. pm consults this

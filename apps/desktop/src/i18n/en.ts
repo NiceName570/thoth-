@@ -451,7 +451,7 @@ export const en: Translations = {
       gatewayAuthFailed:
         'This Thoth no longer accepts your saved sign-in. Open Gateways and sign in again (or paste a new access token), then retry.',
       methodNotAllowed:
-        "Thoth' background service is out of step with the app, probably after an update. Restart it to fix this.",
+        "Thoth's background service is out of step with the app, probably after an update. Restart it to fix this.",
       microphonePermission: 'Microphone permission was denied.',
       openaiRejectedApiKey: "OpenAI didn't accept your API key. Update it in Settings → Keys, then try again.",
       openaiTtsNeedsKey: 'Voice needs an OpenAI key. Add one in Settings → Keys.',
@@ -3530,7 +3530,7 @@ export const en: Translations = {
       '/subscription': 'View your Nous plan and change it in the browser',
       '/topup': 'Show your Nous balance and manage billing on the portal',
       '/platform': 'Pause, resume, or list a failing gateway platform',
-      '/version': 'Show Thoth Agent version',
+      '/version': 'Show Thoth version',
       '/debug': 'Upload debug report (system info + logs) and get shareable links',
       '/model': 'Switch the model for this session'
     },
@@ -4035,7 +4035,7 @@ export const en: Translations = {
     applyRemote: 'Apply and reconnect',
     backToSetup: 'Back',
     failedTitle: 'Installation failed',
-    settingUpTitle: 'Setting up Thoth Agent',
+    settingUpTitle: 'Setting up Thoth',
     finishingTitle: 'Finishing up',
     failedDesc:
       'One of the setup steps did not finish. This can happen when another copy of Thoth is running, the internet connection dropped, or antivirus blocked the installer. Close other Thoth windows, then choose Reload and retry. If it fails again, open the logs and send them to support.',

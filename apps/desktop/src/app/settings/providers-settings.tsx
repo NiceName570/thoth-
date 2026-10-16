@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { runInTerminal } from '@/app/right-sidebar/store'
 import {
   FireworksProviderRow,
+  FreeDailyModelsTag,
   LocalModelsProviderRow,
   OpenRouterProviderRow,
   ProviderRow,
@@ -17,13 +18,14 @@ import { SearchField } from '@/components/ui/search-field'
 import { Tip } from '@/components/ui/tooltip'
 import { disconnectOAuthProvider, listOAuthProviders } from '@/hermes'
 import { useI18n } from '@/i18n'
+import { freeDailyModelsRank, hasFreeDailyModels } from '@/lib/free-daily-models'
 import { Check, ChevronDown, ChevronRight, KeyRound, Loader2, Terminal, Trash2 } from '@/lib/icons'
 import { normalize } from '@/lib/text'
 import { cn } from '@/lib/utils'
 import { confirm } from '@/store/confirm'
 import { $localModelsEnabled } from '@/store/local-models-flag'
 import { notify, notifyError } from '@/store/notifications'
-import { $desktopOnboarding, startManualLocalEndpoint, startManualProviderOAuth } from '@/store/onboarding'
+import { $desktopOnboarding, startManualProviderOAuth } from '@/store/onboarding'
 import { $settingsRequestProfile } from '@/store/settings-scope'
 import type { EnvVarInfo, OAuthProvider } from '@/types/hermes'
 
@@ -130,7 +132,10 @@ function buildProviderKeyGroups(vars: Record<string, EnvVarInfo>): ProviderKeyGr
         .filter(([k, i]) => k !== primary[0] && (!isKeyVar(k, i) || i.is_set))
         .sort(([a], [b]) => a.localeCompare(b)),
       description: meta?.description ?? primary[1].description,
-      docsUrl: meta?.docsUrl ?? primary[1].url ?? undefined,
+      // The backend names each provider's own API key page; the desktop overlay is a fallback.
+      docsUrl: primary[1].url ?? meta?.docsUrl ?? undefined,
+      freeDailyModels: hasFreeDailyModels(primary[1].provider),
+      freeRank: freeDailyModelsRank(primary[1].provider),
       hasAnySet: entries.some(([, i]) => i.is_set),
       name,
       primary,
@@ -138,7 +143,8 @@ function buildProviderKeyGroups(vars: Record<string, EnvVarInfo>): ProviderKeyGr
     })
   }
 
-  return groups.sort((a, b) => a.priority - b.priority || a.name.localeCompare(b.name))
+  // Providers with free daily models lead the list, in their own order.
+  return groups.sort((a, b) => a.freeRank - b.freeRank || a.priority - b.priority || a.name.localeCompare(b.name))
 }
 
 // Deliberately a near-1:1 replica of the first-run onboarding picker
@@ -227,11 +233,11 @@ function OAuthPicker({
       {showOthers && (
         <>
           {connected.length > 0 && <GroupLabel>{p.otherProviders}</GroupLabel>}
+          <OpenRouterProviderRow onClick={onWantApiKey} />
           {others.map(p => (
             <ProviderRow key={p.id} onSelect={select} provider={p} />
           ))}
           <FireworksProviderRow onClick={onWantApiKey} />
-          <OpenRouterProviderRow onClick={onWantApiKey} />
         </>
       )}
       {collapsible && (
@@ -287,6 +293,7 @@ function ConnectedProviderRow({
             <Check className="size-3" />
             {copy.connected}
           </span>
+          {hasFreeDailyModels(provider.id) && <FreeDailyModelsTag />}
         </div>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">{t.onboarding.flowSubtitles[provider.flow]}</p>
         {showHint && (
@@ -350,23 +357,18 @@ function NoProviderKeys() {
 }
 
 // Surfaces the "Local / custom endpoint" entry point directly in the API-keys
-// tab so users can add any OpenAI-compatible endpoint (Zyphra, vLLM, Ollama…)
-// from the GUI. The composer pill and the providers "have an API key" affordance
-// both dead-end on the env-var-driven key catalog, which never lists a custom
-// endpoint — so without this row there is no reachable Desktop path to it.
+// tab so users can add any OpenAI-compatible endpoint (Zyphra, vLLM, Ollama…).
+// It opens Custom Endpoints, the one place Thoth adds them (no setup overlay).
 // The whole row is the button so the click target and a11y focus match the
 // visible area (the chevron + gutter are inside the button, not beside it).
-// Pass reason: null — the onboarding overlay renders an unmapped reason string
-// verbatim as a banner (see ReasonNotice in onboarding/index.tsx), and we don't
-// want a raw identifier like "providers-keys-tab" showing as literal text.
-function LocalEndpointRow({ onOpen }: { onOpen: (reason: null | string) => void }) {
+function LocalEndpointRow({ onOpen }: { onOpen: () => void }) {
   const { t } = useI18n()
   const copy = t.settings.providers.localEndpoint
 
   return (
     <RowButton
       className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-1 rounded-[6px] px-3 py-2.5 text-left transition-colors hover:bg-(--ui-control-hover-background)"
-      onClick={() => onOpen(null)}
+      onClick={onOpen}
     >
       <div className="flex min-w-0 flex-col gap-0.5">
         <span className="truncate text-[length:var(--conversation-text-font-size)] font-semibold">{copy.title}</span>
@@ -549,7 +551,7 @@ export function ProvidersSettings({
     return (
       <SettingsContent>
         <SettingsProfileScope className="mb-5" />
-        <LocalEndpointRow onOpen={reason => startManualLocalEndpoint(reason, scopeProfile)} />
+        <LocalEndpointRow onOpen={() => onViewChange('custom-endpoints')} />
         {keyGroups.length > 0 ? (
           <div className="grid gap-3">
             <SearchField
@@ -617,6 +619,8 @@ interface ProviderKeyGroup {
   advanced: [string, EnvVarInfo][]
   description?: string
   docsUrl?: string
+  freeDailyModels: boolean
+  freeRank: number
   hasAnySet: boolean
   name: string
   primary: [string, EnvVarInfo]

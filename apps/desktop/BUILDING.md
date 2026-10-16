@@ -1,5 +1,26 @@
 # Building the Desktop Installers
 
+## Thoth's Windows installer
+
+Thoth ships one per-machine installer, `Thoth-Setup-<version>.exe`, with Python and every
+dependency inside. Build the bundled app, then wrap it:
+
+```powershell
+python scripts/bundles/desktop.py --tag vX.Y.Z --release-commit <sha> --variant bundled --prepare-only --work .build\desktop-job
+python scripts/bundles/desktop.py --prepared .build\desktop-job\prepared.json --variant bundled -- --dir
+node apps/desktop/scripts/build-installer.mjs
+```
+
+A stable `--tag` build needs a local claim tag, as `scripts/build-bundle.ps1 -Store` makes one.
+The installer lands in `apps/desktop/release/` next to `latest.yml`, which the app's updater
+reads from this repository's GitHub releases. The llama.cpp engines are left out of the bundle;
+local models go through Custom Endpoints. Use a short checkout path such as `C:/tb` and a short
+`--cache` path: some dependency paths come close to Windows' 260-character limit.
+
+## The bundle pipeline
+
+The rest of this page describes the MSIX, DMG and AppImage pipeline the steps above build on.
+
 Use the complete bundle builder for release artifacts. Ordinary `dist:*`
 commands package the current desktop build; they do not stage a fresh runtime.
 

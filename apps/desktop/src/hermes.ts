@@ -63,6 +63,7 @@ export type {
   CustomEndpointUpdate,
   CustomEndpointValidationResponse,
   DebugShareResponse,
+  EdgeVoicesResponse,
   ElevenLabsVoice,
   ElevenLabsVoicesResponse,
   EnvVarInfo,

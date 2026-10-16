@@ -76,6 +76,9 @@ export interface ElevenLabsVoicesResponse {
   voices: ElevenLabsVoice[]
 }
 
+/** Same row shape as ElevenLabs: `voice_id` is the Edge short name (`en-US-AriaNeural`). */
+export type EdgeVoicesResponse = ElevenLabsVoicesResponse
+
 export interface OAuthProviderStatus {
   /** Nous only: the tier name the token resolves to, when the backend knows
    *  one. Null for a free-tier identity and for older backends. */

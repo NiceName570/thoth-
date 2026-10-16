@@ -1178,62 +1178,6 @@ def _lap_custom_provider_rows(b: _PickerBuild, custom_providers: list) -> None:
         section4_slugs.add(slug.lower())
 
 
-_LOCAL_AUTODETECT_TTL_SECONDS = 60.0
-_local_autodetect: dict[str, tuple[float, list[str]]] = {}
-_OLLAMA_DEFAULT_URL = "http://127.0.0.1:11434/v1"
-
-
-def _autodetected_local_models(server: str, probe) -> list[str]:
-    """Models of a local server (LM Studio, Ollama) on its default port, so it shows up in the
-    picker without any setup. One short probe per TTL window: a closed port on Windows takes about
-    a second to refuse, which every picker open must not pay."""
-    now = time.monotonic()
-    at, models = _local_autodetect.get(server, (float("-inf"), []))
-    if now - at >= _LOCAL_AUTODETECT_TTL_SECONDS:
-        models = list(probe() or [])
-        _local_autodetect[server] = (now, models)
-    return list(models)
-
-
-def _autodetected_lmstudio_models() -> list[str]:
-    from hermes_cli.models_local import fetch_lmstudio_models
-    from hermes_cli.auth import AuthError
-
-    def _probe():
-        try:
-            return fetch_lmstudio_models(api_key="", base_url="http://127.0.0.1:1234/v1", timeout=0.5)
-        except AuthError:
-            return []
-    return _autodetected_local_models("lmstudio", _probe)
-
-
-def _with_autodetected_ollama(custom_providers: list | None, user_providers: dict, current_base_url: str) -> list:
-    """Add a running Ollama as an ordinary custom provider the first time it answers on its default
-    port. The entry is saved to config so selecting one of its models resolves like any endpoint."""
-    entries = list(custom_providers) if isinstance(custom_providers, list) else []
-    urls = [current_base_url] + [
-        str(_entry_base_url(e, ("base_url", "api", "url")) or "")
-        for e in [*entries, *user_providers.values()] if isinstance(e, dict)]
-    if any(":11434" in url for url in urls):
-        return entries
-    from hermes_cli.models_local import fetch_ollama_local_models
-    models = _autodetected_local_models(
-        "ollama", lambda: fetch_ollama_local_models(_OLLAMA_DEFAULT_URL, timeout=0.5))
-    if not models:
-        return entries
-    entry = {"name": "Ollama", "base_url": _OLLAMA_DEFAULT_URL,
-             "models": {model_id: {} for model_id in models}, "models_discovered": True}
-    try:
-        from hermes_cli.config import load_config, save_config
-        cfg = load_config()
-        saved = cfg.get("custom_providers") if isinstance(cfg.get("custom_providers"), list) else []
-        cfg["custom_providers"] = [*saved, entry]
-        save_config(cfg)
-    except Exception:
-        logger.debug("Could not save the auto-detected Ollama endpoint", exc_info=True)
-    return [*entries, entry]
-
-
 def _build_curated_lists(current_provider: str, current_base_url: str, current_model: str,
                         non_blocking: bool = False) -> dict[str, list[str]]:
     """Curated model lists keyed by hermes provider id, plus the dynamic ones (nous manifest,
@@ -1254,15 +1198,15 @@ def _build_curated_lists(current_provider: str, current_base_url: str, current_m
         from hermes_cli.models import fetch_ollama_cloud_models
         # Read path: cache only; the row's own SWR refresh (cached_provider_model_ids) warms it.
         curated["ollama-cloud"] = fetch_ollama_cloud_models(cache_only=non_blocking)
-    # LM Studio has no static catalog: probe its native endpoint live. Base URL precedence:
-    # LM_BASE_URL > active config base_url (when current) > default. On auth rejection /
-    # unreachable, fall back to the current model so the picker still shows something offline.
-    # Left live even on the non-blocking path: it is a loopback endpoint with a 1.5s timeout, so it
-    # cannot be the degraded remote provider this path must never wait on.
+    # LM Studio has no static catalog: probe its native endpoint live, but only once the user chose
+    # it (LM_* env or the current provider). Thoth never probes local ports on its own: Ollama and
+    # LM Studio are added under Custom Endpoints. Base URL precedence: LM_BASE_URL > active config
+    # base_url (when current) > default. On auth rejection / unreachable, fall back to the current
+    # model so the picker still shows something offline.
     is_current_lmstudio = current_provider.strip().lower() == "lmstudio"
     if "lmstudio" not in curated and not (
             os.environ.get("LM_API_KEY") or os.environ.get("LM_BASE_URL") or is_current_lmstudio):
-        curated["lmstudio"] = _autodetected_lmstudio_models()
+        curated["lmstudio"] = []
     if "lmstudio" not in curated:
         from hermes_cli.models_local import fetch_lmstudio_models
         from hermes_cli.auth import AuthError
@@ -1357,8 +1301,6 @@ def list_authenticated_providers(
     _lap_canonical_rows(b)
     if user_providers and isinstance(user_providers, dict):
         _lap_user_provider_rows(b, user_providers)
-    custom_providers = _with_autodetected_ollama(
-        custom_providers, user_providers if isinstance(user_providers, dict) else {}, current_base_url)
     _lap_bare_custom_row(b, custom_providers)
     if custom_providers and isinstance(custom_providers, list):
         _lap_custom_provider_rows(b, custom_providers)

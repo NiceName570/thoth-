@@ -70,6 +70,7 @@ export const ruOnboarding: TranslationOverrides['onboarding'] = {
   copy: 'Копировать',
   defaultModel: 'Модель по умолчанию',
   freeTier: 'Бесплатный тариф',
+  freeDailyModels: 'Бесплатные модели каждый день',
   pro: 'Pro',
   free: 'Free',
   price: (input, output) => `${input} вход / ${output} выход за Mtok`,

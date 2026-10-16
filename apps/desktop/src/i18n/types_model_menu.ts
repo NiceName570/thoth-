@@ -7,6 +7,10 @@ export interface ModelMenuTranslations {
   ejectOllama: string
   ejectedOllama: (count: number) => string
   ejectOllamaFailed: string
+  freeMode: string
+  freeModeOn: (model: string) => string
+  freeModeOff: string
+  freeModeFailed: string
   favorites: string
   addFavorite: string
   removeFavorite: string

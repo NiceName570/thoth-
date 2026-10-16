@@ -70,6 +70,7 @@ import { $collapsedProviders, toggleCollapsedProvider } from '@/store/provider-c
 import { $defaultReasoningEffort } from '@/store/session'
 import type { LocalModelLoadProgress, LocalRuntimeJob } from '@/types/hermes'
 
+import { FreeModeToggle } from './free-mode-toggle'
 import { type FastControl, ModelEditSubmenu, resolveFastControl } from './model-edit-submenu'
 import { ModelMenuRowIcon, useModelMenuRowDecoration } from './model-menu-row-decorations'
 
@@ -899,6 +900,13 @@ export function ModelCatalogMenu({
           contributes rows (the composer's Refresh Models) keeps the single
           trailing block it has always rendered. */}
       <DropdownMenuSeparator className="mx-0" />
+      <FreeModeToggle
+        className={dropdownMenuRow}
+        controller={controller}
+        onChanged={() => void modelOptions.refetch()}
+        ownerConnectionId={ownerConnectionId}
+        profile={profile}
+      />
       {footer}
       <DropdownMenuItem
         className={cn(dropdownMenuRow, 'text-(--ui-text-tertiary)', slugEntry && 'text-foreground')}

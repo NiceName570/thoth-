@@ -1,7 +1,7 @@
 const featureFlags = {
-  /** Local-models GUI surfaces (settings pane, pickers, statusbar, tips). Off in Thoth: Ollama and
-   * LM Studio are auto-detected as ordinary providers in the model menu instead. */
-  localModels: () => false
+  /** Local-models GUI surfaces (settings pane, llama.cpp installer, downloads, recommendations).
+   * Off in Thoth: Ollama and LM Studio are added under Settings > Providers > Custom Endpoints. */
+  localModels: (_input: FeatureFlagInput) => false
 } satisfies Record<string, (args: FeatureFlagInput) => boolean>
 
 export type FeatureFlags = { [K in keyof typeof featureFlags]: boolean }

@@ -17,11 +17,8 @@ const variants = {
     kebab: 'thoth-light',
     pascal: 'ThothLight'
   },
-  bundled: {
-    display: 'Thoth Agent',
-    kebab: 'thoth-bundled',
-    pascal: 'ThothBundled'
-  }
+  // The installer build: the same "Thoth" name, app ID and %APPDATA%\Thoth settings folder.
+  bundled: { display: 'Thoth', kebab: 'thoth', pascal: 'Thoth' }
 }
 
 const variant = process.env.HERMES_DESKTOP_VARIANT || ''

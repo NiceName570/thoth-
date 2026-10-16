@@ -2,300 +2,123 @@
   <img src="assets/banner.png" alt="Thoth" width="100%">
 </p>
 
-# Thoth ☤
+<h1 align="center">Thoth</h1>
+
+<p align="center"><b>A personal AI agent for Windows that keeps working on free models.</b><br>
+Built by <a href="https://github.com/NiceName570"><b>NiceName570</b></a>.</p>
 
 <p align="center">
-  <a href="https://github.com/NousResearch/hermes-agent"><img src="https://img.shields.io/badge/Fork%20of-Hermes%20Agent-blueviolet?style=for-the-badge" alt="Fork of Hermes Agent"></a>
-  <img src="https://img.shields.io/badge/Windows-first-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows first">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
-  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/Changelog-what%20changed-orange?style=for-the-badge" alt="Changelog"></a>
+  <a href="https://github.com/NiceName570/thoth-/releases/latest"><img src="https://img.shields.io/badge/Download%20for%20Windows-Thoth%20v0.1.0-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download Thoth for Windows" height="56"></a>
 </p>
+
 <p align="center">
-  <a href="README.zh-CN.md">中文</a> · <a href="README.ur-pk.md">اردو</a> · <a href="README.es.md">Español</a>
+  <a href="CHANGELOG.md">Changelog</a> · <a href="LICENSE">MIT License</a> · <a href="https://github.com/NiceName570/thoth-/issues">Report a problem</a>
 </p>
 
-**A personal AI agent for Windows that runs on your own local models, with no Docker and no WSL.** Thoth is a fork of [Hermes Agent](https://github.com/NousResearch/hermes-agent) by [Nous Research](https://nousresearch.com): same agent core, memory, skills, tools and messaging gateway, reworked for a Windows desktop.
+<p align="center"><img src="docs/screenshots/thoth-chat.png" alt="Thoth answering a question after switching to the next free model" width="100%"></p>
 
-### Why Thoth instead of Hermes
+Download the installer, open Thoth, add a free key from Cline, OpenRouter or Kilo Code, and start
+chatting. When a free model hits its daily limit, Thoth moves the conversation to the next free
+model by itself, so you can keep going without paying.
 
-1. **Your local models just show up.** Start Ollama or LM Studio and its models are in the model menu. No Local Models page, no keys, no base URLs to type.
-2. **Ollama stays fast.** Thoth caps the auto-detected context at 64K so big models stay on your GPU instead of spilling to the CPU, and one click ejects loaded models to free VRAM.
-3. **The desktop app installs itself.** First launch goes straight to a local install, and the installer works from PowerShell 7 as well as Windows PowerShell.
-4. **Fewer upsells, more providers.** Nous Portal is an ordinary provider, with no cloud-only mode, and Cline, abliteration.ai, TypeSafe and DefAPI are built in.
-5. **An agent that finishes the job.** The default persona carries a task through in one go instead of stopping to re-ask, and a Memories page lets you see and fix what it remembers.
+The installer isn't code-signed yet, so Windows may show a SmartScreen prompt: choose
+**More info**, then **Run anyway**.
 
-### Install on Windows
+*Thoth is built on [Hermes Agent](https://github.com/NousResearch/hermes-agent) and is now going its own way.*
 
-```powershell
-iex (irm https://raw.githubusercontent.com/NiceName570/thoth-/main/scripts/install.ps1)
-```
+## What Thoth does
 
-Then run `hermes` (the command keeps its upstream name so existing setups carry over). Linux, macOS and WSL2 are under [Quick Install](#quick-install). Every change from upstream is in the [changelog](CHANGELOG.md).
+### Free-model rotation
 
-## What Thoth adds
+Free models are generous but small: each one has a daily cap, and they run out mid-task. Thoth
+watches for that. When the model you're on runs out or gets rate-limited, Thoth switches to that
+provider's next free model and carries on with the same conversation. When a provider's free
+models are all used up, it moves to the next provider that has free models, in the order they
+appear on the Providers page. A short line in the chat tells you what happened:
 
-| Feature | What you get |
-|---|---|
-| **Local models with no setup** | A running Ollama (`127.0.0.1:11434`) or LM Studio (`127.0.0.1:1234`) shows up in the model menu by itself, as an ordinary provider. |
-| **Ollama that stays on the GPU** | Auto-detected context is capped at 64K instead of the model's training max, so the KV cache no longer spills to the CPU. Eject frees loaded Ollama models from RAM/VRAM without restarting the server. |
-| **More providers** | Cline (ClinePass and pay-as-you-go keys), abliteration.ai, and TypeSafe / DefAPI cards on Settings > Providers. |
-| **Jev observer plugin** | Opt-in `jev-observer` scores each reply with Jev, plus a contextual mode that judges a window of earlier turns. Toggle it from the Plugins page. Nothing is injected into the conversation. [Guide with examples](plugins/jev-observer/README.md). |
-| **Memories page** | View, edit and delete saved memories from the desktop sidebar, under Scheduled jobs. |
-| **Plan usage meter** | The status bar shows how much of your Codex or Claude plan is left, with reset times on hover. |
-| **Finish-the-job persona** | The default persona carries a task through in the same turn and asks only when it is truly blocked. |
+<p align="center"><img src="docs/screenshots/free-model-rotation.png" alt="A chat reply followed by the line: Switched to OpenRouter: dots-studio/dots-3-note-preview:free (free)" width="100%"></p>
+
+Rotation also covers paid models: if your account runs out of credits mid-task, Thoth finishes
+the job on free models instead of stopping.
+
+### Free mode
+
+One switch in the model menu, off by default. Turn it on and Thoth uses only free models: the
+chat moves to a free model straight away, the menu lists only free models, and rotation never
+falls back to a paid one. Turn it off and you're back on the model you had before.
+
+<p align="center"><img src="docs/screenshots/free-mode.png" alt="The model menu with Free mode switched on, listing only free models" width="320"></p>
+
+### Providers with free daily models, first
+
+Cline, Nous, OpenRouter, Kilo Code and OpenCode Zen all give some models away every day. They
+carry a **Free daily models** badge and sit at the top of the Providers page. Thoth keeps their
+free-model lists up to date by itself, once a day. If an account has no credits, the model menu
+shows only its free models; if a provider can't report credits, you see everything, with the
+free models marked. Each provider's "Get a key" link opens that provider's API key page.
+
+<p align="center"><img src="docs/screenshots/free-daily-models.png" alt="Settings, Providers, API keys: Cline, OpenRouter, Kilo Code and OpenCode Zen at the top with Free daily models badges" width="100%"></p>
+
+### More providers
+
+Cline (ClinePass and pay-as-you-go), Kilo Code, OpenCode Zen, abliteration.ai, TypeSafe and
+DefAPI sit alongside OpenRouter, Anthropic, OpenAI, Gemini, xAI, DeepSeek and the rest. Ollama,
+LM Studio and any other OpenAI-compatible server go under **Settings > Providers > Custom
+Endpoints**, and their Context field sets the context window, with Auto using the model's own.
+
+### Usage meters
+
+The status bar shows how much of your plan is left on Claude, Codex and OpenRouter, with the reset
+time on hover, so a limit never takes you by surprise.
+
+### Memory you can see and edit
+
+Thoth remembers things across chats. The Memories page shows exactly what it has saved, and you
+can edit or delete any entry.
+
+<p align="center"><img src="docs/screenshots/memories.png" alt="The Memories page with entries that each have edit and delete buttons" width="640"></p>
+
+### Jev observer
+
+An optional plugin that scores every reply in the background: did the model understand you,
+take your correction on board, or repeat the mistake you just pointed out? Its scores work the
+same whatever provider or model you're on, so you can compare them on equal terms, and it never
+changes the conversation. [Guide with examples](plugins/jev-observer/README.md).
 
 ## Frictions removed
 
-| Before (Hermes) | Now (Thoth) |
+| | |
 |---|---|
-| First launch asked whether to connect to a gateway or install, then waited | Installs locally straight away; a remote gateway can still be added from Settings |
-| Setup failed with `Get-FileHash not recognized` when launched from PowerShell 7 | The installer runs cleanly from PowerShell 7 |
-| Local models needed a separate Local Models page, llama.cpp installer and downloads | One model menu; Ollama and LM Studio are detected automatically |
-| Nous Portal was pushed in onboarding, plus a cloud-only mode | Nous Portal is a normal provider; no cloud-only path |
-| Saved base URLs (like `LM_BASE_URL`) came back masked and had to be retyped | Base URLs show in plain text and edit in place; API keys stay hidden |
-| Edge read-aloud broke when Microsoft moved its speech endpoint | Edge TTS uses the new endpoint and falls back to local Piper if Edge fails |
+| **No terminal needed** | One installer `.exe` with Python and everything else inside. It installs to Program Files with a Start menu shortcut and an uninstaller. |
+| **No failed updates** | Thoth has its own app ID and update feed, so it only ever installs releases from this repository. |
+| **No forced backend** | Nous is one provider among many. You connect the providers you want, one way, and there's no hosted backend in between to break. |
+| **No forced downloads** | No llama.cpp download and no model recommendations that never run fast. Local models are optional, through Custom Endpoints. |
+| **No setup screen** | No install wizard and no terminal steps: open Thoth, paste a provider key, and chat. |
 
-### Jev Observer in ten seconds
+## Where your data lives
 
-You tell the agent "no, I said three bullets." It replies "You're absolutely right, sorry!" and
-gives you five bullets again. The reply looks polite, so nothing warns you. Jev Observer records
-this for that turn:
+Chats, memories, keys and settings stay on your PC:
 
-```text
-understanding: overlooked clarification   <- "no, I said three."
-correction_uptake: acknowledged only
-repeats_corrected_mistake: p=0.94
-turn_success: 1.0/4
+- `%LOCALAPPDATA%\hermes`: conversations, memories, API keys (`.env`) and `config.yaml`
+- `%APPDATA%\Thoth`: window and app preferences
+
+Uninstalling Thoth leaves both folders in place, so reinstalling picks up where you left off.
+
+## For developers
+
+```
+apps/desktop/   The Thoth desktop app (Electron)
+agent/          The agent turn loop, providers, memory, fallback and free-model rotation
+hermes_cli/     Settings, providers, free-model lists, and the desktop app's backend routes
+gateway/        The messaging gateway (Telegram, Discord, Slack and more)
+tools/          Tools the agent can use (terminal, files, browser, voice, ...)
+plugins/        Bundled plugins, including jev-observer and the model providers
+tests/          The Python test suite
 ```
 
-It runs in the background after every turn, never changes the conversation, and lets you see
-where a model, prompt or skill actually listens to you. [Full guide with before/after examples](plugins/jev-observer/README.md).
-
-Thoth still runs the `hermes` command and keeps data in `~/.hermes` (`%LOCALAPPDATA%\hermes` on Windows), so existing Hermes setups carry over.
-
-<details>
-<summary>Everything inherited from Hermes Agent</summary>
-
-**The self-improving AI agent built by [Nous Research](https://nousresearch.com).** It's the only agent with a built-in learning loop — it creates skills from experience, improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions. Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle. It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.
-
-Use any model you want — [Nous Portal](https://portal.nousresearch.com), OpenRouter, OpenAI, your own endpoint, and [many others](https://hermes-agent.nousresearch.com/docs/integrations/providers). Switch with `hermes model` — no code changes, no lock-in.
-
-<table>
-<tr><td><b>A real terminal interface</b></td><td>Full TUI with multiline editing, slash-command autocomplete, conversation history, interrupt-and-redirect, and streaming tool output.</td></tr>
-<tr><td><b>Lives where you do</b></td><td>Telegram, Discord, Slack, WhatsApp, Signal, and CLI — all from a single gateway process. Voice memo transcription, cross-platform conversation continuity.</td></tr>
-<tr><td><b>A closed learning loop</b></td><td>Agent-curated memory with periodic nudges. Autonomous skill creation after complex tasks. Skills self-improve during use. FTS5 session search with LLM summarization for cross-session recall. <a href="https://github.com/plastic-labs/honcho">Honcho</a> dialectic user modeling. Compatible with the <a href="https://agentskills.io">agentskills.io</a> open standard.</td></tr>
-<tr><td><b>Scheduled automations</b></td><td>Built-in cron scheduler with delivery to any platform. Daily reports, nightly backups, weekly audits — all in natural language, running unattended.</td></tr>
-<tr><td><b>Delegates and parallelizes</b></td><td>Spawn isolated subagents for parallel workstreams. Write Python scripts that call tools via RPC, collapsing multi-step pipelines into zero-context-cost turns.</td></tr>
-<tr><td><b>Runs anywhere, not just your laptop</b></td><td>Seven terminal backends — local, Docker, SSH, Singularity, Modal, Daytona, and Vercel Sandbox. Daytona and Modal offer serverless persistence — your agent's environment hibernates when idle and wakes on demand, costing nearly nothing between sessions. Run it on a $5 VPS or a GPU cluster.</td></tr>
-<tr><td><b>Research-ready</b></td><td>Batch trajectory generation, trajectory compression for training the next generation of tool-calling models.</td></tr>
-</table>
-
-</details>
-
----
-
-## Quick Install
-
-### Windows (native, PowerShell)
-
-> **Heads up:** Native Windows runs Thoth without WSL — CLI, gateway, TUI, and tools all work natively. If you'd rather use WSL2, the Linux/macOS one-liner below works there too. Found a bug? Please [file issues](https://github.com/NiceName570/thoth-/issues).
-
-Run this in PowerShell:
-
-```powershell
-iex (irm https://raw.githubusercontent.com/NiceName570/thoth-/main/scripts/install.ps1)
-```
-
-The source installer delegates Python 3.14, Node.js, npm, ripgrep, FFmpeg,
-and Python dependencies to PM. If Git is absent, it stages the verified Git
-for Windows archive in Thoth's tool store. It does not replace your system Git.
-See [installation methods](https://hermes-agent.nousresearch.com/docs/getting-started/installation)
-for the separate MSIX/App Installer package and its update ownership.
-
-### Linux, macOS, WSL2
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/NiceName570/thoth-/main/scripts/install.sh | bash
-```
-
-> **Windows:** Native Windows install lives under `%LOCALAPPDATA%\hermes`; WSL2 installs under `~/.hermes` as on Linux.
-
-After installation:
-
-```bash
-source ~/.bashrc    # reload shell (or: source ~/.zshrc)
-hermes              # start chatting!
-```
-
-### Troubleshooting
-
-#### Windows Defender or antivirus flags `uv.exe` as malware
-
-If your antivirus (Bitdefender, Windows Defender, etc.) quarantines `uv.exe` from the Thoth `bin` folder (`%LOCALAPPDATA%\hermes\bin\uv.exe`), this is a **false positive**. The file is Astral's `uv` — the Rust Python package manager Thoth bundles to manage its Python environment. ML-based antivirus engines commonly flag unsigned Rust binaries that download and install packages.
-
-**To verify your copy is authentic:**
-
-```powershell
-# Install GitHub CLI if needed
-winget install --id GitHub.cli
-
-# Login to GitHub
-gh auth login
-
-# Run verification
-$uv = "$env:LOCALAPPDATA\hermes\bin\uv.exe"
-$ver = (& $uv --version).Split(' ')[1]
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$zip = "$env:TEMP\uv.zip"
-Invoke-WebRequest "https://github.com/astral-sh/uv/releases/download/$ver/uv-x86_64-pc-windows-msvc.zip" -OutFile $zip -UseBasicParsing
-gh attestation verify $zip --repo astral-sh/uv
-Expand-Archive $zip "$env:TEMP\uv_x" -Force
-(Get-FileHash "$env:TEMP\uv_x\uv.exe").Hash -eq (Get-FileHash $uv).Hash
-```
-
-If attestation says "Verification succeeded" and the last line prints `True`, you're good.
-
-**To whitelist Thoth:**
-- **Windows Defender:** Run PowerShell as Admin → `Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\hermes\bin"`
-- **Bitdefender:** Add an exception in the Bitdefender console (Protection > Antivirus > Settings > Manage Exceptions)
-- Whitelist the **folder**, not the file hash — Thoth updates `uv` and the hash changes every version
-
-For more context, see the upstream Astral reports: [astral-sh/uv#13553](https://github.com/astral-sh/uv/issues/13553), [astral-sh/uv#15011](https://github.com/astral-sh/uv/issues/15011), [astral-sh/uv#10079](https://github.com/astral-sh/uv/issues/10079).
-
----
-
-## Getting Started
-
-```bash
-hermes              # Interactive CLI — start a conversation
-hermes model        # Choose your LLM provider and model
-hermes tools        # Configure which tools are enabled
-hermes config set   # Set individual config values
-hermes config get   # Print individual config values
-hermes gateway      # Start the messaging gateway (Telegram, Discord, etc.)
-hermes setup        # Run the full setup wizard (configures everything at once)
-hermes claw migrate # Migrate from OpenClaw (if coming from OpenClaw)
-hermes update       # Update to the latest version
-hermes doctor       # Diagnose any issues
-```
-
-📖 **[Full documentation →](https://hermes-agent.nousresearch.com/docs/)**
-
----
-
-## CLI vs Messaging Quick Reference
-
-Thoth has two entry points: start the terminal UI with `hermes`, or run the gateway and talk to it from Telegram, Discord, Slack, WhatsApp, Signal, or Email. Once you're in a conversation, many slash commands are shared across both interfaces.
-
-| Action                         | CLI                                           | Messaging platforms                                                              |
-| ------------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------- |
-| Start chatting                 | `hermes`                                      | Run `hermes gateway setup` + `hermes gateway start`, then send the bot a message |
-| Start fresh conversation       | `/new` or `/reset`                            | `/new` or `/reset`                                                               |
-| Change model                   | `/model [provider:model]`                     | `/model [provider:model]`                                                        |
-| Set a personality              | `/personality [name]`                         | `/personality [name]`                                                            |
-| Retry or undo the last turn    | `/retry`, `/undo`                             | `/retry`, `/undo`                                                                |
-| Compress context / check usage | `/compress`, `/usage`, `/insights [--days N]` | `/compress`, `/usage`, `/insights [days]`                                        |
-| Browse skills                  | `/skills` or `/<skill-name>`                  | `/<skill-name>`                                                                  |
-| Interrupt current work         | `Ctrl+C` or send a new message                | `/stop` or send a new message                                                    |
-| Platform-specific status       | `/platforms`                                  | `/status`, `/sethome`                                                            |
-
-For the full command lists, see the [CLI guide](https://hermes-agent.nousresearch.com/docs/user-guide/cli) and the [Messaging Gateway guide](https://hermes-agent.nousresearch.com/docs/user-guide/messaging).
-
----
-
-## Documentation
-
-All documentation lives at **[hermes-agent.nousresearch.com/docs](https://hermes-agent.nousresearch.com/docs/)**:
-
-| Section                                                                                             | What's Covered                                             |
-| --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| [Quickstart](https://hermes-agent.nousresearch.com/docs/getting-started/quickstart)                 | Install → setup → first conversation in 2 minutes          |
-| [CLI Usage](https://hermes-agent.nousresearch.com/docs/user-guide/cli)                              | Commands, keybindings, personalities, sessions             |
-| [Configuration](https://hermes-agent.nousresearch.com/docs/user-guide/configuration)                | Config file, providers, models, all options                |
-| [Messaging Gateway](https://hermes-agent.nousresearch.com/docs/user-guide/messaging)                | Telegram, Discord, Slack, WhatsApp, Signal, Home Assistant |
-| [Security](https://hermes-agent.nousresearch.com/docs/user-guide/security)                          | Command approval, DM pairing, container isolation          |
-| [Tools & Toolsets](https://hermes-agent.nousresearch.com/docs/user-guide/features/tools)            | 40+ tools, toolset system, terminal backends               |
-| [Skills System](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills)              | Procedural memory, Skills Hub, creating skills             |
-| [Memory](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory)                     | Persistent memory, user profiles, best practices           |
-| [MCP Integration](https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp)               | Connect any MCP server for extended capabilities           |
-| [Cron Scheduling](https://hermes-agent.nousresearch.com/docs/user-guide/features/cron)              | Scheduled tasks with platform delivery                     |
-| [Context Files](https://hermes-agent.nousresearch.com/docs/user-guide/features/context-files)       | Project context that shapes every conversation             |
-| [Architecture](https://hermes-agent.nousresearch.com/docs/developer-guide/architecture)             | Project structure, agent loop, key classes                 |
-| [Contributing](https://hermes-agent.nousresearch.com/docs/developer-guide/contributing)             | Development setup, PR process, code style                  |
-| [CLI Reference](https://hermes-agent.nousresearch.com/docs/reference/cli-commands)                  | All commands and flags                                     |
-| [Environment Variables](https://hermes-agent.nousresearch.com/docs/reference/environment-variables) | Complete env var reference                                 |
-
----
-
-## Migrating from OpenClaw
-
-If you're coming from OpenClaw, Thoth can automatically import your settings, memories, skills, and API keys.
-
-**During first-time setup:** The setup wizard (`hermes setup`) automatically detects `~/.openclaw` and offers to migrate before configuration begins.
-
-**Anytime after install:**
-
-```bash
-hermes claw migrate              # Interactive migration (full preset)
-hermes claw migrate --dry-run    # Preview what would be migrated
-hermes claw migrate --preset user-data   # Migrate without secrets
-hermes claw migrate --overwrite  # Overwrite existing conflicts
-```
-
-What gets imported:
-
-- **SOUL.md** — persona file
-- **Memories** — MEMORY.md and USER.md entries
-- **Skills** — user-created skills → `~/.hermes/skills/openclaw-imports/`
-- **Command allowlist** — approval patterns
-- **Messaging settings** — platform configs, allowed users, working directory
-- **API keys** — allowlisted secrets (Telegram, OpenRouter, OpenAI, Anthropic, ElevenLabs)
-- **TTS assets** — workspace audio files
-- **Workspace instructions** — AGENTS.md (with `--workspace-target`)
-
-See `hermes claw migrate --help` for all options, or use the `openclaw-migration` skill for an interactive agent-guided migration with dry-run previews.
-
----
-
-## Where things live
-
-| Path | What it is |
-|---|---|
-| `apps/desktop/` | The Thoth desktop app (Electron) |
-| `agent/`, `run_agent.py` | The agent turn loop, providers, memory and compression |
-| `hermes_cli/`, `cli.py` | The `hermes` command, setup, config and the desktop app's backend routes |
-| `gateway/` | The messaging gateway and its platform adapters |
-| `tools/` | Tool implementations (terminal, files, browser, TTS, ...) |
-| `plugins/` | Bundled plugins, including `jev-observer` and the model providers |
-| `skills/`, `optional-skills/` | Built-in and optional skills |
-| `scripts/` | Installers (`install.ps1`, `install.sh`), checks and test runner |
-| `tests/` | The Python test suite, mirroring the source tree |
-| `hermes_state*.py` | The session database, split into one file per topic |
-
----
-
-## Contributing
-
-We welcome contributions! See the [Contributing Guide](https://hermes-agent.nousresearch.com/docs/developer-guide/contributing) for development setup, code style, and PR process.
-
-Start with the [PM developer workflow](website/docs/reference/package-management.md#developer-workflow)
-for activation, daily use, dependency changes, and leaving the environment.
-[Development Setup](CONTRIBUTING.md#development-setup) covers the separate test environment and verification commands.
-
----
-
-## Community
-
-- 💬 [Discord](https://discord.gg/NousResearch)
-- 📚 [Skills Hub](https://agentskills.io)
-- 🐛 [Issues](https://github.com/NiceName570/thoth-/issues)
-- 🔌 [computer-use-linux](https://github.com/avifenesh/computer-use-linux) — Linux desktop-control MCP server for Thoth and other MCP hosts, with AT-SPI accessibility trees, Wayland/X11 input, screenshots, and compositor window targeting.
-- 🔌 [HermesClaw](https://github.com/AaronWong1999/hermesclaw) — Community WeChat bridge: Run Thoth and OpenClaw on the same WeChat account.
-
----
+To build the Windows installer yourself, see [apps/desktop/BUILDING.md](apps/desktop/BUILDING.md).
+Development setup and tests are in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
-
-Thoth is a fork of [Hermes Agent](https://github.com/NousResearch/hermes-agent), built by [Nous Research](https://nousresearch.com).
+MIT. See [LICENSE](LICENSE).

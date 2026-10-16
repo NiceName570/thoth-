@@ -48,6 +48,55 @@ def test_edge_synthesis_uses_replacement_endpoint(monkeypatch, tmp_path):
     assert kwargs == {"voice": "en-US-JennyNeural", "rate": "+25%"}
 
 
+class _Throttled(Exception):
+    status = 429
+
+
+def _edge_sdk_failing(tmp_path, failures):
+    sdk = ModuleType("edge_tts_current")  # an SDK already on the new endpoint: no URL migration
+    attempts = []
+
+    class Communicate:
+        def __init__(self, text, **kwargs):
+            self.streamed = False
+
+        async def save(self, path):
+            assert not self.streamed, "the SDK refuses to stream one instance twice"
+            self.streamed = True
+            attempts.append(path)
+            if len(attempts) <= len(failures):
+                raise failures[len(attempts) - 1]
+            tmp_path.joinpath("speech.mp3").write_bytes(b"audio")
+
+    sdk.Communicate = Communicate
+    return sdk, attempts
+
+
+def test_edge_throttle_is_retried_until_speech_arrives(monkeypatch, tmp_path):
+    from tools import tts_edge_endpoint
+    monkeypatch.setattr(tts_edge_endpoint, "EDGE_THROTTLE_RETRY_DELAYS", (0, 0, 0))
+    sdk, attempts = _edge_sdk_failing(tmp_path, [_Throttled(), _Throttled()])
+    monkeypatch.setattr(tts_tool, "_import_edge_tts", lambda: sdk)
+    output = str(tmp_path / "speech.mp3")
+    assert asyncio.run(tts_tool._generate_edge_tts("Hello", output, {})) == output
+    assert len(attempts) == 3
+    assert tmp_path.joinpath("speech.mp3").read_bytes() == b"audio"
+
+
+def test_edge_non_throttle_error_is_not_retried(monkeypatch, tmp_path):
+    from tools import tts_edge_endpoint
+    monkeypatch.setattr(tts_edge_endpoint, "EDGE_THROTTLE_RETRY_DELAYS", (0, 0, 0))
+    sdk, attempts = _edge_sdk_failing(tmp_path, [ValueError("bad voice")])
+    monkeypatch.setattr(tts_tool, "_import_edge_tts", lambda: sdk)
+    try:
+        asyncio.run(tts_tool._generate_edge_tts("Hello", str(tmp_path / "speech.mp3"), {}))
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("a non-429 failure must surface")
+    assert len(attempts) == 1
+
+
 def test_newer_sdk_endpoint_is_preserved(monkeypatch, tmp_path):
     current = "wss://api.msedgeservices.com/tts/cognitiveservices/websocket/v1?Ocp-Apim-Subscription-Key=current-token"
     endpoint, _, _ = _run_edge(monkeypatch, tmp_path, current)

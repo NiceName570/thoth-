@@ -324,6 +324,7 @@ export const arBoot = {
     copy: 'نسخ',
     defaultModel: 'النموذج الافتراضي',
     freeTier: 'الطبقة المجانية',
+    freeDailyModels: 'نماذج مجانية يومية',
     pro: 'مدفوع',
     free: 'مجاني',
     price: (input, output) => `${input} إدخال / ${output} إخراج لكل مليون رمز`,

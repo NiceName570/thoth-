@@ -91,6 +91,7 @@ export const frOnboarding: TranslationOverrides['onboarding'] = {
   copy: 'Copier',
   defaultModel: 'Modèle par défaut',
   freeTier: 'Gratuit',
+  freeDailyModels: 'Modèles gratuits quotidiens',
   pro: 'Pro',
   free: 'Gratuit',
   price: (input, output) => `${input} entrant / ${output} sortant par Mtok`,

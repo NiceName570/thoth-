@@ -73,6 +73,7 @@ export const jaOnboarding: TranslationOverrides['onboarding'] = {
   copy: 'コピー',
   defaultModel: 'デフォルトモデル',
   freeTier: '無料プラン',
+  freeDailyModels: '毎日無料のモデル',
   pro: 'Pro',
   free: '無料',
   price: (input, output) => `${input} 入力 / ${output} 出力 per Mtok`,

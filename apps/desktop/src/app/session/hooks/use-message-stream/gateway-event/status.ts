@@ -26,7 +26,10 @@ export function isFallbackSwitchStatus(kind: string | undefined, text: string): 
     return Boolean(text.trim())
   }
 
-  return /model fallback|provider fallback|switched to fallback|switching to fallback/i.test(text)
+  // Free-model rotation announces itself as "Switched to <Provider>: <model> (free)".
+  return /model fallback|provider fallback|switched to fallback|switching to fallback|^switched to .+\(free\)$/i.test(
+    text.trim()
+  )
 }
 
 /** status.update / review.summary / notification.show / notification.clear /

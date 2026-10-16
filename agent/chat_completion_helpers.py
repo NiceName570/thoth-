@@ -2083,6 +2083,9 @@ def try_activate_fallback(agent, reason: "FailoverReason | None" = None, reset_a
             return _fallback_chain_exhausted(agent, reason)
         fb = agent._fallback_chain[agent._fallback_index]
         agent._fallback_index += 1
+        from agent.free_rotation import skip_for_reason
+        if skip_for_reason(fb, reason):
+            continue
         fb_key = _fallback_entry_key(fb)
         if getattr(agent, "_unavailable_fallback_keys", None) is None:
             agent._unavailable_fallback_keys = set()
@@ -2103,10 +2106,14 @@ def try_activate_fallback(agent, reason: "FailoverReason | None" = None, reset_a
             fb_model = agent.model  # normalized by the binder
             rewrite_prompt_model_identity(agent, fb_model, fb_provider)
 
-            notice = (
-                f"⚠️ Model fallback: {old_model} via {old_provider} unavailable "
-                f"({_fallback_reason_text(reason)}); using {fb_model} via {fb_provider}.")
-            if cooldown_seconds is not None:
+            if fb.get("free_rotation"):
+                from agent.free_rotation import switch_notice
+                notice = switch_notice(fb_provider, fb_model)
+            else:
+                notice = (
+                    f"⚠️ Model fallback: {old_model} via {old_provider} unavailable "
+                    f"({_fallback_reason_text(reason)}); using {fb_model} via {fb_provider}.")
+            if cooldown_seconds is not None and not fb.get("free_rotation"):
                 remaining = max(0, math.ceil(agent._rate_limited_until - time.monotonic()))
                 notice += f" Primary retry eligible in ~{remaining} s; recovery is not guaranteed."
             _buffer_fallback_notice(agent, notice)

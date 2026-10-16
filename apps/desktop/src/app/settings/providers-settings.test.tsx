@@ -447,20 +447,38 @@ describe('ProvidersSettings', () => {
     await waitFor(() => expect(Element.prototype.scrollIntoView).toHaveBeenCalled())
   })
 
-  it('offers a Local / custom endpoint entry in the API-keys tab that opens the custom-endpoint flow', async () => {
-    // Regression: the composer pill and the providers "have an API key"
-    // affordance both dead-end on the env-var-driven key catalog, which never
-    // lists a custom endpoint — so without this row there is no reachable
-    // Desktop GUI path to add one. See issue #62817.
-    getEnvVars.mockResolvedValue({})
+  it('lists providers with free daily models first, each with the badge', async () => {
+    getEnvVars.mockResolvedValue({
+      ANTHROPIC_API_KEY: keyVar({ provider: 'anthropic', provider_label: 'Anthropic' }),
+      KILOCODE_API_KEY: keyVar({ provider: 'kilocode', provider_label: 'Kilo Code' }),
+      OPENROUTER_API_KEY: keyVar({ provider: 'openrouter', provider_label: 'OpenRouter' })
+    })
     listOAuthProviders.mockResolvedValue({ providers: [] })
 
     render(<ProvidersSettings onClose={vi.fn()} onViewChange={vi.fn()} view="keys" />)
+    await screen.findByText('Anthropic')
+
+    const names = ['OpenRouter', 'Kilo Code', 'Anthropic'].map(name => screen.getByText(name))
+    const follows = (a: Element, b: Element) => Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING)
+    expect(follows(names[0], names[1]) && follows(names[1], names[2])).toBe(true)
+    expect(screen.getAllByText('Free daily models')).toHaveLength(2)
+  })
+
+  it('offers a Local / custom endpoint entry in the API-keys tab that opens Custom Endpoints', async () => {
+    // Regression: the key catalog never lists a custom endpoint, so this row is
+    // the API-keys tab's path to adding one (#62817). Thoth adds them only under
+    // Custom Endpoints, never through the setup overlay.
+    getEnvVars.mockResolvedValue({})
+    listOAuthProviders.mockResolvedValue({ providers: [] })
+    const onViewChange = vi.fn()
+
+    render(<ProvidersSettings onClose={vi.fn()} onViewChange={onViewChange} view="keys" />)
 
     const row = await screen.findByText('Local / custom endpoint')
 
     fireEvent.click(row)
 
-    await waitFor(() => expect(startManualLocalEndpoint).toHaveBeenCalledWith(null))
+    await waitFor(() => expect(onViewChange).toHaveBeenCalledWith('custom-endpoints'))
+    expect(startManualLocalEndpoint).not.toHaveBeenCalled()
   })
 })

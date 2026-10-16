@@ -119,7 +119,7 @@ test('nonstable runtime pins userData before the app name can change', async ():
 
 test.each([
   [undefined, 'Thoth', 'hermes', 'latest', 'canary'],
-  ['bundled', 'Thoth Agent', 'hermes', 'latest', 'canary'],
+  ['bundled', 'Thoth', 'hermes', 'latest', 'canary'],
   ['light', 'Thoth Light', 'hermes-light', 'light', 'light-canary']
 ] as const)(
   '%s separates stable, canary and independent commits',
@@ -181,20 +181,18 @@ test.each([
   }
 )
 
-test('light and bundled retain distinct OS markers from the full client', async (): Promise<void> => {
+test('light retains distinct OS markers; the installer build is the same Thoth', async (): Promise<void> => {
   const full: ProductIdentity = await identityForVariant(undefined)
+  const light: ProductIdentity = await identityForVariant('light')
+  const bundled: ProductIdentity = await identityForVariant('bundled')
 
-  for (const variant of ['bundled', 'light']) {
-    const other: ProductIdentity = await identityForVariant(variant)
+  for (const field of ['displayName', 'appId', 'appNamePascal', 'msixAppIdWithOrg', 'channel'] as const) {
+    assert.notEqual(light[field], full[field])
+  }
 
-    for (const field of ['displayName', 'appId', 'appNamePascal'] as const) {
-      assert.notEqual(other[field], full[field])
-    }
-
-    if (variant === 'light') {
-      assert.notEqual(other.msixAppIdWithOrg, full.msixAppIdWithOrg)
-      assert.notEqual(other.channel, full.channel)
-    }
+  // One Thoth: the installer and a source run share the name, app ID and %APPDATA%\Thoth.
+  for (const field of ['displayName', 'appId', 'appNamePascal'] as const) {
+    assert.equal(bundled[field], full[field])
   }
 })
 

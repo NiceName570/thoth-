@@ -57,7 +57,11 @@ export function ComboboxInput({
   const query = value.trim().toLowerCase()
   const isExact = options.some(option => option.toLowerCase() === query)
 
-  const visible = query && !isExact ? options.filter(option => option.toLowerCase().includes(query)) : options
+  // Labels are searchable too, so "french" or "female" finds an Edge voice by its description.
+  const matches = (option: string) =>
+    option.toLowerCase().includes(query) || (optionLabels?.[option]?.toLowerCase().includes(query) ?? false)
+
+  const visible = query && !isExact ? options.filter(matches) : options
   // An empty menu is just a floating border; stay closed until something matches.
   const expanded = open && !disabled && visible.length > 0
 

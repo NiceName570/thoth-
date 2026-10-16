@@ -34,8 +34,8 @@ export const enBoot = {
     // Plain causes for a local backend boot failure (`classifyBootFailure`);
     // the raw output stays behind "Show recent logs".
     causes: {
-      exitedEarly: "Thoth' background service stopped right after starting.",
-      timedOut: "Thoth' background service didn't answer in time.",
+      exitedEarly: "Thoth's background service stopped right after starting.",
+      timedOut: "Thoth's background service didn't answer in time.",
       permission: "Thoth couldn't write to its data folder (permission problem).",
       diskFull: 'The disk is full, so Thoth could not start.',
       portInUse: 'Another program is using the network port Thoth needs.',
@@ -44,7 +44,7 @@ export const enBoot = {
     failure: {
       title: "Thoth couldn't start",
       description:
-        "Thoth' background service didn't come up. Try one of the recovery steps below. Nothing here deletes your chats or settings.",
+        "Thoth's background service didn't come up. Try one of the recovery steps below. Nothing here deletes your chats or settings.",
       details: 'Details',
       remoteTitle: 'Remote gateway sign-in required',
       remoteDescription:

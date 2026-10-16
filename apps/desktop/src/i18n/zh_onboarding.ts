@@ -67,6 +67,7 @@ export const zhOnboarding: TranslationOverrides['onboarding'] = {
   copy: '复制',
   defaultModel: '默认模型',
   freeTier: '免费层',
+  freeDailyModels: '每日免费模型',
   pro: 'Pro',
   free: '免费',
   price: (input, output) => `${input} 输入 / ${output} 输出每 Mtok`,

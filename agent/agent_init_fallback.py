@@ -25,13 +25,17 @@ def _init_fallback_chain(agent, fallback_model):
     from agent.agent_runtime_helpers import sync_credential_pool_entry_id
     sync_credential_pool_entry_id(agent)
 
-    # Ordered backups tried when the primary is exhausted (legacy single-dict or list).
-    agent._fallback_chain = _fallback_entries(fallback_model)
+    # Ordered backups tried when the primary is exhausted (legacy single-dict or list); a free
+    # primary rotates through free models first (agent/free_rotation.py).
+    from agent.free_rotation import with_free_rotation
+    agent._fallback_chain = with_free_rotation(
+        _fallback_entries(fallback_model), getattr(agent, "provider", ""), getattr(agent, "model", ""))
     agent._fallback_index = 0
     agent._fallback_activated = getattr(agent, "_fallback_activated", False)
     # Legacy attribute kept for backward compat (tests, external callers)
     agent._fallback_model = agent._fallback_chain[0] if agent._fallback_chain else None
-    chain = agent._fallback_chain
+    # Free-model rotation entries are implied, not configured: keep them out of the banner.
+    chain = [entry for entry in agent._fallback_chain if not entry.get("free_rotation")]
     if chain and not agent.quiet_mode:
         labels = [f"{f['model']} ({f['provider']})" for f in chain]
         if len(chain) == 1:

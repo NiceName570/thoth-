@@ -17,6 +17,7 @@ import { hermesConfigCacheWriter, useHermesConfigRecord } from '../hooks/use-con
 import { ConfigField } from './config-field'
 import { SECTIONS } from './constants'
 import { diffConfig, enumOptionsFor, getNested, inferFieldSchema, setNested } from './helpers'
+import { EDGE_VOICE_KEY, useEdgeVoices } from './use-edge-voices'
 
 // The curated voice keys (Settings → Voice) are the single source of which
 // per-provider fields exist; both the Voice settings page and the
@@ -141,6 +142,8 @@ export function VoiceProviderFields({
     return () => void (cancelled = true)
   }, [wantsElevenLabs])
 
+  const edgeVoices = useEdgeVoices(keys.includes(EDGE_VOICE_KEY))
+
   if (keys.length === 0 || !config) {
     return null
   }
@@ -159,13 +162,16 @@ export function VoiceProviderFields({
         const value = getNested(config, key)
         const field = schema[key] ?? inferFieldSchema(value)
         const isElVoice = key === 'tts.elevenlabs.voice_id'
+        const isEdgeVoice = key === EDGE_VOICE_KEY
+
+        const dynamicOptions = isElVoice ? (elVoices ?? undefined) : isEdgeVoice ? edgeVoices.options : undefined
 
         return (
           <ConfigField
-            enumOptions={enumOptionsFor(key, value, config, isElVoice ? (elVoices ?? undefined) : undefined)}
+            enumOptions={enumOptionsFor(key, value, config, dynamicOptions)}
             key={key}
             onChange={next => updateConfig(setNested(config, key, next))}
-            optionLabels={isElVoice ? elVoiceLabels : undefined}
+            optionLabels={isElVoice ? elVoiceLabels : isEdgeVoice ? edgeVoices.labels : undefined}
             schema={field}
             schemaKey={key}
             value={value}

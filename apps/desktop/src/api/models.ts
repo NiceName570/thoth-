@@ -131,3 +131,24 @@ export function setModelAssignment(
     body
   })
 }
+
+/** Free mode: only free models from providers with free daily models (never local endpoints). */
+export interface FreeModeState {
+  enabled: boolean
+  /** Main model now in effect; set by a toggle. */
+  model?: string
+  provider?: string
+}
+
+export function getFreeMode(profile?: ProfileScope): Promise<FreeModeState> {
+  return window.hermesDesktop.api<FreeModeState>({ ...capabilityScoped(profile), path: '/api/free-mode' })
+}
+
+export function setFreeMode(enabled: boolean, profile?: ProfileScope): Promise<FreeModeState> {
+  return window.hermesDesktop.api<FreeModeState>({
+    ...capabilityScoped(profile),
+    path: '/api/free-mode',
+    method: 'POST',
+    body: { enabled }
+  })
+}

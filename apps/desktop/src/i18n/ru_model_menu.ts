@@ -8,6 +8,10 @@ export const ruModelMenu = {
   ejectedOllama: (count: number) =>
     count === 0 ? 'Нет загруженных моделей Ollama' : `Выгружено моделей Ollama: ${count}`,
   ejectOllamaFailed: 'Не удалось выгрузить модели Ollama',
+  freeMode: 'Бесплатный режим',
+  freeModeOn: (model: string) => `Бесплатный режим включён: переключено на ${model}`,
+  freeModeOff: 'Бесплатный режим выключен: возврат к вашей модели',
+  freeModeFailed: 'Не удалось изменить бесплатный режим',
   favorites: 'Избранное',
   addFavorite: 'Добавить в избранное',
   removeFavorite: 'Убрать из избранного',

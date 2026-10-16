@@ -47,6 +47,7 @@ const getHermesConfigSchema = vi.fn()
 const saveHermesConfig = vi.fn()
 const saveHermesConfigRecord = vi.fn()
 const getElevenLabsVoices = vi.fn()
+const getEdgeVoices = vi.fn()
 
 vi.mock('@/hermes', () => ({
   // useHermesConfigRecord (via VoiceProviderFields) reads these from the barrel.
@@ -71,6 +72,7 @@ vi.mock('@/hermes', () => ({
   saveHermesConfig: (config: unknown) => saveHermesConfig(config),
   saveHermesConfigRecord: (config: unknown, profile?: unknown) => saveHermesConfigRecord(config, profile),
   getElevenLabsVoices: () => getElevenLabsVoices(),
+  getEdgeVoices: () => getEdgeVoices(),
   // use-config-record keys its query cache by scope via profileScopeKey; a
   // scoped panel reaches it, so the full-replacement mock must provide it.
   profileScopeKey: (scope?: { profile?: string; connectionId?: string } | string) =>
@@ -165,6 +167,7 @@ beforeEach(() => {
   saveHermesConfig.mockResolvedValue({ ok: true })
   saveHermesConfigRecord.mockResolvedValue({ ok: true })
   getElevenLabsVoices.mockResolvedValue({ available: false, voices: [] })
+  getEdgeVoices.mockResolvedValue({ available: false, voices: [] })
 })
 
 afterEach(() => {
@@ -218,6 +221,41 @@ describe('ToolsetConfigPanel', () => {
     // Unscoped panel (no Capabilities override) → profile rides as undefined,
     // preserving the active-profile default. A scoped panel forwards its scope.
     expect(saveHermesConfigRecord.mock.calls.at(-1)?.[1]).toBeUndefined()
+  })
+
+  it('offers the full live Edge voice catalog, searchable by language', async () => {
+    getEdgeVoices.mockResolvedValue({
+      available: true,
+      voices: [
+        { voice_id: 'en-US-AriaNeural', name: 'Aria', label: 'Aria (English (United States), Female)' },
+        { voice_id: 'fr-FR-DeniseNeural', name: 'Denise', label: 'Denise (French (France), Female)' }
+      ]
+    })
+    getToolsetConfig.mockResolvedValue(
+      config({
+        active_provider: 'Microsoft Edge TTS',
+        providers: [
+          {
+            name: 'Microsoft Edge TTS',
+            badge: 'free',
+            tag: 'No key needed',
+            env_vars: [],
+            post_setup: null,
+            requires_nous_auth: false,
+            is_active: true,
+            tts_provider: 'edge'
+          }
+        ]
+      })
+    )
+
+    render(<ToolsetConfigPanel onConfiguredChange={vi.fn()} toolset="tts" />)
+
+    const voiceInput = await screen.findByDisplayValue('en-US-AriaNeural')
+    fireEvent.change(voiceInput, { target: { value: 'french' } })
+    // fr-FR-DeniseNeural is not among the curated suggestions: it comes from the live list, and its
+    // label is what matched "french".
+    expect(await screen.findByText('Denise (French (France), Female)')).toBeTruthy()
   })
 
   it('autosaves the inline voice fields into the profile the panel is scoped to', async () => {

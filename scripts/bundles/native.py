@@ -16,10 +16,12 @@ from pm.registry import get_package, walk
 from pm.store import current_target
 
 def _bundle_package_names() -> list[str]:
+    # Thoth ships no built-in local model runtime (Ollama and LM Studio are Custom Endpoints),
+    # so the llama.cpp engines (about 2 GB on Windows) stay out of the bundle.
     names = [
         n
         for n in _lockfile().names()
-        if not get_package(n).internal or n == "uv"
+        if (not get_package(n).internal or n == "uv") and not n.startswith("llamacpp-")
     ]
     if "python" not in names:
         names.append("python")

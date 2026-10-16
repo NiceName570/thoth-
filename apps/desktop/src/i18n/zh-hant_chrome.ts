@@ -258,6 +258,10 @@ export const zhHantChrome = {
       ejectedOllama: (count: number) =>
         count === 0 ? '沒有已載入的 Ollama 模型' : `已從記憶體卸載 ${count} 個 Ollama 模型`,
       ejectOllamaFailed: '無法卸載 Ollama 模型',
+      freeMode: '免費模式',
+      freeModeOn: (model: string) => `已開啟免費模式：已切換到 ${model}`,
+      freeModeOff: '已關閉免費模式：已切回你的模型',
+      freeModeFailed: '無法變更免費模式',
       favorites: '我的最愛',
       addFavorite: '加入我的最愛',
       removeFavorite: '從我的最愛移除',

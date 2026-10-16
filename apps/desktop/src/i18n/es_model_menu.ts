@@ -8,6 +8,10 @@ export const esModelMenu = {
   ejectedOllama: (count: number) =>
     count === 0 ? 'No había modelos de Ollama cargados' : `${count} modelo(s) de Ollama liberado(s) de la memoria`,
   ejectOllamaFailed: 'No se pudieron expulsar los modelos de Ollama',
+  freeMode: 'Modo gratis',
+  freeModeOn: (model: string) => `Modo gratis activado: cambiado a ${model}`,
+  freeModeOff: 'Modo gratis desactivado: de vuelta a tu modelo',
+  freeModeFailed: 'No se pudo cambiar el modo gratis',
   favorites: 'Favoritos',
   addFavorite: 'Añadir a favoritos',
   removeFavorite: 'Quitar de favoritos',

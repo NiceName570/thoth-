@@ -2,7 +2,7 @@
   "name": "hermes",
   "productName": "Thoth",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Native desktop shell for Thoth.",
   "author": "Nous Research",
   "repository": {

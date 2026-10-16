@@ -1,7 +1,7 @@
 import type { Translations } from './types'
 
 export const enOnboarding: Translations['onboarding'] = {
-  headerTitle: "Let's get you setup with Thoth Agent",
+  headerTitle: "Let's get you set up with Thoth",
   headerDesc: 'Connect a model provider to start chatting. Most options take one click.',
   preparingInstall: 'Thoth is finishing install. This usually takes under a minute on first run.',
   starting: 'Starting Thoth…',
@@ -79,6 +79,7 @@ export const enOnboarding: Translations['onboarding'] = {
   copy: 'Copy',
   defaultModel: 'Default model',
   freeTier: 'Free tier',
+  freeDailyModels: 'Free daily models',
   pro: 'Pro',
   free: 'Free',
   price: (input, output) => `${input} in / ${output} out per Mtok`,

@@ -8,6 +8,7 @@ import type {
   BackendUpdateCheckResponse,
   CuratorStatusResponse,
   DebugShareResponse,
+  EdgeVoicesResponse,
   ElevenLabsVoicesResponse,
   MemoryEntriesResponse,
   MemoryFileEntries,
@@ -132,7 +133,11 @@ export function getMemoryEntries(): Promise<MemoryEntriesResponse> {
 
 /** Rewrites one entry (`content`) or deletes it (`content` null). `entry` is the full
  *  listed text, so a stale page is refused instead of overwriting a newer entry. */
-export function editMemoryEntry(target: MemoryTarget, entry: string, content: null | string): Promise<MemoryFileEntries> {
+export function editMemoryEntry(
+  target: MemoryTarget,
+  entry: string,
+  content: null | string
+): Promise<MemoryFileEntries> {
   return hermesApi<MemoryFileEntries>({
     ...profileScoped(),
     path: '/api/memory/entries',
@@ -286,6 +291,11 @@ export function getElevenLabsVoices(profile?: null | string): Promise<ElevenLabs
     path: '/api/audio/elevenlabs/voices',
     ...profileScoped(profile)
   })
+}
+
+/** Full Edge voice catalog (keyless, so not profile-specific). */
+export function getEdgeVoices(): Promise<EdgeVoicesResponse> {
+  return hermesApi<EdgeVoicesResponse>({ path: '/api/audio/edge/voices', ...profileScoped() })
 }
 
 /** `gh` CLI presence + auth state, for the composer's GitHub skill pill

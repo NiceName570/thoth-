@@ -4,7 +4,7 @@
 
 [project]
 name = "hermes-agent"
-version = "0.0.0"
+version = "0.1.0"
 description = "The self-improving AI agent — creates skills from experience, improves them during use, and runs anywhere"
 readme = "README.md"
 # 3.14 is the newest python we know we have wheels for.
@@ -563,8 +563,11 @@ hermes-acp = "acp_adapter.entry:main"
 # Extras that only an explicit selection installs (setup, sync_venv). Bundles
 # build with --all-extras and pass --no-extra for each of these, so their
 # closures never ship. KittenTTS pulls torch, transformers and spaCy through
-# misaki[en]: installed when the user picks it, not preinstalled.
-opt-in-extras = ["kittentts"]
+# misaki[en]: installed when the user picks it, not preinstalled. silk (pilk) and daytona
+# (obstore) have no CPython 3.14 Windows wheels and would need a C/Rust compiler to bundle.
+# tts-premium (elevenlabs) ships module paths too long for Windows' 260-character limit
+# once installed under Program Files.
+opt-in-extras = ["kittentts", "silk", "daytona", "tts-premium"]
 
 # Per-extra platform gates (settled 2026-09-02): an extra listed here is
 # only installable on platforms matching the marker. pm consults this

@@ -1,5 +1,6 @@
 import { RowButton } from '@/components/ui/row-button'
 import { useI18n } from '@/i18n'
+import { freeDailyModelsRank, hasFreeDailyModels } from '@/lib/free-daily-models'
 import { Check, ChevronRight, Terminal } from '@/lib/icons'
 import { PROVIDER_DISPLAY_NAMES } from '@/lib/model-status-label'
 import type { OAuthProvider } from '@/types/hermes'
@@ -21,8 +22,12 @@ const assetPath = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/
 export const providerTitle = (p: OAuthProvider) => PROVIDER_DISPLAY_NAMES[p.id] ?? p.name
 const orderOf = (p: OAuthProvider) => PROVIDER_ORDER[p.id] ?? 99
 
+// Providers with free daily models lead, in their own order; then the featured order.
 export const sortProviders = (providers: OAuthProvider[]) =>
-  [...providers].sort((a, b) => orderOf(a) - orderOf(b) || a.name.localeCompare(b.name))
+  [...providers].sort(
+    (a, b) =>
+      freeDailyModelsRank(a.id) - freeDailyModelsRank(b.id) || orderOf(a) - orderOf(b) || a.name.localeCompare(b.name)
+  )
 
 export function FeaturedProviderRow({
   onSelect,
@@ -58,6 +63,7 @@ export function FeaturedProviderRow({
               {t.onboarding.recommended}
             </span>
           )}
+          {hasFreeDailyModels(provider.id) && <FreeDailyModelsTag />}
         </div>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
           {freeTier ? t.freeTier.providerRowPitch : t.onboarding.featuredPitch}
@@ -79,6 +85,17 @@ function FreeTierTag() {
   )
 }
 
+/** Badge for a provider that gives some models away every day. */
+export function FreeDailyModelsTag() {
+  const { t } = useI18n()
+
+  return (
+    <span className="inline-flex shrink-0 items-center gap-1 bg-(--ui-green)/10 px-2 py-0.5 text-xs font-medium text-(--ui-green)">
+      {t.onboarding.freeDailyModels}
+    </span>
+  )
+}
+
 function ConnectedTag() {
   const { t } = useI18n()
 
@@ -94,11 +111,24 @@ const PROVIDER_ROW_CLASS =
   'group flex w-full items-center justify-between gap-3 rounded-[6px] px-3 py-2.5 text-left transition-colors hover:bg-(--ui-control-hover-background)'
 
 /** Quick-key row for API-key providers (Fireworks leads the expanded list after Nous, OpenRouter further down). */
-export function KeyProviderRow({ onClick, pitch, title }: { onClick: () => void; pitch: string; title: string }) {
+export function KeyProviderRow({
+  freeDailyModels = false,
+  onClick,
+  pitch,
+  title
+}: {
+  freeDailyModels?: boolean
+  onClick: () => void
+  pitch: string
+  title: string
+}) {
   return (
     <RowButton className={PROVIDER_ROW_CLASS} onClick={onClick}>
       <div className="min-w-0">
-        <span className="text-[length:var(--conversation-text-font-size)] font-semibold">{title}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-[length:var(--conversation-text-font-size)] font-semibold">{title}</span>
+          {freeDailyModels && <FreeDailyModelsTag />}
+        </div>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">{pitch}</p>
       </div>
       <ChevronRight className="size-4 text-muted-foreground transition group-hover:text-foreground" />
@@ -125,7 +155,7 @@ export function LocalModelsProviderRow({ onClick }: { onClick: () => void }) {
 export function OpenRouterProviderRow({ onClick }: { onClick: () => void }) {
   const { t } = useI18n()
 
-  return <KeyProviderRow onClick={onClick} pitch={t.onboarding.openRouterPitch} title="OpenRouter" />
+  return <KeyProviderRow freeDailyModels onClick={onClick} pitch={t.onboarding.openRouterPitch} title="OpenRouter" />
 }
 
 export function ProviderRow({
@@ -148,6 +178,7 @@ export function ProviderRow({
             {freeTier ? t.freeTier.providerRowTitle : providerTitle(provider)}
           </span>
           {freeTier ? <FreeTierTag /> : loggedIn ? <ConnectedTag /> : null}
+          {hasFreeDailyModels(provider.id) && <FreeDailyModelsTag />}
         </div>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">{t.onboarding.flowSubtitles[provider.flow]}</p>
       </div>

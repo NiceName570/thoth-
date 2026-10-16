@@ -233,12 +233,29 @@ module.exports = {
   win: {
     executableName: windowsExecutableName,
     legalTrademarks: displayName,
-    target: ['msix'],
+    // Thoth ships one per-machine installer .exe (Program Files, Start menu, uninstaller); the
+    // Store build keeps its MSIX.
+    target: store ? ['msix'] : ['nsis'],
     // The updaters' relaunch waiter is PowerShell run outside the package. The
     // sealed payload's snapshot omits scripts/, so it ships as a resource
     // (RELAUNCH_WAITER_SCRIPT in electron/updater/relaunch-waiter.ts).
     extraResources: [{ from: 'scripts/update-relaunch-waiter.ps1', to: 'update-relaunch-waiter.ps1' }],
     ...windowsSigning()
+  },
+  nsis: {
+    oneClick: false,
+    perMachine: true,
+    allowElevation: true,
+    allowToChangeInstallationDirectory: true,
+    createDesktopShortcut: true,
+    createStartMenuShortcut: true,
+    shortcutName: displayName,
+    uninstallDisplayName: displayName,
+    installerIcon: 'assets/icon.ico',
+    uninstallerIcon: 'assets/icon.ico',
+    // Settings and conversations outlive an uninstall; reinstalling picks them back up.
+    deleteAppDataOnUninstall: false,
+    artifactName: `${artifactNamePascal}-Setup-\${version}.\${ext}`
   },
   msix: {
     // A store build uses the Partner Center packaging identity (the Store

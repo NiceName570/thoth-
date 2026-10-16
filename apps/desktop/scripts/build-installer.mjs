@@ -7,6 +7,7 @@
 //   node scripts/build-installer.mjs [--app release/win-unpacked] [--version 0.1.0]
 import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
+import { createRequire } from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
@@ -20,7 +21,8 @@ if (!fs.existsSync(path.join(app, 'resources', 'agent-payload'))) {
   throw new Error(`${app} is not a bundled build (no resources/agent-payload); run scripts/bundles/desktop.py first`)
 }
 
-const cli = path.join(path.dirname(fileURLToPath(import.meta.resolve('electron-builder/package.json'))), 'cli.js')
+// The package exports only its API; its CLI sits beside dist/ as cli.js (its `bin`).
+const cli = path.join(path.dirname(createRequire(import.meta.url).resolve('electron-builder')), '..', 'cli.js')
 const result = spawnSync(
   process.execPath,
   [cli, '--config', 'electron-builder.config.cjs', '--prepackaged', app, '--win', 'nsis', '--x64',

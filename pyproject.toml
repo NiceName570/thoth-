@@ -565,7 +565,9 @@ hermes-acp = "acp_adapter.entry:main"
 # closures never ship. KittenTTS pulls torch, transformers and spaCy through
 # misaki[en]: installed when the user picks it, not preinstalled. silk (pilk) and daytona
 # (obstore) have no CPython 3.14 Windows wheels and would need a C/Rust compiler to bundle.
-opt-in-extras = ["kittentts", "silk", "daytona"]
+# tts-premium (elevenlabs) ships module paths too long for Windows' 260-character limit
+# once installed under Program Files.
+opt-in-extras = ["kittentts", "silk", "daytona", "tts-premium"]
 
 # Per-extra platform gates (settled 2026-09-02): an extra listed here is
 # only installable on platforms matching the marker. pm consults this

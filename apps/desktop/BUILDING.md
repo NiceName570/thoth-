@@ -17,7 +17,9 @@ reads from this repository's GitHub releases. The llama.cpp engines are left out
 local models go through Custom Endpoints. Use a short checkout path such as `C:	b` and a short
 `--cache` path: some dependency paths come close to Windows' 260-character limit.
 
-The rest of this page describes the upstream MSIX, DMG and AppImage pipeline the steps above build on.
+## The bundle pipeline
+
+The rest of this page describes the MSIX, DMG and AppImage pipeline the steps above build on.
 
 Use the complete bundle builder for release artifacts. Ordinary `dist:*`
 commands package the current desktop build; they do not stage a fresh runtime.

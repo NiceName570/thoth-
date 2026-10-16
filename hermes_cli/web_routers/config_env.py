@@ -159,8 +159,10 @@ async def update_config(
 
 
 def _provider_card(d, description: str, url, *, is_password: bool, advanced: bool) -> dict:
+    from hermes_cli.provider_key_pages import api_key_page
     return {
-        "provider": d.slug, "provider_label": d.label, "description": description, "url": url,
+        "provider": d.slug, "provider_label": d.label, "description": description,
+        "url": api_key_page(d.slug, url) if is_password else url,
         "is_password": is_password, "advanced": advanced, "category": "provider",
     }
 
@@ -266,6 +268,7 @@ async def get_env_vars(profile: Optional[str] = None):
 
 
 def _get_env_vars_sync(profile: Optional[str] = None):
+    from hermes_cli.provider_key_pages import api_key_page
     with _profile_scope(profile):
         env_on_disk = load_env()
     channel_keys = _channel_managed_env_keys()
@@ -287,7 +290,9 @@ def _get_env_vars_sync(profile: Optional[str] = None):
             # so Desktop can show and edit them in place instead of blanking them.
             "value": value if plain else None,
             "description": info.get("description") or cat_meta.get("description", ""),
-            "url": info.get("url") if info.get("url") is not None else cat_meta.get("url"),
+            # A provider key links to that provider's own key page when Thoth knows it.
+            "url": api_key_page(cat_meta.get("provider", "") if is_password else "",
+                                info.get("url") if info.get("url") is not None else cat_meta.get("url")),
             "category": info.get("category") or cat_meta.get("category", ""),
             "is_password": is_password,
             "tools": info.get("tools", []),

@@ -54,6 +54,7 @@ export interface OnboardingTranslations {
   copy: string
   defaultModel: string
   freeTier: string
+  freeDailyModels: string
   pro: string
   free: string
   price: (input: string, output: string) => string

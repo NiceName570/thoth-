@@ -91,6 +91,7 @@ export const deOnboarding: TranslationOverrides['onboarding'] = {
   copy: 'Kopieren',
   defaultModel: 'Standardmodell',
   freeTier: 'Free-Tier',
+  freeDailyModels: 'Kostenlose Tagesmodelle',
   pro: 'Pro',
   free: 'Kostenlos',
   price: (input, output) => `${input} rein / ${output} raus pro Mtok`,

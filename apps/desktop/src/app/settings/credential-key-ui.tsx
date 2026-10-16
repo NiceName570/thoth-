@@ -1,8 +1,10 @@
 import { type ChangeEvent, type KeyboardEvent } from 'react'
 
+import { FreeDailyModelsTag } from '@/components/onboarding/providers'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { translateNow, useI18n } from '@/i18n'
+import { openExternalLink } from '@/lib/external-link'
 import { ChevronDown, ExternalLink, Loader2, Save, Trash2 } from '@/lib/icons'
 import { isSubmitEnter } from '@/lib/ime'
 import { cn } from '@/lib/utils'
@@ -152,9 +154,13 @@ function CredentialDocsLink({ href }: { href: string }) {
     <a
       className="inline-flex w-fit items-center gap-1 text-[length:var(--conversation-caption-font-size)] text-(--ui-text-tertiary) underline-offset-4 transition-colors hover:text-foreground hover:underline"
       href={href}
-      onClick={e => e.stopPropagation()}
+      onClick={e => {
+        // The window-open policy denies every target=_blank, so a bare link here does nothing.
+        e.preventDefault()
+        e.stopPropagation()
+        openExternalLink(href)
+      }}
       rel="noreferrer"
-      target="_blank"
     >
       {t.settings.credentials.getKey}
       <ExternalLink className="size-3" />
@@ -308,6 +314,8 @@ export function ProviderKeyRows({ expanded, group, onExpand, onToggle, rowProps 
             {group.name}
           </span>
 
+          {group.freeDailyModels && <FreeDailyModelsTag />}
+
           {expandable && (
             <ChevronDown
               className={cn(
@@ -407,6 +415,7 @@ export interface ProviderKeyRowGroup {
   advanced: [string, EnvVarInfo][]
   description?: string
   docsUrl?: string
+  freeDailyModels?: boolean
   hasAnySet: boolean
   name: string
   primary: [string, EnvVarInfo]

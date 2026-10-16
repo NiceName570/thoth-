@@ -326,6 +326,7 @@ export const zhHantBoot = {
     copy: '複製',
     defaultModel: '預設模型',
     freeTier: '免費層',
+    freeDailyModels: '每日免費模型',
     pro: 'Pro',
     free: '免費',
     price: (input, output) => `${input} 輸入 / ${output} 輸出 每 Mtok`,

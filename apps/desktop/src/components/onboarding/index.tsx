@@ -52,6 +52,7 @@ import {
 
 export {
   FireworksProviderRow,
+  FreeDailyModelsTag,
   KeyProviderRow,
   LocalModelsProviderRow,
   OpenRouterProviderRow,

@@ -79,6 +79,7 @@ export const enOnboarding: Translations['onboarding'] = {
   copy: 'Copy',
   defaultModel: 'Default model',
   freeTier: 'Free tier',
+  freeDailyModels: 'Free daily models',
   pro: 'Pro',
   free: 'Free',
   price: (input, output) => `${input} in / ${output} out per Mtok`,

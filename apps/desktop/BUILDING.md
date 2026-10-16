@@ -11,10 +11,10 @@ python scripts/bundles/desktop.py --prepared .build\desktop-job\prepared.json --
 node apps/desktop/scripts/build-installer.mjs
 ```
 
-A stable `--tag` build needs a local claim tag, as `scriptsuild-bundle.ps1 -Store` makes one.
+A stable `--tag` build needs a local claim tag, as `scripts/build-bundle.ps1 -Store` makes one.
 The installer lands in `apps/desktop/release/` next to `latest.yml`, which the app's updater
 reads from this repository's GitHub releases. The llama.cpp engines are left out of the bundle;
-local models go through Custom Endpoints. Use a short checkout path such as `C:	b` and a short
+local models go through Custom Endpoints. Use a short checkout path such as `C:/tb` and a short
 `--cache` path: some dependency paths come close to Windows' 260-character limit.
 
 ## The bundle pipeline

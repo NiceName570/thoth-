@@ -21,6 +21,9 @@ Download the installer, open Thoth, add a free key from Cline, OpenRouter or Kil
 chatting. When a free model hits its daily limit, Thoth moves the conversation to the next free
 model by itself, so you can keep going without paying.
 
+The installer isn't code-signed yet, so Windows may show a SmartScreen prompt: choose
+**More info**, then **Run anyway**.
+
 *Thoth is built on [Hermes Agent](https://github.com/NousResearch/hermes-agent) and is now going its own way.*
 
 ## What Thoth does

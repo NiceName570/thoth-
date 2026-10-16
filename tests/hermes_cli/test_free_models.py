@@ -44,6 +44,7 @@ def test_unknown_credits_keeps_every_model_and_marks_free(free_lists, monkeypatc
 
     assert row["models"] == ["cline-pass/glm-5.3", "c/three:free"]
     assert row["pricing"]["c/three:free"]["free"] is True
+    assert row["featured_models"] == ["c/three:free"]
     assert "cline-pass/glm-5.3" not in row["pricing"]
 
 

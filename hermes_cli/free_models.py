@@ -350,3 +350,6 @@ def decorate_picker_rows(rows: list[dict]) -> None:
         if isinstance(row.get("total_models"), int):
             row["total_models"] = len(row["models"])
         row["pricing"] = pricing
+        # Featured models are what the picker shows before the user curates it: free ones included.
+        featured = row.get("featured_models") if isinstance(row.get("featured_models"), list) else []
+        row["featured_models"] = free if free_mode else featured + [m for m in free if m not in featured]

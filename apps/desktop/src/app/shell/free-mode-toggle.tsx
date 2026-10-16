@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
+import { Codicon } from '@/components/ui/codicon'
 import { DropdownMenuCheckboxItem } from '@/components/ui/dropdown-menu'
 import { getFreeMode, setFreeMode } from '@/hermes'
 import { useI18n } from '@/i18n'
@@ -55,6 +56,7 @@ export function FreeModeToggle({ className, controller, onChanged, ownerConnecti
       onCheckedChange={checked => void toggle(checked === true)}
       onSelect={event => event.preventDefault()}
     >
+      <Codicon name="gift" size="0.75rem" />
       {copy.freeMode}
     </DropdownMenuCheckboxItem>
   )

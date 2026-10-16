@@ -58,6 +58,13 @@ describe('desktop fallback switch', () => {
     expect(systemText(updateSessionState)).toMatch(/fallback/i)
   })
 
+  it('shows a free-model rotation switch in the transcript', () => {
+    const { ctx, updateSessionState } = statusContext('Switched to OpenRouter: dots-studio/dots-3-note-preview:free (free)')
+
+    expect(handleStatusEvent(ctx)).toBe(true)
+    expect(systemText(updateSessionState)).toBe('Switched to OpenRouter: dots-studio/dots-3-note-preview:free (free)')
+  })
+
   it('does not turn unrelated lifecycle status into a transcript line', () => {
     const { ctx, updateSessionState } = statusContext('⚠️ Rate limited — retrying')
 

@@ -67,3 +67,17 @@ def test_free_mode_drops_paid_fallbacks(rotation, monkeypatch):
     chain = free_rotation.with_free_rotation([configured], "openrouter", "o/one:free")
 
     assert configured not in chain and all(e["free_rotation"] for e in chain)
+
+
+def test_per_message_chain_refresh_keeps_free_rotation(rotation):
+    """The gateway re-applies the configured chain before every message; that refresh must keep
+    the free-model rotation, or a free model's first rate limit ends the turn."""
+    from types import SimpleNamespace
+
+    from gateway.run import GatewayRunner
+
+    agent = SimpleNamespace(provider="openrouter", model="o/one:free", _fallback_chain=[], _fallback_model=None,
+                            _fallback_index=0, _fallback_activated=False, _rate_limited_until=0)
+    GatewayRunner._apply_fallback_chain_to_agent(agent, [])
+
+    assert _pairs(agent._fallback_chain)[:2] == [("openrouter", "o/two:free"), ("openrouter", "o/three:free")]

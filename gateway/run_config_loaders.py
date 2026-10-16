@@ -558,7 +558,10 @@ class GatewayConfigLoadersMixin:
         """
         if agent is None:
             return
-        new_chain = list(chain or [])
+        # The configured chain plus free-model rotation (agent/free_rotation.py), as at agent init.
+        from agent.free_rotation import with_free_rotation
+        new_chain = with_free_rotation(
+            list(chain or []), str(getattr(agent, "provider", "") or ""), str(getattr(agent, "model", "") or ""))
         rate_limited_until = getattr(agent, "_rate_limited_until", 0) or 0
         if getattr(agent, "_fallback_activated", False) and rate_limited_until > time.monotonic():
             return

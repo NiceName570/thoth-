@@ -559,9 +559,15 @@ class GatewayConfigLoadersMixin:
         if agent is None:
             return
         # The configured chain plus free-model rotation (agent/free_rotation.py), as at agent init.
+        # Built around the primary, not an active fallback, so the chain (and _fallback_index into
+        # it) stays the same from one message to the next.
         from agent.free_rotation import with_free_rotation
+        primary = getattr(agent, "_primary_runtime", None)
+        primary = primary if isinstance(primary, dict) else {}
         new_chain = with_free_rotation(
-            list(chain or []), str(getattr(agent, "provider", "") or ""), str(getattr(agent, "model", "") or ""))
+            list(chain or []),
+            str(primary.get("provider") or getattr(agent, "provider", "") or ""),
+            str(primary.get("model") or getattr(agent, "model", "") or ""))
         rate_limited_until = getattr(agent, "_rate_limited_until", 0) or 0
         if getattr(agent, "_fallback_activated", False) and rate_limited_until > time.monotonic():
             return

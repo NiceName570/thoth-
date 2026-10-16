@@ -10,6 +10,7 @@ process-wide timer refreshes it once a day.
 
 from __future__ import annotations
 
+import contextvars
 import json
 import logging
 import os
@@ -24,6 +25,8 @@ logger = logging.getLogger(__name__)
 FREE_MODEL_PROVIDERS: tuple[str, ...] = ("cline", "nous", "openrouter", "kilocode", "opencode-zen")
 
 REFRESH_SECONDS = 24 * 60 * 60
+# A refresh that reached no provider at all (offline, first launch) is retried this soon instead.
+_RETRY_SECONDS = 15 * 60
 _CREDITS_TTL_SECONDS = 60 * 60
 _TIMEOUT = 8.0
 
@@ -55,7 +58,7 @@ def _write_cache(data: dict, path: Optional[Path] = None) -> None:
     path = path or _cache_path()
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = path.with_suffix(".tmp")
+        tmp = path.with_suffix(f".{os.getpid()}.{threading.get_ident()}.tmp")
         tmp.write_text(json.dumps(data, indent=1), encoding="utf-8")
         os.replace(tmp, path)
     except OSError:
@@ -155,6 +158,7 @@ def refresh_free_models(providers: tuple[str, ...] = FREE_MODEL_PROVIDERS,
     to one failed request."""
     cache = _read_cache(path)
     lists = dict(cache.get("providers") or {})
+    reached = False
     for slug in providers:
         try:
             fresh = _FETCHERS[slug]()
@@ -163,7 +167,9 @@ def refresh_free_models(providers: tuple[str, ...] = FREE_MODEL_PROVIDERS,
             fresh = []
         if fresh:
             lists[slug] = fresh
-    _write_cache({"fetched_at": time.time(), "providers": lists}, path)
+            reached = True
+    now = time.time()
+    _write_cache({"fetched_at": now if reached else now - REFRESH_SECONDS + _RETRY_SECONDS, "providers": lists}, path)
     return lists
 
 
@@ -182,7 +188,9 @@ def _refresh_in_background() -> None:
             with _lock:
                 _refreshing.discard(str(path))
 
-    threading.Thread(target=_run, name="free-models-refresh", daemon=True).start()
+    # The caller's context carries its profile scope, so keys and base URLs come from that profile.
+    ctx = contextvars.copy_context()
+    threading.Thread(target=ctx.run, args=(_run,), name="free-models-refresh", daemon=True).start()
 
 
 def free_models_by_provider(*, blocking: bool = False) -> dict[str, list[str]]:
@@ -215,15 +223,20 @@ def ensure_daily_refresh() -> None:
             return
         _timer_started = True
 
+    # Bound to the profile that started it; other profiles refresh when their picker opens on a
+    # list older than a day.
+    path = _cache_path()
+
     def _loop() -> None:
         while True:
             time.sleep(REFRESH_SECONDS)
             try:
-                refresh_free_models()
+                refresh_free_models(path=path)
             except Exception:
                 logger.debug("Daily free-model refresh failed", exc_info=True)
 
-    threading.Thread(target=_loop, name="free-models-daily", daemon=True).start()
+    ctx = contextvars.copy_context()
+    threading.Thread(target=ctx.run, args=(_loop,), name="free-models-daily", daemon=True).start()
 
 
 # ─── Credits ────────────────────────────────────────────────────────────
@@ -292,7 +305,8 @@ def credit_state(provider: str, *, blocking: bool = False) -> str:
 
     if blocking:
         return _read()
-    threading.Thread(target=_read, name=f"credits-{slug}", daemon=True).start()
+    ctx = contextvars.copy_context()
+    threading.Thread(target=ctx.run, args=(_read,), name=f"credits-{slug}", daemon=True).start()
     return cached[1] if cached else CREDITS_UNKNOWN
 
 

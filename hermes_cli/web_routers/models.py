@@ -460,7 +460,9 @@ async def set_free_mode(body: FreeModeToggle, profile: Optional[str] = None):
                     previous = {key: str(model_cfg.get(src) or "") for key, src in
                                 (("provider", "provider"), ("model", "default"), ("base_url", "base_url"))}
             else:
-                target = (previous.get("provider", ""), previous.get("model", ""), previous.get("base_url", ""))                     if previous.get("provider") and previous.get("model") else None
+                target = None
+                if previous.get("provider") and previous.get("model"):
+                    target = (previous["provider"], previous["model"], previous.get("base_url", ""))
             prepared = _prepare_main_assignment(load_config(), *target, "") if target else None
             with _CONFIG_MUTATION_LOCK:
                 if target:

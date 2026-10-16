@@ -81,3 +81,16 @@ def test_per_message_chain_refresh_keeps_free_rotation(rotation):
     GatewayRunner._apply_fallback_chain_to_agent(agent, [])
 
     assert _pairs(agent._fallback_chain)[:2] == [("openrouter", "o/two:free"), ("openrouter", "o/three:free")]
+
+
+def test_chain_refresh_on_an_active_fallback_keeps_the_primarys_chain(rotation):
+    from types import SimpleNamespace
+
+    from gateway.run import GatewayRunner
+
+    agent = SimpleNamespace(provider="openrouter", model="o/two:free", _primary_runtime={"provider": "openrouter", "model": "o/one:free"},
+                            _fallback_chain=[], _fallback_model=None, _fallback_index=1, _fallback_activated=True,
+                            _rate_limited_until=0)
+    GatewayRunner._apply_fallback_chain_to_agent(agent, [])
+
+    assert _pairs(agent._fallback_chain)[:2] == [("openrouter", "o/two:free"), ("openrouter", "o/three:free")]

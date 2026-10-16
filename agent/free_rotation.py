@@ -15,16 +15,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-_FREE_SUFFIXES = (":free", "-free")
-
-
-def _lists(model: str) -> dict[str, list[str]]:
+def _lists() -> dict[str, list[str]]:
+    """Cached lists only: this runs on the message path, so a missing or stale list refreshes in
+    the background and rotation picks it up from the next message."""
     from hermes_cli.free_models import free_models_by_provider
-    lists = free_models_by_provider()
-    # First run: no list yet. A model that names itself free is worth one inline fetch.
-    if not any(lists.values()) and model.endswith(_FREE_SUFFIXES):
-        lists = free_models_by_provider(blocking=True)
-    return lists
+    return free_models_by_provider()
 
 
 def _provider_order(start: str | None) -> list[str]:
@@ -45,7 +40,7 @@ def free_rotation_chain(provider: str, model: str) -> list[dict]:
     slug, model = (provider or "").strip().lower(), (model or "").strip()
     if not model:
         return []
-    lists = _lists(model)
+    lists = _lists()
     own = lists.get(slug) or []
     if model not in own:
         return []
@@ -57,7 +52,7 @@ def free_rotation_chain(provider: str, model: str) -> list[dict]:
 def credits_fallback_chain(provider: str, model: str) -> list[dict]:
     """For a paid model: every signed-in provider's free models, tried only once the account is
     out of credits."""
-    lists = _lists((model or "").strip())
+    lists = _lists()
     slug = (provider or "").strip().lower()
     return [{"provider": p, "model": m, "free_rotation": True, "on_credits_only": True}
             for p, m in _signed_in_free_models(lists, slug) if (p, m) != (slug, model)]

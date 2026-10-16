@@ -77,3 +77,13 @@ def test_free_mode_lists_only_free_models_and_drops_local_endpoints(free_lists, 
 
     assert [r["slug"] for r in rows] == ["openrouter"]
     assert rows[0]["models"] == ["a/one:free", "b/two:free"] and "warning" not in rows[0]
+
+
+def test_refresh_that_reaches_no_provider_retries_soon(free_lists, monkeypatch):
+    for slug in free_models.FREE_MODEL_PROVIDERS:
+        monkeypatch.setitem(free_models._FETCHERS, slug, list)
+
+    free_models.refresh_free_models()
+
+    fetched_at = json.loads(free_lists.read_text())["fetched_at"]
+    assert time.time() - fetched_at > free_models.REFRESH_SECONDS - 16 * 60

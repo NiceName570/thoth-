@@ -2153,7 +2153,8 @@ def _inject_context_engine_tools(agent):
 
 def _configure_ollama_num_ctx(agent, _model_cfg, _config_context_length):
     # Ollama defaults num_ctx to 2048, so detect the max window and send num_ctx per request.
-    # model.ollama_num_ctx overrides; model.context_length caps the detected value (VRAM).
+    # model.ollama_num_ctx overrides; otherwise the Context setting (model.context_length or the
+    # custom endpoint's context_length) is the window sent, and Auto (unset) uses the model's own.
     agent._ollama_num_ctx: int | None = None
     _override = _model_cfg.get("ollama_num_ctx") if isinstance(_model_cfg, dict) else None
     if _override is not None:
@@ -2170,16 +2171,15 @@ def _configure_ollama_num_ctx(agent, _model_cfg, _config_context_length):
                 agent._ollama_num_ctx = _detected
         except Exception as exc:
             _ra().logger.debug("Local server num_ctx detection failed: %s", exc)
-    # Cap auto-detected num_ctx to the explicit context_length (GGUF metadata can advertise
-    # 256K+ and Ollama would allocate that much VRAM); never override an explicit num_ctx.
+    # The Context setting decides the window in both directions; never override an explicit num_ctx.
     if (
         agent._ollama_num_ctx
         and _config_context_length
         and _override is None
-        and agent._ollama_num_ctx > _config_context_length
+        and agent._ollama_num_ctx != _config_context_length
     ):
         _ra().logger.info(
-            "Ollama num_ctx capped: %d -> %d (model.context_length override)",
+            "Ollama num_ctx set from the Context setting: %d -> %d",
             agent._ollama_num_ctx, _config_context_length,
         )
         agent._ollama_num_ctx = _config_context_length

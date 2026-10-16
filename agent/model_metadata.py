@@ -1449,18 +1449,19 @@ def _is_ollama_server(base_url: str, api_key: str) -> bool:
 
 
 def query_ollama_num_ctx(model: str, base_url: str, api_key: str = "") -> Optional[int]:
-    """Ollama ``/api/show`` context (Modelfile num_ctx, else GGUF max capped at the 64K floor); sent as ``num_ctx``."""
+    """Ollama ``/api/show`` context (Modelfile num_ctx, else the GGUF max); sent as ``num_ctx``.
+    Uncapped: the endpoint's Context setting (``context_length``) is what bounds it, not a fixed floor."""
     bare_model, server_url = _strip_provider_prefix(model), _server_root(base_url)
     if not _is_ollama_server(base_url, api_key):
         return None
     _disk_key = f"{server_url}|{bare_model}"
-    disk_hit = _local_probe_disk_get("ollama_num_ctx_capped", _disk_key)
+    disk_hit = _local_probe_disk_get("ollama_num_ctx", _disk_key)
     if isinstance(disk_hit, int) and disk_hit > 0:
         return disk_hit
     data = _ollama_show(server_url, api_key, bare_model)
-    ctx = _ollama_show_context(data, gguf_first=False, gguf_cap=MINIMUM_CONTEXT_LENGTH) if data else None
+    ctx = _ollama_show_context(data, gguf_first=False) if data else None
     if ctx is not None:
-        _local_probe_disk_put("ollama_num_ctx_capped", _disk_key, ctx)
+        _local_probe_disk_put("ollama_num_ctx", _disk_key, ctx)
     return ctx
 
 

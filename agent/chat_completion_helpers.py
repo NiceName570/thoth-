@@ -2083,6 +2083,9 @@ def try_activate_fallback(agent, reason: "FailoverReason | None" = None, reset_a
             return _fallback_chain_exhausted(agent, reason)
         fb = agent._fallback_chain[agent._fallback_index]
         agent._fallback_index += 1
+        from agent.free_rotation import skip_for_reason
+        if skip_for_reason(fb, reason):
+            continue
         fb_key = _fallback_entry_key(fb)
         if getattr(agent, "_unavailable_fallback_keys", None) is None:
             agent._unavailable_fallback_keys = set()

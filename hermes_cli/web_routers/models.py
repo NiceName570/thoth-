@@ -18,7 +18,7 @@ from hermes_cli.web_server_config import (
 )
 from agent.model_metadata import is_local_endpoint
 from starlette.concurrency import run_in_threadpool
-from hermes_cli.web_models import ModelAssignment, MoaConfigPayload, MoaModelSlot
+from hermes_cli.web_models import FreeModeToggle, ModelAssignment, MoaConfigPayload, MoaModelSlot
 from hermes_cli.web_routers._common import _CONFIG_MUTATION_LOCK, config_write_scope, http_failure
 
 _log = logging.getLogger("hermes_cli.web_server")
@@ -425,3 +425,57 @@ async def set_model_assignment(body: ModelAssignment, profile: Optional[str] = N
                         reasoning_effort=reasoning_effort, prepared=prepared)
 
         return await asyncio.to_thread(_apply_assignment)
+
+
+_FREE_MODE_NEEDS_PROVIDER = ("Free mode needs a provider with free daily models. Add a key for Cline, OpenRouter, "
+                             "Kilo Code or OpenCode Zen, or sign in to Nous, under Settings > Providers.")
+
+
+@router.get("/api/free-mode")
+def get_free_mode(profile: Optional[str] = None):
+    from hermes_cli.free_models import free_mode_enabled
+    with _config_profile_scope(profile):
+        return {"enabled": free_mode_enabled()}
+
+
+@router.post("/api/free-mode")
+async def set_free_mode(body: FreeModeToggle, profile: Optional[str] = None):
+    """Free mode on: the main model becomes the first signed-in provider's first free model, and
+    only free models are listed and rotated through. Off: the main model goes back to the one in
+    use before Free mode was turned on. Returns the main model now in effect."""
+    from hermes_cli.free_models import first_free_model
+
+    def _toggle():
+        with _profile_scope(body.profile or profile):
+            model_cfg = load_config().get("model")
+            model_cfg = model_cfg if isinstance(model_cfg, dict) else {}
+            was_on = model_cfg.get("free_mode") is True
+            previous = model_cfg.get("free_mode_previous") if isinstance(model_cfg.get("free_mode_previous"), dict) else {}
+            if body.enabled:
+                pick = first_free_model()
+                if pick is None:
+                    raise HTTPException(status_code=409, detail=_FREE_MODE_NEEDS_PROVIDER)
+                target = (pick[0], pick[1], "")
+                if not was_on:
+                    previous = {key: str(model_cfg.get(src) or "") for key, src in
+                                (("provider", "provider"), ("model", "default"), ("base_url", "base_url"))}
+            else:
+                target = (previous.get("provider", ""), previous.get("model", ""), previous.get("base_url", ""))                     if previous.get("provider") and previous.get("model") else None
+            prepared = _prepare_main_assignment(load_config(), *target, "") if target else None
+            with _CONFIG_MUTATION_LOCK:
+                if target:
+                    _apply_model_assignment_sync("main", target[0], target[1], "", target[2], prepared=prepared)
+                cfg = load_config()
+                raw = cfg.get("model")
+                section = cfg["model"] = raw if isinstance(raw, dict) else ({"default": raw} if raw else {})
+                section["free_mode"] = bool(body.enabled)
+                if body.enabled:
+                    section["free_mode_previous"] = previous
+                else:
+                    section.pop("free_mode_previous", None)
+                save_config(cfg)
+                return {"enabled": bool(body.enabled), "provider": str(section.get("provider") or ""),
+                        "model": str(section.get("default") or "")}
+
+    with http_failure("POST /api/free-mode failed", 500, detail="Failed to change Free mode"):
+        return await asyncio.to_thread(_toggle)

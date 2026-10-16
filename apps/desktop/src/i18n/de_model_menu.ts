@@ -8,6 +8,10 @@ export const deModelMenu = {
   ejectedOllama: (count: number) =>
     count === 0 ? 'Keine Ollama-Modelle geladen' : `${count} Ollama-Modell(e) aus dem Speicher entfernt`,
   ejectOllamaFailed: 'Ollama-Modelle konnten nicht ausgeworfen werden',
+  freeMode: 'Gratis-Modus',
+  freeModeOn: (model: string) => `Gratis-Modus an: gewechselt zu ${model}`,
+  freeModeOff: 'Gratis-Modus aus: zurück zu deinem Modell',
+  freeModeFailed: 'Gratis-Modus konnte nicht geändert werden',
   favorites: 'Favoriten',
   addFavorite: 'Zu Favoriten hinzufügen',
   removeFavorite: 'Aus Favoriten entfernen',

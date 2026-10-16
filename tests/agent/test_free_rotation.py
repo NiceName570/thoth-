@@ -15,6 +15,7 @@ def rotation(monkeypatch):
     monkeypatch.setattr(free_models, "free_models_by_provider", lambda blocking=False: dict(LISTS))
     signed_in = {"cline", "openrouter", "kilocode"}
     monkeypatch.setattr(free_rotation, "_signed_in", lambda p: p in signed_in)
+    monkeypatch.setattr(free_models, "free_mode_enabled", lambda: False)
 
 
 def _pairs(chain):
@@ -39,8 +40,30 @@ def test_rotation_goes_before_configured_fallbacks_and_is_rebuilt_on_switch(rota
     assert _pairs(first)[0] == ("openrouter", "o/one:free") and first[-1] == configured
 
     switched = free_rotation.with_free_rotation(first, "anthropic", "claude-sonnet-5")
-    assert switched == [configured]
+    assert switched[0] == configured and all(e.get("on_credits_only") for e in switched[1:])
 
 
 def test_switch_notice_names_provider_and_model():
     assert free_rotation.switch_notice("openrouter", "o/two:free") == "Switched to OpenRouter: o/two:free (free)"
+
+
+def test_paid_model_falls_back_to_free_models_only_when_credits_run_out(rotation, monkeypatch):
+    from agent.error_classifier import FailoverReason
+    monkeypatch.setattr(free_models, "free_mode_enabled", lambda: False)
+    configured = {"provider": "anthropic", "model": "claude-haiku-5.5"}
+
+    chain = free_rotation.with_free_rotation([configured], "anthropic", "claude-sonnet-5")
+
+    assert chain[0] == configured and _pairs(chain[1:3]) == [("cline", "c/one:free"), ("openrouter", "o/one:free")]
+    assert free_rotation.skip_for_reason(chain[1], FailoverReason.rate_limit) is True
+    assert free_rotation.skip_for_reason(chain[1], FailoverReason.billing) is False
+    assert free_rotation.skip_for_reason(configured, FailoverReason.rate_limit) is False
+
+
+def test_free_mode_drops_paid_fallbacks(rotation, monkeypatch):
+    monkeypatch.setattr(free_models, "free_mode_enabled", lambda: True)
+    configured = {"provider": "anthropic", "model": "claude-haiku-5.5"}
+
+    chain = free_rotation.with_free_rotation([configured], "openrouter", "o/one:free")
+
+    assert configured not in chain and all(e["free_rotation"] for e in chain)

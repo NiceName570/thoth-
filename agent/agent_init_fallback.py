@@ -34,7 +34,8 @@ def _init_fallback_chain(agent, fallback_model):
     agent._fallback_activated = getattr(agent, "_fallback_activated", False)
     # Legacy attribute kept for backward compat (tests, external callers)
     agent._fallback_model = agent._fallback_chain[0] if agent._fallback_chain else None
-    chain = agent._fallback_chain
+    # Free-model rotation entries are implied, not configured: keep them out of the banner.
+    chain = [entry for entry in agent._fallback_chain if not entry.get("free_rotation")]
     if chain and not agent.quiet_mode:
         labels = [f"{f['model']} ({f['provider']})" for f in chain]
         if len(chain) == 1:

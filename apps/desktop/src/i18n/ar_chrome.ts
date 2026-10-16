@@ -358,6 +358,10 @@ export const arChrome = {
       ejectedOllama: (count: number) =>
         count === 0 ? 'لا توجد نماذج Ollama محمّلة' : `تم إخراج ${count} من نماذج Ollama من الذاكرة`,
       ejectOllamaFailed: 'تعذّر إخراج نماذج Ollama',
+      freeMode: 'الوضع المجاني',
+      freeModeOn: (model: string) => `تم تشغيل الوضع المجاني: تم التبديل إلى ${model}`,
+      freeModeOff: 'تم إيقاف الوضع المجاني: العودة إلى نموذجك',
+      freeModeFailed: 'تعذر تغيير الوضع المجاني',
       favorites: 'المفضلة',
       addFavorite: 'إضافة إلى المفضلة',
       removeFavorite: 'إزالة من المفضلة',

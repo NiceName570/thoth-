@@ -8,6 +8,10 @@ export const jaModelMenu = {
   ejectedOllama: (count: number) =>
     count === 0 ? '読み込まれた Ollama モデルはありません' : `Ollama モデル ${count} 件をメモリから解放しました`,
   ejectOllamaFailed: 'Ollama モデルをアンロードできませんでした',
+  freeMode: '無料モード',
+  freeModeOn: (model: string) => `無料モードをオン: ${model} に切り替えました`,
+  freeModeOff: '無料モードをオフ: 元のモデルに戻しました',
+  freeModeFailed: '無料モードを変更できませんでした',
   favorites: 'お気に入り',
   addFavorite: 'お気に入りに追加',
   removeFavorite: 'お気に入りから削除',

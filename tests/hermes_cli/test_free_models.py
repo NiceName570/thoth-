@@ -24,6 +24,7 @@ def _row(slug, models):
 
 
 def test_no_credits_lists_only_free_models(free_lists, monkeypatch):
+    monkeypatch.setattr(free_models, "free_mode_enabled", lambda: False)
     monkeypatch.setattr(free_models, "credit_state", lambda slug: free_models.CREDITS_NONE)
     row = _row("openrouter", ["paid/model", "a/one:free"])
 
@@ -35,6 +36,7 @@ def test_no_credits_lists_only_free_models(free_lists, monkeypatch):
 
 
 def test_unknown_credits_keeps_every_model_and_marks_free(free_lists, monkeypatch):
+    monkeypatch.setattr(free_models, "free_mode_enabled", lambda: False)
     monkeypatch.setattr(free_models, "credit_state", lambda slug: free_models.CREDITS_UNKNOWN)
     row = _row("cline", ["cline-pass/glm-5.3"])
 
@@ -62,3 +64,15 @@ def test_failed_catalog_read_keeps_the_last_list(free_lists, monkeypatch):
 
     assert lists["openrouter"] == ["a/one:free", "b/two:free"]
     assert lists["cline"] == ["c/new:free"]
+
+
+def test_free_mode_lists_only_free_models_and_drops_local_endpoints(free_lists, monkeypatch):
+    monkeypatch.setattr(free_models, "free_mode_enabled", lambda: True)
+    monkeypatch.setattr(free_models, "credit_state", lambda slug: free_models.CREDITS_AVAILABLE)
+    rows = [_row("openrouter", ["paid/model", "a/one:free"]), _row("anthropic", ["claude-sonnet-5"]),
+            _row("custom:ollama", ["qwen3:14b"])]
+
+    free_models.decorate_picker_rows(rows)
+
+    assert [r["slug"] for r in rows] == ["openrouter"]
+    assert rows[0]["models"] == ["a/one:free", "b/two:free"] and "warning" not in rows[0]

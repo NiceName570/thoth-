@@ -8,6 +8,10 @@ export const zhModelMenu = {
   ejectedOllama: (count: number) =>
     count === 0 ? '没有已加载的 Ollama 模型' : `已从内存卸载 ${count} 个 Ollama 模型`,
   ejectOllamaFailed: '无法卸载 Ollama 模型',
+  freeMode: '免费模式',
+  freeModeOn: (model: string) => `已开启免费模式：已切换到 ${model}`,
+  freeModeOff: '已关闭免费模式：已切回你的模型',
+  freeModeFailed: '无法更改免费模式',
   favorites: '收藏',
   addFavorite: '添加到收藏',
   removeFavorite: '从收藏中移除',

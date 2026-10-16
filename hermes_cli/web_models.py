@@ -102,6 +102,13 @@ class ManagedFileDelete(BaseModel):
     path: str
     recursive: bool = False
 
+class FreeModeToggle(BaseModel):
+    """POST /api/free-mode — turn Free mode on (only free models) or off (back to the model
+    chosen before it was turned on)."""
+    enabled: bool
+    profile: Optional[str] = None
+
+
 class ModelAssignment(BaseModel):
     """POST /api/model/set — assign a provider/model to a slot.
 

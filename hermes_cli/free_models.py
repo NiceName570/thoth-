@@ -296,6 +296,27 @@ def credit_state(provider: str, *, blocking: bool = False) -> str:
     return cached[1] if cached else CREDITS_UNKNOWN
 
 
+# ─── Free mode ──────────────────────────────────────────────────────────
+
+def free_mode_enabled() -> bool:
+    """``model.free_mode``: use only free models (off by default)."""
+    from hermes_cli.config import load_config
+    model = (load_config() or {}).get("model")
+    return isinstance(model, dict) and model.get("free_mode") is True
+
+
+def first_free_model() -> Optional[tuple[str, str]]:
+    """The first free model of the first signed-in provider with free models, in list order."""
+    from hermes_cli.models_detect import provider_has_credentials
+    lists = free_models_by_provider()
+    if not any(lists.values()):
+        lists = free_models_by_provider(blocking=True)
+    for slug in FREE_MODEL_PROVIDERS:
+        if lists.get(slug) and provider_has_credentials(slug):
+            return slug, lists[slug][0]
+    return None
+
+
 # ─── Model picker ───────────────────────────────────────────────────────
 
 NO_CREDITS_WARNING = "No credits on this account, so only its free models are listed."
@@ -305,8 +326,12 @@ _FREE_PRICE = {"input": "free", "output": "free", "cache": None, "free": True}
 def decorate_picker_rows(rows: list[dict]) -> None:
     """In place, for each provider with free daily models: list its free models (marked free), and
     when the account reports no credits, list only those. A provider that can't report credits
-    keeps every model, with the free ones marked."""
+    keeps every model, with the free ones marked. Free mode lists only free models, so every other
+    provider row, local and custom endpoints included, drops out."""
     lists = free_models_by_provider()
+    free_mode = free_mode_enabled()
+    if free_mode:
+        rows[:] = [row for row in rows if lists.get(str(row.get("slug") or "").strip().lower())]
     for row in rows:
         slug = str(row.get("slug") or "").strip().lower()
         free = lists.get(slug) or []
@@ -316,9 +341,10 @@ def decorate_picker_rows(rows: list[dict]) -> None:
         pricing = row.get("pricing") if isinstance(row.get("pricing"), dict) else {}
         for mid in free:
             pricing[mid] = {**(pricing.get(mid) or {}), **_FREE_PRICE}
-        if credit_state(slug) == CREDITS_NONE:
+        if free_mode or credit_state(slug) == CREDITS_NONE:
             row["models"] = [m for m in models if m in free] + [m for m in free if m not in models]
-            row["warning"] = row.get("warning") or NO_CREDITS_WARNING
+            if not free_mode:
+                row["warning"] = row.get("warning") or NO_CREDITS_WARNING
         else:
             row["models"] = models + [m for m in free if m not in models]
         if isinstance(row.get("total_models"), int):

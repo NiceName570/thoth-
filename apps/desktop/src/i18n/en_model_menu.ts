@@ -10,6 +10,10 @@ export const enModelMenu: Translations['shell']['modelMenu'] = {
   ejectedOllama: (count: number) =>
     count === 0 ? 'No Ollama models were loaded' : `Ejected ${count} Ollama ${count === 1 ? 'model' : 'models'} from memory`,
   ejectOllamaFailed: 'Could not eject Ollama models',
+  freeMode: 'Free mode',
+  freeModeOn: (model: string) => `Free mode on: switched to ${model}`,
+  freeModeOff: 'Free mode off: back to your model',
+  freeModeFailed: 'Could not change Free mode',
   favorites: 'Favorites',
   addFavorite: 'Add to favorites',
   removeFavorite: 'Remove from favorites',

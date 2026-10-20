@@ -2916,7 +2916,7 @@ OPTIONAL_ENV_VARS = {
         "Perplexity API key for the Search API web backend (ranked results + query-relevant page "
         "snippets)", "Perplexity API key", "https://www.perplexity.ai/account/api",
         tools=["web_search", "web_extract"]),
-    # Jev decision-model keys (jev-observer plugin, Jev catalog plugins). Provider category so they
+    # Jev decision-model keys (Jev catalog plugins). Provider category so they
     # sit on the Providers > API keys page with the other vendor keys.
     "TYPESAFE_API_KEY": _prov(
         "TypeSafe API key for the Jev decision model (api.typesafe.ai)", "TypeSafe API key",

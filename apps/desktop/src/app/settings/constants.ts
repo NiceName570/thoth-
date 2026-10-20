@@ -237,14 +237,14 @@ export const PROVIDER_GROUPS: ProviderPrefix[] = [
   {
     prefix: 'TYPESAFE_',
     name: 'TypeSafe',
-    description: 'Jev decision model (used by the jev-observer plugin)',
+    description: 'Jev decision model (for Jev plugins from the catalog)',
     docsUrl: 'https://typesafe.ai',
     priority: 25
   },
   {
     prefix: 'DEFAPI_',
     name: 'DefAPI',
-    description: 'Jev 1.13 through DefAPI (jev-observer fallback when no TypeSafe key)',
+    description: 'Jev 1.13 through DefAPI (fallback for Jev catalog plugins without TypeSafe)',
     docsUrl: 'https://defapi.org',
     priority: 26
   }

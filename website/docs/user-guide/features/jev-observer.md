@@ -1,14 +1,14 @@
 ---
-sidebar_label: "Jev Observer"
-title: "Jev Observer"
+sidebar_label: "ExpressionJev"
+title: "ExpressionJev"
 description: "See whether your agent understood you, not just whether it sounded nice: a passive plugin that judges every turn with Jev and keeps the results local"
 ---
 
-# Jev Observer
+# ExpressionJev
 
 **Find out whether your agent actually understood you, not just whether it sounded nice.**
 
-Jev Observer is a plugin that ships with Thoth. After every chat turn, it quietly asks
+ExpressionJev is a plugin that ships with Thoth. After every chat turn, it quietly asks
 [Jev](https://typesafe.ai) (TypeSafe's decision model) to judge the exchange, and it saves
 the answers on your machine. You can then read a turn-by-turn timeline of a conversation and
 see where the agent understood you, where it missed the point, whether it took your
@@ -35,7 +35,7 @@ or memory.
 **The problem in one line:** your agent can be polite, confident and wrong at the same time,
 and nothing in the chat window tells you.
 
-### Without Jev Observer
+### Without ExpressionJev
 
 You ask for three bullets. The agent gives five. You say "no, I said three." It replies:
 
@@ -47,9 +47,9 @@ What you have to go on:
   yourself to notice it ignored you.
 - A tone checker would score this reply as great: warm, appreciative, high rapport.
 
-### With Jev Observer
+### With ExpressionJev
 
-The same turn, as Jev Observer records it in the background:
+The same turn, as ExpressionJev records it in the background:
 
 ```text
 understanding (assistant): overlooked clarification   <- "no, I said three."
@@ -69,7 +69,7 @@ anything.
 These come from a live test: six scripted conversations sent to the real Jev model. All 21
 expectations written before the run held.
 
-| What happened in the chat | What you'd notice without the plugin | What Jev Observer recorded |
+| What happened in the chat | What you'd notice without the plugin | What ExpressionJev recorded |
 |---|---|---|
 | The agent was friendly but misread what you meant | Probably nothing: the reply sounds helpful | `understanding`: overlooked clarification (0.97), `correction_uptake`: acknowledged only, `warmth` 0.94 |
 | The agent apologised, then made the same mistake again | Maybe, if you read carefully | `repeats_corrected_mistake` 0.94, `relationship`: repair only *attempted*, not demonstrated |
@@ -90,9 +90,9 @@ Chat agents are very good at *sounding* agreeable. A reply can be warm, polite a
 while answering a question you never asked, or while repeating the exact mistake you just
 corrected. Reading a long conversation back to spot that is slow.
 
-Jev Observer does that reading for you, every turn, in the background:
+ExpressionJev does that reading for you, every turn, in the background:
 
-| You want to know... | Jev Observer tells you |
+| You want to know... | ExpressionJev tells you |
 |---|---|
 | Did it answer what I actually meant? | `understanding`: addressed meaning, partial, substituted a different claim, or overlooked a clarification |
 | I corrected it. Did it listen? | `correction_uptake`: changed and acknowledged, changed silently, acknowledged only, or ignored |

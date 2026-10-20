@@ -322,3 +322,9 @@ native/fts5_cjk/*.so
 /pm/.lock.json.lock
 
 apps/desktop/.dist-build*
+apps/desktop/.dist-previous-*
+
+# Local Jev research evidence and test lab: private raw conversations, recorded
+# runs and SQLite snapshots, not source. The shipped plugin is plugins/jev-observer.
+/Jev-Plugin/
+

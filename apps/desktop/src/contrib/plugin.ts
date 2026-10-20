@@ -167,6 +167,10 @@ export interface HermesPlugin {
   name?: string
   /** One-liner for the settings inventory (what the plugin adds). */
   description?: string
+  /** Agent package folder this desktop half belongs to. Set it when the same
+   *  package also ships `plugin.yaml`, so Capabilities ▸ Plugins shows one
+   *  merged row (desktop name + agent switch) instead of two. */
+  packageName?: string
   /** Registers on load when the user hasn't chosen (default true). Set false
    *  for opt-in plugins: they inventory in Capabilities ▸ Plugins, off until the
    *  user flips the switch. */

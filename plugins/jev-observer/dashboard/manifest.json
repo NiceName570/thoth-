@@ -1,0 +1,11 @@
+{
+  "name": "jev-observer",
+  "label": "ExpressionJev",
+  "description": "Read-only observation records for the jev-observer plugin: what was scored, and which turns each contextual judgment carried.",
+  "icon": "Eye",
+  "version": "0.1.0",
+  "tab": {
+    "hidden": true
+  },
+  "api": "plugin_api.py"
+}

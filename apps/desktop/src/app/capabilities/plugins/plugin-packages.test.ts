@@ -35,6 +35,22 @@ describe('mergePluginPackages', () => {
     expect(rows[0].desktop?.id).toBe('media')
     expect(rows[0].agent?.name).toBe('hermes-media-studio')
   })
+  it('merges a bundled desktop half with its agent package and keeps the display name', () => {
+    // ExpressionJev: `plugins/jev-observer` (agent, opt-in) + a bundled
+    // `src/plugins/jev-observer` UI half. Without `packageName` the page showed
+    // two rows — the folder-shaped agent name and the human desktop name.
+    const rows = mergePluginPackages(
+      [desktop({ id: 'jev-observer', kind: 'bundled', name: 'ExpressionJev', packageName: 'jev-observer' })],
+      [agent({ name: 'jev-observer', has_desktop_half: true })]
+    )
+
+    expect(rows).toHaveLength(1)
+    expect(rows[0]).toMatchObject({ kind: 'both', desktopMissing: false })
+    expect(rows[0].name).toBe('ExpressionJev')
+    expect(rows[0].agent?.name).toBe('jev-observer')
+  })
+
+
 
   it('pairs a desktop half with an agent row whose folder differs from its manifest name', () => {
     // Electron names the half after the package FOLDER (plugins/<folder>/desktop);

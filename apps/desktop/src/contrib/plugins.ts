@@ -49,7 +49,8 @@ export function discoverBundledPlugins(): void {
       id: plugin.id,
       name: plugin.name ?? plugin.id,
       description: plugin.description,
-      kind: 'bundled' as const
+      kind: 'bundled' as const,
+      packageName: plugin.packageName
     }
 
     let disposers: (() => void)[] = []

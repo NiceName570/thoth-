@@ -11,7 +11,7 @@ import threading
 import time
 from typing import Any, Optional
 
-from . import store
+from . import lifecycle, store
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +64,8 @@ def _session_lock(session_id: str) -> threading.Lock:
 
 
 def _observe_row(row) -> None:
+    if not lifecycle.is_enabled():
+        return
     provider, key = _resolve()
     if provider is None:
         store.finish_error(row["id"], "no Jev key: add a TypeSafe or DefAPI key in Settings > Providers")
@@ -73,8 +75,12 @@ def _observe_row(row) -> None:
     while attempts < MAX_ATTEMPTS:
         if attempts:
             _sleep(BACKOFF_SECONDS[min(attempts - 1, len(BACKOFF_SECONDS) - 1)])
+        if not lifecycle.is_enabled():
+            return
         attempts = store.bump_attempts(row["id"])
         if attempts is None:  # lease lost to another process; it finishes the row
+            return
+        if not lifecycle.is_enabled():
             return
         try:
             obs = _observe(row["assistant_reply"], row["turn_id"], provider, key)
@@ -93,10 +99,13 @@ def drain(session_id: str) -> None:
     the reply-only baseline first, then contextual rows (which read the captured exchanges)."""
     from . import context_worker
     try:
+        if not lifecycle.is_enabled():
+            return
         with _session_lock(session_id):
-            while (row := store.claim_next(session_id)) is not None:
+            while lifecycle.is_enabled() and (row := store.claim_next(session_id)) is not None:
                 _observe_row(row)
-            context_worker.drain(session_id)
+            if lifecycle.is_enabled():
+                context_worker.drain(session_id)
     except Exception:
         logger.warning("jev-observer worker failed for session %s", session_id, exc_info=True)
 

@@ -22,7 +22,7 @@ KEY = "test-key-not-real-1111"
 def _config(home: Path, **settings) -> None:
     body = "".join(f"        {k}: {str(v).lower() if isinstance(v, bool) else v}\n" for k, v in settings.items())
     (home / "config.yaml").write_text(
-        "plugins:\n  entries:\n    jev-observer:\n      settings:\n" + (body or "        {}\n"), encoding="utf-8")
+        "plugins:\n  enabled: [jev-observer]\n  entries:\n    jev-observer:\n      settings:\n" + (body or "        {}\n"), encoding="utf-8")
 
 
 @pytest.fixture(autouse=True)

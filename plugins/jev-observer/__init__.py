@@ -13,7 +13,7 @@ import logging
 import threading
 from typing import Any
 
-from . import context_store, settings, store, worker
+from . import context_store, lifecycle, settings, store, worker
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +35,8 @@ def _on_post_llm_call(*, session_id: str = "", turn_id: str = "", user_message: 
                       assistant_response: Any = None, conversation_history: Any = None,
                       model: str = "", platform: str = "", **_: Any) -> None:
     try:
+        if not lifecycle.is_enabled():
+            return
         reply = store._text(assistant_response)
         if not session_id or not turn_id or not reply.strip():
             return

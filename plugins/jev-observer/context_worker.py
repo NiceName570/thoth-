@@ -56,6 +56,8 @@ def _assemble(row) -> dict[str, Any]:
 
 
 def observe_row(row) -> None:
+    if not worker.lifecycle.is_enabled():
+        return
     if (row["observer_version"], row["rubric_version"]) != (rubric.OBSERVER_VERSION, rubric.RUBRIC_VERSION):
         # Judging it with today's questions would file the answers under an older rubric.
         context_store.finish_error(row["id"], f"queued for {row['observer_version']}/{row['rubric_version']}, "
@@ -76,8 +78,12 @@ def observe_row(row) -> None:
     while attempts < worker.MAX_ATTEMPTS:
         if attempts:
             worker._sleep(worker.BACKOFF_SECONDS[min(attempts - 1, len(worker.BACKOFF_SECONDS) - 1)])
+        if not worker.lifecycle.is_enabled():
+            return
         attempts = context_store.bump_attempts(row["id"])
         if attempts is None:
+            return
+        if not worker.lifecycle.is_enabled():
             return
         try:
             result = _decide(a["bundle"]["state"], a["questions"], provider, key)
@@ -99,5 +105,5 @@ def observe_row(row) -> None:
 
 def drain(session_id: str, run: str = context_store.LIVE_RUN) -> None:
     """Called with the session lock held: by ``worker.drain`` for live rows, by ``rescore`` for its run."""
-    while (row := context_store.claim_next(session_id, run)) is not None:
+    while worker.lifecycle.is_enabled() and (row := context_store.claim_next(session_id, run)) is not None:
         observe_row(row)

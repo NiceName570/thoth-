@@ -24,7 +24,7 @@ def _isolate_env(tmp_path, monkeypatch):
     hermes_home.mkdir()
     # This file covers the reply-only baseline; the contextual observer has its own tests.
     (hermes_home / "config.yaml").write_text(
-        "plugins:\n  entries:\n    jev-observer:\n      settings:\n        contextual: false\n", encoding="utf-8")
+        "plugins:\n  enabled: [jev-observer]\n  entries:\n    jev-observer:\n      settings:\n        contextual: false\n", encoding="utf-8")
     monkeypatch.setenv("HERMES_HOME", str(hermes_home))
     yield hermes_home
 
@@ -114,6 +114,45 @@ def test_capture_is_pending_until_background_worker_runs(monkeypatch):
     probs = json.loads(row["probabilities"])
     assert row["status"] == "ok" and len(probs) == 21 and row["deltas"] is None
     assert row["observed_at"] and row["created_at"]
+
+
+def test_disabling_loaded_plugin_fences_queued_observer_work(plugin, _isolate_env):
+    """A saved off switch must stop queued work even while this module stays loaded."""
+    import hermes_yaml as yaml
+
+    config_path = _isolate_env / "config.yaml"
+    config_path.write_text(yaml.safe_dump({"plugins": {"enabled": ["jev-observer"], "entries": {
+        "jev-observer": {"settings": {"contextual": False}}
+    }}}), encoding="utf-8")
+    queued = []
+    plugin.worker.spawn = lambda target, *args: queued.append((target, args))
+
+    _fire(plugin, "s1", "turn-off-race", "hello", "queued reply")
+    assert len(_rows(plugin)) == 1 and plugin.observer.calls == []
+
+    config_path.write_text(yaml.safe_dump({"plugins": {"enabled": []}}), encoding="utf-8")
+    for target, args in queued:
+        target(*args)
+
+    assert plugin.observer.calls == []
+    assert _rows(plugin)[0]["status"] == "pending"
+
+    config_path.write_text(yaml.safe_dump({"plugins": {"enabled": ["jev-observer"]}}), encoding="utf-8")
+    plugin.worker.spawn = lambda target, *args: target(*args)
+    _fire(plugin, "s1", "turn-after-reenable", "hello again", "captured again")
+
+    rows = _rows(plugin)
+    assert [row["turn_id"] for row in rows] == ["turn-off-race", "turn-after-reenable"]
+    assert len(plugin.observer.calls) == 2
+
+
+def test_freshly_disabled_plugin_does_not_capture(plugin, _isolate_env):
+    (_isolate_env / "config.yaml").write_text("plugins:\n  enabled: []\n", encoding="utf-8")
+
+    _fire(plugin, "s1", "turn-disabled", "hello", "not captured")
+
+    assert _rows(plugin) == []
+    assert plugin.observer.calls == []
 
 
 def test_duplicate_event_is_ignored(plugin):
@@ -270,6 +309,7 @@ def test_export_uses_handoff_adapter_on_latest_reply_per_exchange(plugin, tmp_pa
 
 
 def test_bundled_plugin_is_opt_in(_isolate_env):
+    (_isolate_env / "config.yaml").write_text("plugins: {}\n", encoding="utf-8")
     from hermes_cli import plugins as pmod
     mgr = pmod.PluginManager()
     mgr.discover_and_load()

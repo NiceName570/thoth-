@@ -115,7 +115,7 @@ export const $agentPluginBusy = atom<string | null>(null)
 // list is the fallback for older backends whose rows predate a reliable
 // `source` field — same curation stance as desktop-slash-commands.ts.
 const HIDDEN_KEY_PREFIXES = ['dashboard_auth/', 'model-providers/', 'platforms/']
-const MANAGEABLE_BUNDLED_KEYS = new Set(['disk-cleanup', 'jev-observer', 'security-guidance'])
+const MANAGEABLE_BUNDLED_KEYS = new Set(['disk-cleanup', 'security-guidance'])
 
 export const isDesktopRelevantPlugin = (row: AgentPluginRow): boolean => {
   if (row.source === 'bundled') {

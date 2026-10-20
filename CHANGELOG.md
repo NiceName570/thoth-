@@ -31,7 +31,7 @@ The first release with a Windows installer. [Download it](https://github.com/Nic
 
 ### Docs
 - README with screenshots of rotation, Free mode, the Providers page and Memories, and a Download button instead of terminal install commands.
-- [Jev Observer guide](plugins/jev-observer/README.md) with setup, a worked example and every command.
+- Jev Observer guide with setup, a worked example and every command.
 
 ### Earlier work in this release
 

@@ -78,13 +78,6 @@ can edit or delete any entry.
 
 <p align="center"><img src="docs/screenshots/memories.png" alt="The Memories page with entries that each have edit and delete buttons" width="640"></p>
 
-### Jev observer
-
-An optional plugin that scores every reply in the background: did the model understand you,
-take your correction on board, or repeat the mistake you just pointed out? Its scores work the
-same whatever provider or model you're on, so you can compare them on equal terms, and it never
-changes the conversation. [Guide with examples](plugins/jev-observer/README.md).
-
 ## Frictions removed
 
 | | |
@@ -112,7 +105,7 @@ agent/          The agent turn loop, providers, memory, fallback and free-model 
 hermes_cli/     Settings, providers, free-model lists, and the desktop app's backend routes
 gateway/        The messaging gateway (Telegram, Discord, Slack and more)
 tools/          Tools the agent can use (terminal, files, browser, voice, ...)
-plugins/        Bundled plugins, including jev-observer and the model providers
+plugins/        Bundled plugins, including disk-cleanup and the model providers
 tests/          The Python test suite
 ```
 

@@ -237,7 +237,8 @@ def free_models_by_provider(*, blocking: bool = False) -> dict[str, list[str]]:
     the background by default (the picker never waits on it), inline when ``blocking``."""
     ensure_daily_refresh()
     cache = _read_cache()
-    stale = time.time() - float(cache.get("fetched_at") or 0) >= REFRESH_SECONDS
+    # A cache written before reasoning levels were recorded refreshes now rather than a day later.
+    stale = time.time() - float(cache.get("fetched_at") or 0) >= REFRESH_SECONDS or "levels" not in cache
     if stale and blocking:
         return refresh_free_models()
     if stale:

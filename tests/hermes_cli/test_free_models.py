@@ -15,7 +15,7 @@ def free_lists(monkeypatch, tmp_path):
     monkeypatch.setattr(free_models, "_cache_path", lambda: path)
     monkeypatch.setattr(free_models, "ensure_daily_refresh", lambda: None)
     path.write_text(json.dumps({"fetched_at": time.time(), "providers": {
-        "openrouter": ["a/one:free", "b/two:free"], "cline": ["c/three:free"]}}))
+        "openrouter": ["a/one:free", "b/two:free"], "cline": ["c/three:free"]}, "levels": {}}))
     return path
 
 
@@ -119,3 +119,12 @@ def test_free_mode_starts_on_the_strongest_reasoner(free_lists, monkeypatch):
     monkeypatch.setattr(models_detect, "provider_has_credentials", lambda p: True)
 
     assert free_models.first_free_model() == ("openrouter", "b/two:free")
+
+
+def test_cache_without_reasoning_levels_refreshes_now(free_lists, monkeypatch):
+    free_lists.write_text(json.dumps({"fetched_at": time.time(), "providers": {"openrouter": ["a/one:free", "b/two:free"]}}))
+    started = []
+    monkeypatch.setattr(free_models, "_refresh_in_background", lambda: started.append(True))
+
+    assert free_models.free_models("openrouter") == ["a/one:free", "b/two:free"]
+    assert started == [True]

@@ -20,6 +20,7 @@ PAID = {"provider": "anthropic", "model": "claude-haiku-5.5"}
 def lists(monkeypatch):
     current = {k: list(v) for k, v in LISTS.items()}
     monkeypatch.setattr(free_models, "free_models_by_provider", lambda blocking=False: {k: list(v) for k, v in current.items()})
+    monkeypatch.setattr(free_models, "free_model_levels", dict)
     monkeypatch.setattr(models_detect, "provider_has_credentials", lambda p: p in SIGNED_IN)
     monkeypatch.setattr(free_models, "free_mode_enabled", lambda: False)
     return current
@@ -37,6 +38,23 @@ def test_free_model_rotates_within_its_provider_then_to_the_next_signed_in_one(l
     assert _pairs(chain) == [("openrouter", "o/three:free"), ("openrouter", "o/one:free"),
                              ("kilocode", "k/one:free"), ("cline", "c/one:free"), (PAID["provider"], PAID["model"])]
     assert all(e["free_rotation"] for e in chain[:-1])
+
+
+def test_rotation_tries_the_strongest_reasoners_first(lists, monkeypatch):
+    """Highest published reasoning level first (max, then high, then medium), then reasoning
+    models with no published levels, then low-only, then models that don't reason; ties keep the
+    provider-by-provider order."""
+    from agent.route_chain import build_chain
+    monkeypatch.setattr(free_models, "free_model_levels", lambda: {
+        "openrouter": {"o/one:free": "medium", "o/three:free": "off"},
+        "kilocode": {"k/one:free": "max"}, "cline": {"c/one:free": "high"}})
+
+    rotation = build_chain([], "openrouter", "o/two:free")
+    credits = build_chain([], "anthropic", "claude-sonnet-5")
+
+    assert _pairs(rotation) == [("kilocode", "k/one:free"), ("cline", "c/one:free"),
+                                ("openrouter", "o/one:free"), ("openrouter", "o/three:free")]
+    assert _pairs(credits)[:3] == [("kilocode", "k/one:free"), ("cline", "c/one:free"), ("openrouter", "o/one:free")]
 
 
 def test_paid_model_keeps_its_fallbacks_and_holds_free_models_for_credits(lists):

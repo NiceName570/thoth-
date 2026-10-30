@@ -2,9 +2,9 @@
 rotation built in. The chain lives on the agent (``_fallback_chain`` and ``_fallback_index``);
 this module is the only place that builds it, decides the next entry and words the switch.
 
-When the current model is one of a provider's free daily models, the chain is that provider's
-other free models, then every other signed-in provider's free models in Providers-page order,
-then the configured fallbacks. A paid model keeps its configured fallbacks and ends the chain with
+When the current model is one of a provider's free daily models, the chain is every signed-in
+provider's other free models, strongest reasoners first (``free_models.by_reasoning``; ties keep
+the same provider first, then Providers-page order), then the configured fallbacks. A paid model keeps its configured fallbacks and ends the chain with
 the free models, marked ``on_credits_only``: they are tried only when the account runs out of
 credits. With Free mode on (``model.free_mode``), only free models are ever used. Local servers
 (Ollama, LM Studio, custom endpoints) are never free models and never rotate in."""
@@ -40,6 +40,11 @@ def _signed_in_free_models(lists: dict[str, list[str]], start: str | None) -> li
     return [(p, m) for p in _provider_order(start) if lists.get(p) and _signed_in(p) for m in lists[p]]
 
 
+def _strongest_first(pairs: list[tuple[str, str]]) -> list[tuple[str, str]]:
+    from hermes_cli.free_models import by_reasoning
+    return by_reasoning(pairs)
+
+
 def free_rotation_chain(provider: str, model: str) -> list[dict]:
     """Fallback entries that keep a free model's conversation on free models; [] when *model* is
     not one of *provider*'s free models."""
@@ -51,7 +56,7 @@ def free_rotation_chain(provider: str, model: str) -> list[dict]:
     if model not in own:
         return []
     at = own.index(model)
-    chain = [(slug, m) for m in own[at + 1:] + own[:at]] + _signed_in_free_models(lists, slug)
+    chain = _strongest_first([(slug, m) for m in own[at + 1:] + own[:at]] + _signed_in_free_models(lists, slug))
     return [{"provider": p, "model": m, "free_rotation": True} for p, m in chain]
 
 
@@ -61,7 +66,7 @@ def credits_fallback_chain(provider: str, model: str) -> list[dict]:
     lists = _lists()
     slug = (provider or "").strip().lower()
     return [{"provider": p, "model": m, "free_rotation": True, "on_credits_only": True}
-            for p, m in _signed_in_free_models(lists, slug) if (p, m) != (slug, model)]
+            for p, m in _strongest_first(_signed_in_free_models(lists, slug)) if (p, m) != (slug, model)]
 
 
 def build_chain(configured: list[dict], provider: str, model: str) -> list[dict]:

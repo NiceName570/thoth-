@@ -58,8 +58,8 @@ def test_stale_list_refreshes_in_background_without_blocking(free_lists, monkeyp
 
 
 def test_failed_catalog_read_keeps_the_last_list(free_lists, monkeypatch):
-    monkeypatch.setitem(free_models._FETCHERS, "openrouter", list)
-    monkeypatch.setitem(free_models._FETCHERS, "cline", lambda: ["c/new:free"])
+    monkeypatch.setitem(free_models._FETCHERS, "openrouter", dict)
+    monkeypatch.setitem(free_models._FETCHERS, "cline", lambda: {"c/new:free": None})
 
     lists = free_models.refresh_free_models(("openrouter", "cline"))
 
@@ -81,9 +81,41 @@ def test_free_mode_lists_only_free_models_and_drops_local_endpoints(free_lists, 
 
 def test_refresh_that_reaches_no_provider_retries_soon(free_lists, monkeypatch):
     for slug in free_models.FREE_MODEL_PROVIDERS:
-        monkeypatch.setitem(free_models._FETCHERS, slug, list)
+        monkeypatch.setitem(free_models._FETCHERS, slug, dict)
 
     free_models.refresh_free_models()
 
     fetched_at = json.loads(free_lists.read_text())["fetched_at"]
     assert time.time() - fetched_at > free_models.REFRESH_SECONDS - 16 * 60
+
+
+def test_refresh_records_each_models_top_reasoning_level(free_lists, monkeypatch):
+    """Levels come from the provider's own catalog; a catalog that publishes none (Cline) borrows
+    OpenRouter's for the same model id."""
+    catalogs = {
+        "https://openrouter.ai/api/v1/models": {"data": [
+            {"id": "a/one:free", "supported_parameters": ["reasoning"],
+             "reasoning": {"supported_efforts": ["high", "medium", "low"]}},
+            {"id": "b/two:free", "supported_parameters": ["tools"]},
+            {"id": "c/three:free", "supported_parameters": ["reasoning"]}]},
+        "https://api.cline.bot/api/v1/models": {"data": [{"id": "a/one:free"}]},
+        "https://opencode.ai/zen/v1/models": {"data": [
+            {"id": "z-free", "capabilities": {"reasoning": {"supported": True, "effort": ["low", "max"]}}}]},
+    }
+    monkeypatch.setattr(free_models, "_get_json", lambda url, headers=None: catalogs.get(url))
+
+    free_models.refresh_free_models(("openrouter", "cline", "opencode-zen"))
+
+    assert free_models.free_model_levels() == {
+        "openrouter": {"a/one:free": "high", "b/two:free": "off", "c/three:free": "reasoning"},
+        "cline": {"a/one:free": "high"}, "opencode-zen": {"z-free": "max"}}
+
+
+def test_free_mode_starts_on_the_strongest_reasoner(free_lists, monkeypatch):
+    from hermes_cli import models_detect
+    free_lists.write_text(json.dumps({"fetched_at": time.time(),
+        "providers": {"cline": ["c/three:free"], "openrouter": ["a/one:free", "b/two:free"]},
+        "levels": {"cline": {"c/three:free": "medium"}, "openrouter": {"b/two:free": "max"}}}))
+    monkeypatch.setattr(models_detect, "provider_has_credentials", lambda p: True)
+
+    assert free_models.first_free_model() == ("openrouter", "b/two:free")

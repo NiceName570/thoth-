@@ -558,24 +558,20 @@ class GatewayConfigLoadersMixin:
         """
         if agent is None:
             return
-        # The configured chain plus free-model rotation (agent/free_rotation.py), as at agent init.
-        # Built around the primary, not an active fallback, so the chain (and _fallback_index into
-        # it) stays the same from one message to the next.
-        from agent.free_rotation import with_free_rotation
-        primary = getattr(agent, "_primary_runtime", None)
-        primary = primary if isinstance(primary, dict) else {}
-        new_chain = with_free_rotation(
-            list(chain or []),
-            str(primary.get("provider") or getattr(agent, "provider", "") or ""),
-            str(primary.get("model") or getattr(agent, "model", "") or ""))
         rate_limited_until = getattr(agent, "_rate_limited_until", 0) or 0
         if getattr(agent, "_fallback_activated", False) and rate_limited_until > time.monotonic():
             return
+        # The configured chain plus free-model rotation (agent/route_chain.py), as at agent init.
+        # Built around the primary, not an active fallback, so the chain stays the same from one
+        # message to the next.
+        from agent.route_chain import rebuild
+        primary = getattr(agent, "_primary_runtime", None)
+        primary = primary if isinstance(primary, dict) else {}
         old_chain = list(getattr(agent, "_fallback_chain", []) or [])
-        agent._fallback_chain = new_chain
-        agent._fallback_model = new_chain[0] if new_chain else None
-        if not getattr(agent, "_fallback_activated", False):
-            agent._fallback_index = 0
+        new_chain = rebuild(
+            agent, list(chain or []),
+            str(primary.get("provider") or getattr(agent, "provider", "") or ""),
+            str(primary.get("model") or getattr(agent, "model", "") or ""))
         # A config edit means the user changed something — drop the session-scoped unavailability
         # memo so re-configured entries (e.g. credentials added mid-uptime) get retried. Only on real
         # content change, so the per-message no-op refresh keeps the memo's rate-limiting benefit.

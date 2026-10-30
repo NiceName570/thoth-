@@ -28,7 +28,7 @@ TASK = "voice_chat"
 # model's and leaves its own behind (a learned floor is remembered per route instead).
 _REJECTION_FIELDS = ("_reasoning_disable_rejected", "_reasoning_floor_required", "_reasoning_effort_rejected")
 _EXTRA_FIELDS = (
-    "_fallback_activated", "_fallback_index", "_provider_fallback_active", "_provider_fallback_route",
+    "_fallback_activated", "_fallback_index", "_credits_fallback_at", "_provider_fallback_active", "_provider_fallback_route",
     "_rate_limit_backoff_count", "_credential_pool", "_credential_pool_entry_id", "_config_context_length",
     *_REJECTION_FIELDS,
 )

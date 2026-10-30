@@ -3,7 +3,7 @@ an account has paid credits.
 
 Thoth lists these providers first on the Providers page, marks their free models in the model
 picker, narrows a provider with no credits to its free models, and rotates through free models
-when one runs out (``agent/free_rotation.py``). The lists come from each provider's public model
+when one runs out (``agent/route_chain.py``). The lists come from each provider's public model
 catalog, cached on disk for a day: a picker open refreshes a stale list in the background, and a
 process-wide timer refreshes it once a day.
 """
@@ -48,7 +48,7 @@ def _cache_path() -> Path:
 
 def _read_cache(path: Optional[Path] = None) -> dict:
     try:
-        data = json.loads((path or _cache_path()).read_text(encoding="utf-8"))
+        data = json.loads((path or _cache_path()).read_text(encoding="utf-8-sig"))
         return data if isinstance(data, dict) else {}
     except (OSError, ValueError):
         return {}

@@ -252,6 +252,54 @@ class TestAutoModeRespectsOverride:
             assert decide_image_input_mode("custom", "unknown", {}) == "text"
 
 
+# ─── MoA: the preset's aggregator decides ────────────────────────────────────
+
+
+def _moa_cfg(provider: str, model: str) -> dict:
+    return {"moa": {"presets": {"Frontier": {
+        "reference_models": [{"provider": "openai-codex", "model": "gpt-6.1-sol"}],
+        "aggregator": {"provider": provider, "model": model}}}}}
+
+
+def _caps_by_model(vision: dict):
+    def fake(provider, model, **_kwargs):
+        return type("Caps", (), {"supports_vision": vision.get(model)})() if model in vision else None
+    return fake
+
+
+class TestMoAAggregatorVision:
+
+    def test_vision_aggregator_is_native(self):
+        cfg = _moa_cfg("anthropic", "claude-opus-5-5")
+        with patch("agent.models_dev.get_model_capabilities", side_effect=_caps_by_model({"claude-opus-5-5": True})):
+            assert decide_image_input_mode("moa", "Frontier", cfg) == "native"
+
+    def test_text_only_aggregator_is_text(self):
+        cfg = _moa_cfg("openrouter", "text-only-model")
+        with patch("agent.models_dev.get_model_capabilities", side_effect=_caps_by_model({"text-only-model": False})):
+            assert decide_image_input_mode("moa", "Frontier", cfg) == "text"
+
+    def test_unresolvable_preset_is_text(self):
+        cfg = _moa_cfg("anthropic", "claude-opus-5-5")
+        with patch("agent.models_dev.get_model_capabilities", side_effect=_caps_by_model({"claude-opus-5-5": True})):
+            assert _lookup_supports_vision("moa", "NoSuchPreset", cfg) is None
+            assert decide_image_input_mode("moa", "NoSuchPreset", cfg) == "text"
+
+    def test_explicit_false_override_wins(self):
+        cfg = {**_moa_cfg("anthropic", "claude-opus-5-5"),
+               "providers": {"moa": {"models": {"Frontier": {"supports_vision": False}}}}}
+        with patch("agent.models_dev.get_model_capabilities", side_effect=_caps_by_model({"claude-opus-5-5": True})):
+            assert decide_image_input_mode("moa", "Frontier", cfg) == "text"
+
+    def test_moa_aggregator_does_not_recurse(self):
+        # The config normalizer already drops a "moa" slot; force one past it to exercise the guard.
+        preset = {"aggregator": {"provider": "moa", "model": "Frontier"}}
+        with patch("hermes_cli.moa_config.resolve_moa_preset", return_value=preset) as resolve, \
+             patch("agent.models_dev.get_model_capabilities", return_value=None):
+            assert decide_image_input_mode("moa", "Frontier", {}) == "text"
+        assert resolve.call_count == 1
+
+
 
 
 # ─── build_native_content_parts ──────────────────────────────────────────────

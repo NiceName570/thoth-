@@ -327,6 +327,21 @@ _VISION_PROBES: tuple[tuple[str, Callable[..., Optional[bool]]], ...] = (
 )
 
 
+def _moa_aggregator_supports_vision(preset_name: str, cfg: Optional[dict[str, Any]]) -> Optional[bool]:
+    """MoA is virtual (``model`` is a preset name): the aggregator receives the image parts,
+    so its capability decides. Unresolvable preset or a ``moa`` aggregator → None (text)."""
+    try:
+        from hermes_cli.moa_config import resolve_moa_preset
+        agg = _dict_or_empty(resolve_moa_preset(_dict_or_empty(cfg).get("moa") or {}, preset_name).get("aggregator"))
+    except Exception as exc:
+        logger.debug("image_routing: MoA preset %r unresolvable — %s", preset_name, exc)
+        return None
+    agg_provider, agg_model = _clean_str(agg.get("provider")), _clean_str(agg.get("model"))
+    if not agg_provider or not agg_model or agg_provider.lower() == "moa":
+        return None
+    return _lookup_supports_vision(agg_provider, agg_model, cfg)
+
+
 def _lookup_supports_vision(
     provider: str,
     model: str,
@@ -360,6 +375,8 @@ def _lookup_supports_vision(
         return override
     if not provider or not model:
         return None
+    if _clean_str(provider).lower() == "moa":
+        return _moa_aggregator_supports_vision(model, cfg)
 
     for label, probe in _VISION_PROBES:
         try:
